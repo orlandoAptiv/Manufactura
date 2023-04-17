@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package CapturasEffort;
 
 import Clases.Conection;
@@ -13,12 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import manufactura.Principal;
-//import manufactura.Principal;
 
-/**
- *
- * @author FelipeM
- */
 public class CapturaPorcentajes extends javax.swing.JFrame {
 
     /**
@@ -27,33 +16,30 @@ public class CapturaPorcentajes extends javax.swing.JFrame {
     public CapturaPorcentajes() {
         try {
             initComponents();
-            Principal.cn=new Conection();
+            Principal.cn = new Conection();
             setLocationRelativeTo(null);
             cargardgv();
         } catch (Exception ex) {
             Logger.getLogger(CapturaPorcentajes.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-    
+        }
+
     }
-    
-    public void cargardgv(){
-        try{
-            ResultSet rs=Principal.cn.GetConsulta("select distinct modulo from porcentajes");
-            while(rs.next())
-            {
-                cbxModulos.addItem(rs.getString(1));         
+
+    public void cargardgv() {
+        try {
+            ResultSet rs = Principal.cn.GetConsulta("select distinct modulo from porcentajes");
+            while (rs.next()) {
+                cbxModulos.addItem(rs.getString(1));
             }
-        }catch(Exception e)
-        {
-        
+        } catch (Exception e) {
+
         }
     }
-   
-    public void obtenerPorcentajes(String Modulo){
-        try{
-            ResultSet rs=Principal.cn.GetConsulta("select * from porcentajes where modulo='"+Modulo+"'");
-            if(rs.next())
-            {
+
+    public void obtenerPorcentajes(String Modulo) {
+        try {
+            ResultSet rs = Principal.cn.GetConsulta("select * from porcentajes where modulo='" + Modulo + "'");
+            if (rs.next()) {
                 txtBcable.setValue(rs.getDouble("BCABLE"));
                 txtCamaro.setValue(rs.getDouble("GMX521"));
                 txtGmt610.setValue(rs.getDouble("GMT610"));
@@ -63,23 +49,22 @@ public class CapturaPorcentajes extends javax.swing.JFrame {
                 txt_BATTERY.setValue(rs.getDouble("BB"));
                 TXT_D2XX.setValue(rs.getDouble("D2XX"));
             }
-        }catch(Exception e)
-        {
-            
+        } catch (Exception e) {
+
         }
     }
-  
-    public void sacarTotales(){
-        Double Total=0.0;
-        try{
-            Total=(Double)txtGmt610.getValue()+(Double)txtCamaro.getValue()+(Double)txtBcable.getValue()+(Double)txtIsuzu.getValue()+(Double)txtK2xx.getValue()+(Double)txtServicios.getValue()+(Double)txt_BATTERY.getValue()+(Double)TXT_D2XX.getValue();
+
+    public void sacarTotales() {
+        Double Total = 0.0;
+        try {
+            Total = (Double) txtGmt610.getValue() + (Double) txtCamaro.getValue() + (Double) txtBcable.getValue() + (Double) txtIsuzu.getValue() + (Double) txtK2xx.getValue() + (Double) txtServicios.getValue() + (Double) txt_BATTERY.getValue() + (Double) TXT_D2XX.getValue();
             txtTotal.setText(Total.toString());
-                    
-        }catch(Exception e)
-        {
-           System.out.println(e.toString());
+
+        } catch (Exception e) {
+            System.out.println(e.toString());
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -400,25 +385,25 @@ public class CapturaPorcentajes extends javax.swing.JFrame {
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
         // TODO add your handling code here:
         //      if((cbxModuloAlta.getSelectedItem()!=null) || )
-    //   if(Double.parseDouble(txtTotal.getText())==100)
-       // {
-            ArrayList<Object> lista=new ArrayList<Object>();
-            lista.add(txtBcable.getValue());
-            lista.add(txtGmt610.getValue());
-            lista.add(txtCamaro.getValue());
-            lista.add(txtIsuzu.getValue());
-            lista.add(txtK2xx.getValue());
-            lista.add(txtServicios.getValue());
-            lista.add(txt_BATTERY.getValue()); 
-            lista.add(TXT_D2XX.getValue()); 
-            lista.add(cbxModulos.getSelectedItem());
+        //   if(Double.parseDouble(txtTotal.getText())==100)
+        // {
+        ArrayList<Object> lista = new ArrayList<Object>();
+        lista.add(txtBcable.getValue());
+        lista.add(txtGmt610.getValue());
+        lista.add(txtCamaro.getValue());
+        lista.add(txtIsuzu.getValue());
+        lista.add(txtK2xx.getValue());
+        lista.add(txtServicios.getValue());
+        lista.add(txt_BATTERY.getValue());
+        lista.add(TXT_D2XX.getValue());
+        lista.add(cbxModulos.getSelectedItem());
 
-            Principal.cn.EjecutarInsertOb("UPDATE porcentajes  SET BCABLE=?, GMT610=?, GMX521=?, ISUZU_=?, K2XX=?, SERVICIOS=?, BB=?, D2XX=? WHERE MODULO=?", lista);
-            JOptionPane.showMessageDialog(null, "DATOS ACTUALIZADOS...", "", JOptionPane.INFORMATION_MESSAGE);
-      // }
-       // else{
+        Principal.cn.EjecutarInsertOb("UPDATE porcentajes  SET BCABLE=?, GMT610=?, GMX521=?, ISUZU_=?, K2XX=?, SERVICIOS=?, BB=?, D2XX=? WHERE MODULO=?", lista);
+        JOptionPane.showMessageDialog(null, "DATOS ACTUALIZADOS...", "", JOptionPane.INFORMATION_MESSAGE);
+        // }
+        // else{
         //  JOptionPane.showMessageDialog(null, "ERROR, LA SUMA EN PORCENTAJE  NO ES IGUAL 100% ...", "", JOptionPane.WARNING_MESSAGE);
-       //}
+        //}
     }//GEN-LAST:event_btnEntrarActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -429,37 +414,37 @@ public class CapturaPorcentajes extends javax.swing.JFrame {
     private void txtBcableVetoableChange(java.beans.PropertyChangeEvent evt)throws java.beans.PropertyVetoException {//GEN-FIRST:event_txtBcableVetoableChange
         // TODO add your handling code here:
 //        if(Double.parseDouble(txtBcable.getValue().toString())>0)
-         sacarTotales();
+        sacarTotales();
     }//GEN-LAST:event_txtBcableVetoableChange
 
     private void txtGmt610VetoableChange(java.beans.PropertyChangeEvent evt)throws java.beans.PropertyVetoException {//GEN-FIRST:event_txtGmt610VetoableChange
         // TODO add your handling code here:
 //        if(Double.parseDouble(txtGmt610.getValue().toString())>0)
-         sacarTotales();
+        sacarTotales();
     }//GEN-LAST:event_txtGmt610VetoableChange
 
     private void txtCamaroVetoableChange(java.beans.PropertyChangeEvent evt)throws java.beans.PropertyVetoException {//GEN-FIRST:event_txtCamaroVetoableChange
         // TODO add your handling code here:
 //        if(Double.parseDouble(txtCamaro.getValue().toString())>0)
-         sacarTotales();
+        sacarTotales();
     }//GEN-LAST:event_txtCamaroVetoableChange
 
     private void txtIsuzuVetoableChange(java.beans.PropertyChangeEvent evt)throws java.beans.PropertyVetoException {//GEN-FIRST:event_txtIsuzuVetoableChange
         // TODO add your handling code here:
-        if(Double.parseDouble(txtIsuzu.getValue().toString())>0)
-         sacarTotales();
+        if (Double.parseDouble(txtIsuzu.getValue().toString()) > 0)
+            sacarTotales();
     }//GEN-LAST:event_txtIsuzuVetoableChange
 
     private void txtK2xxVetoableChange(java.beans.PropertyChangeEvent evt)throws java.beans.PropertyVetoException {//GEN-FIRST:event_txtK2xxVetoableChange
         // TODO add your handling code here:
 //         if(Double.parseDouble(txtK2xx.getValue().toString())>0)
-         sacarTotales();
+        sacarTotales();
     }//GEN-LAST:event_txtK2xxVetoableChange
 
     private void txtServiciosVetoableChange(java.beans.PropertyChangeEvent evt)throws java.beans.PropertyVetoException {//GEN-FIRST:event_txtServiciosVetoableChange
         // TODO add your handling code here:
 //          if(Double.parseDouble(txtServicios.getValue().toString())>0)
-            sacarTotales();
+        sacarTotales();
     }//GEN-LAST:event_txtServiciosVetoableChange
 
     private void txtBcableStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_txtBcableStateChanged
@@ -494,8 +479,7 @@ public class CapturaPorcentajes extends javax.swing.JFrame {
 
     private void cbxModulosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxModulosItemStateChanged
         // TODO add your handling code here:
-        if(cbxModulos.getSelectedItem()!=null)
-        {
+        if (cbxModulos.getSelectedItem() != null) {
             obtenerPorcentajes(cbxModulos.getSelectedItem().toString());
         }
     }//GEN-LAST:event_cbxModulosItemStateChanged

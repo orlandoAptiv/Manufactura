@@ -6,20 +6,12 @@
 
 package effortGUA;
 
-import CapturasEffort.*;
-import Clases.Conection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import manufactura.Principal;
 
-/**
- *
- * @author Felipe M
- */
+
 public class CapturaHCR2 extends javax.swing.JFrame {
 
     /**

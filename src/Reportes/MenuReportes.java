@@ -13,10 +13,7 @@ import manufactura.CapturaExcelGSD_Verdadero;
 import manufactura.Principal;
 import manufactura.ReporteGSDVSActual;
 
-/**
- *
- * @author gzld6k
- */
+
 public class MenuReportes extends javax.swing.JFrame {
 
     /**

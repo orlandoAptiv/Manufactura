@@ -11,10 +11,7 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-/**
- *
- * @author bzc85r
- */
+
 public class Render_CheckBox extends JCheckBox implements TableCellRenderer {
       private JComponent component = new JCheckBox();
 

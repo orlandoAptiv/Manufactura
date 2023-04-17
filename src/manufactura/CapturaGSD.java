@@ -1,35 +1,28 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package manufactura;
 
 import Clases.DatosGSD;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author gzld6k
- */
 public class CapturaGSD extends javax.swing.JFrame {
 
     /**
      * Creates new form CapturaGSD
      */
-    Double totalHCDIR=0.0;
-    Double totalHCIND=0.0;
+    Double totalHCDIR = 0.0;
+    Double totalHCIND = 0.0;
     DatosGSD dgsd;
+
     public CapturaGSD(DatosGSD DG) {
         initComponents();
-        dgsd=DG;
-        lblEtiqueta.setText("C"+DG.Codigo.Cadena+", PL="+ DG.Codigo.Plataforma+ ",  COD="+ DG.Codigo.Codigo+ ", L="+DG.Codigo.Linea +", T="+DG.Codigo.Turno+"." );
+        dgsd = DG;
+        lblEtiqueta.setText("C" + DG.Codigo.Cadena + ", PL=" + DG.Codigo.Plataforma + ",  COD=" + DG.Codigo.Codigo + ", L=" + DG.Codigo.Linea + ", T=" + DG.Codigo.Turno + ".");
         hcDirLPS.setValue(Double.parseDouble(DG.HCDIRLPS));
         HCDirCorte.setValue(Double.parseDouble(DG.HCDIRCORTE));
         ptosPzasPond.setValue(Double.parseDouble(DG.PUNTOSPZAPOND));
         capUtilHta.setValue(Double.parseDouble(DG.CAP_UTIL_HTA));
-        totalHCDIR=Double.parseDouble(DG.HCDIRLPS)+Double.parseDouble(DG.HCDIRCORTE)+Double.parseDouble(DG.HCDIRENSFINAL);
-        totalHCIND=Double.parseDouble(DG.HCINDRUTAS);
+        totalHCDIR = Double.parseDouble(DG.HCDIRLPS) + Double.parseDouble(DG.HCDIRCORTE) + Double.parseDouble(DG.HCDIRENSFINAL);
+        totalHCIND = Double.parseDouble(DG.HCINDRUTAS);
         lblHCDIR.setText(totalHCDIR.toString());
         lblHCIND.setText(totalHCIND.toString());
     }
@@ -340,9 +333,8 @@ public class CapturaGSD extends javax.swing.JFrame {
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
         // TODO add your handling code here:
         //JOptionPane.showConfirmDialog(null, "", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
-        if((JOptionPane.showConfirmDialog(null, "Esta seguro que desea actualizar?", "Confirmar", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION))
-        {
-            ArrayList<String> listaInsert=new ArrayList<String>();
+        if ((JOptionPane.showConfirmDialog(null, "Esta seguro que desea actualizar?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)) {
+            ArrayList<String> listaInsert = new ArrayList<String>();
             listaInsert.add(hcDirLPS.getValue().toString());
             listaInsert.add(HCDirCorte.getValue().toString());
             listaInsert.add(hcDirEnsFinal.getValue().toString());
@@ -351,12 +343,9 @@ public class CapturaGSD extends javax.swing.JFrame {
             listaInsert.add(capUtilHta.getValue().toString());
             listaInsert.add(Principal.UsuarioLogeado.codigo);
             listaInsert.add(dgsd.Codigo.Idcodigo);
-            if( Principal.cn.EjecutarInsert("update GSD SET HCDIRLPS=?, HCDIRCORTE=?, HCDIRENSFINAL=?, HCINDRUTAS=?, PUNTOSPZAPOND=?, CAP_UTIL_HTA=?, usuariomodif=? WHERE IDCODIGO=?", listaInsert))
-            {
+            if (Principal.cn.EjecutarInsert("update GSD SET HCDIRLPS=?, HCDIRCORTE=?, HCDIRENSFINAL=?, HCINDRUTAS=?, PUNTOSPZAPOND=?, CAP_UTIL_HTA=?, usuariomodif=? WHERE IDCODIGO=?", listaInsert)) {
                 JOptionPane.showMessageDialog(null, "Datos Actualizados", "Confirmacion", JOptionPane.INFORMATION_MESSAGE);
-            }
-            else
-            {
+            } else {
                 JOptionPane.showMessageDialog(null, "Error, al guardar", "Confirmacion", JOptionPane.WARNING_MESSAGE);
             }
 
@@ -365,7 +354,7 @@ public class CapturaGSD extends javax.swing.JFrame {
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         // TODO add your handling code here:
-        SelectCodigo p=new SelectCodigo();
+        SelectCodigo p = new SelectCodigo();
         p.setLocationRelativeTo(null);
         p.setVisible(true);
     }//GEN-LAST:event_formWindowClosed

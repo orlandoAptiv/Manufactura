@@ -1,44 +1,34 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package manufactura;
 
 import Clases.Conection;
 import Reportes.MenuReportes;
-import Reportes.ReporteDistGente;
 import java.awt.Image;
-import java.sql.Date;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-/**
-
- */
 public class Principal extends javax.swing.JFrame {
 
     /**
      * Creates new form Principal
      */
-   public static Conection cn;
-   public static Clases.Usuario UsuarioLogeado;
+    public static Conection cn;
+    public static Clases.Usuario UsuarioLogeado;
+
     public Principal(Clases.Usuario u) {
-       try {
+        try {
             initComponents();
-            cn=new Conection();
-            UsuarioLogeado=u;
-           //  btnPerfil.setIcon(UsuarioLogeado.Foto);
-            txtEstado.setText("        Nombre: "+ UsuarioLogeado.nombre+ "           Puesto: "+ UsuarioLogeado.puesto+ "              Turno: "+UsuarioLogeado.turno+ "          Fecha: ");
+            cn = new Conection();
+            UsuarioLogeado = u;
+            //  btnPerfil.setIcon(UsuarioLogeado.Foto);
+            txtEstado.setText("        Nombre: " + UsuarioLogeado.nombre + "           Puesto: " + UsuarioLogeado.puesto + "              Turno: " + UsuarioLogeado.turno + "          Fecha: ");
             txtEstado.setEditable(false);
             Image icon = new ImageIcon(getClass().getResource("/Images/competitors-icon.png")).getImage();
             setIconImage(icon);
-       } catch (Exception ex) {
-           System.out.println(ex.toString());
-       }
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+        }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -362,47 +352,41 @@ public class Principal extends javax.swing.JFrame {
 
     private void btnUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsuariosActionPerformed
         // TODO add your handling code here:
-        if(Principal.UsuarioLogeado.turno.equals("TODOS"))
-        {
-        CAPTURAINFORMACION F=new CAPTURAINFORMACION();
-        this.setVisible(false);
-        F.setLocationRelativeTo(null);
-        F.setVisible(true);
-        }
-          else
-             JOptionPane.showMessageDialog(this, "No tiene permisos para accesar a este modulo...", "Error", JOptionPane.WARNING_MESSAGE);
+        if (Principal.UsuarioLogeado.turno.equals("TODOS")) {
+            CAPTURAINFORMACION F = new CAPTURAINFORMACION();
+            this.setVisible(false);
+            F.setLocationRelativeTo(null);
+            F.setVisible(true);
+        } else
+            JOptionPane.showMessageDialog(this, "No tiene permisos para accesar a este modulo...", "Error", JOptionPane.WARNING_MESSAGE);
     }//GEN-LAST:event_btnUsuariosActionPerformed
 
     private void btnInformacion1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInformacion1ActionPerformed
         // TODO add your handling code here:
-         if(Principal.UsuarioLogeado.turno.equals("TODOS"))
-        {
-        CapturaExcelGSD cEG=new CapturaExcelGSD();
-        cEG.setLocationRelativeTo(null);
-        cEG.setVisible(true);
-        this.setVisible(false);
-        }
-         else
-             JOptionPane.showMessageDialog(this, "No tiene permisos para accesar a este modulo...", "Error", JOptionPane.WARNING_MESSAGE);
+        if (Principal.UsuarioLogeado.turno.equals("TODOS")) {
+            CapturaExcelGSD cEG = new CapturaExcelGSD();
+            cEG.setLocationRelativeTo(null);
+            cEG.setVisible(true);
+            this.setVisible(false);
+        } else
+            JOptionPane.showMessageDialog(this, "No tiene permisos para accesar a este modulo...", "Error", JOptionPane.WARNING_MESSAGE);
     }//GEN-LAST:event_btnInformacion1ActionPerformed
 
     private void btnInformacion2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInformacion2ActionPerformed
         // TODO add your handling code here:
-         if(Principal.UsuarioLogeado.turno.equals("TODOS"))
-        {
-         CapturaExcelMSD cEG=new CapturaExcelMSD();
-        cEG.setLocationRelativeTo(null);
-        cEG.setVisible(true);
-        this.setVisible(false);
-        }
-           else
-             JOptionPane.showMessageDialog(this, "No tiene permisos para accesar a este modulo...", "Error", JOptionPane.WARNING_MESSAGE);
+        if (Principal.UsuarioLogeado.turno.equals("TODOS")) {
+            CapturaExcelMSD cEG = new CapturaExcelMSD();
+            cEG.setLocationRelativeTo(null);
+            cEG.setVisible(true);
+            this.setVisible(false);
+        } else
+            JOptionPane.showMessageDialog(this, "No tiene permisos para accesar a este modulo...", "Error", JOptionPane.WARNING_MESSAGE);
     }//GEN-LAST:event_btnInformacion2ActionPerformed
 
     private void btnManufacturaExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManufacturaExcelActionPerformed
         // TODO add your handling code here:
 //        CapturaExcelManufactura cEG=new CapturaExcelManufactura();
-        MenuManufactura cEG=new MenuManufactura();
+        MenuManufactura cEG = new MenuManufactura();
         cEG.setLocationRelativeTo(null);
         cEG.setVisible(true);
         this.setVisible(false);
@@ -412,10 +396,10 @@ public class Principal extends javax.swing.JFrame {
         // TODO add your handling code here:
 //         if(Principal.UsuarioLogeado.turno.equals("TODOS"))
 //        {
-            CapturaCodigos cEG=new CapturaCodigos();
-            cEG.setLocationRelativeTo(null);
-            cEG.setVisible(true);
-            this.setVisible(false);
+        CapturaCodigos cEG = new CapturaCodigos();
+        cEG.setLocationRelativeTo(null);
+        cEG.setVisible(true);
+        this.setVisible(false);
 //        }
 //           else
 //             JOptionPane.showMessageDialog(this, "No tiene permisos para accesar a este modulo...", "Error", JOptionPane.WARNING_MESSAGE);
@@ -423,36 +407,35 @@ public class Principal extends javax.swing.JFrame {
 
     private void btnManufacturaExcel1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManufacturaExcel1ActionPerformed
         // TODO add your handling code here:
-        SelectCodigo SC=new  SelectCodigo();
+        SelectCodigo SC = new SelectCodigo();
         this.dispose();
         SC.setLocationRelativeTo(null);
         SC.setVisible(true);
     }//GEN-LAST:event_btnManufacturaExcel1ActionPerformed
 
     private void btnManufacturaExcel2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManufacturaExcel2ActionPerformed
-                // TODO add your handling code here:
-                 Object[] possPlanta = {"MOCHIS", "GML"};
-                    String OpcionPlanta = (String) JOptionPane.showInputDialog(
-                            null,
-                            "¿QUE PLANTA DESEA MODIFICAR?\n",
-                            "CORTE",
-                            JOptionPane.PLAIN_MESSAGE,
-                            null,
-                            possPlanta,
-                          " ");
-         Object[] possibilities = {"A", "B", "C","AC","BC"};
-                    String s = (String) JOptionPane.showInputDialog(
-                            null,
-                            "¿QUE TURNO DESEA  MODIFICAR?\n",
-                            "CORTE",
-                            JOptionPane.PLAIN_MESSAGE,
-                            null,
-                            possibilities,
-                          " ");
-                    
-        if(s!=null)            
-        {
-            CapturaGenteCorte eFP=new CapturaGenteCorte(OpcionPlanta,s);
+        // TODO add your handling code here:
+        Object[] possPlanta = {"MOCHIS", "GML"};
+        String OpcionPlanta = (String) JOptionPane.showInputDialog(
+                null,
+                "¿QUE PLANTA DESEA MODIFICAR?\n",
+                "CORTE",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                possPlanta,
+                " ");
+        Object[] possibilities = {"A", "B", "C", "AC", "BC"};
+        String s = (String) JOptionPane.showInputDialog(
+                null,
+                "¿QUE TURNO DESEA  MODIFICAR?\n",
+                "CORTE",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                possibilities,
+                " ");
+
+        if (s != null) {
+            CapturaGenteCorte eFP = new CapturaGenteCorte(OpcionPlanta, s);
             eFP.setLocationRelativeTo(null);
             this.hide();
             eFP.setVisible(true);
@@ -465,7 +448,7 @@ public class Principal extends javax.swing.JFrame {
 
     private void btnReportesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportesActionPerformed
         // TODO add your handling code here:
-        Reportes.MenuReportes rsp=new MenuReportes();
+        Reportes.MenuReportes rsp = new MenuReportes();
         rsp.setVisible(true);
         this.hide();
         rsp.setLocationRelativeTo(null);
@@ -473,47 +456,47 @@ public class Principal extends javax.swing.JFrame {
 
     private void btnPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPerfilActionPerformed
         // TODO add your handling code here:
-        DatosPersonales dt=new DatosPersonales(Principal.UsuarioLogeado);
-        dt.setLocation(btnPerfil.getLocation().x- (dt.getSize().width-100), btnPerfil.getLocation().y-(dt.getSize().height-400));
+        DatosPersonales dt = new DatosPersonales(Principal.UsuarioLogeado);
+        dt.setLocation(btnPerfil.getLocation().x - (dt.getSize().width - 100), btnPerfil.getLocation().y - (dt.getSize().height - 400));
         dt.setVisible(true);
     }//GEN-LAST:event_btnPerfilActionPerformed
 
     private void btnContigenciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContigenciasActionPerformed
         // TODO add your handling code here:
         this.hide();
-        CapturaContigencias CConti=new CapturaContigencias();
+        CapturaContigencias CConti = new CapturaContigencias();
         CConti.setLocationRelativeTo(null);
         CConti.setVisible(true);
     }//GEN-LAST:event_btnContigenciasActionPerformed
 
     private void btnExtrasGerenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExtrasGerenciaActionPerformed
         // TODO add your handling code here:
-         Object[] possPlanta = {"MOCHIS", "GML"};
-                    String OpcionPlanta = (String) JOptionPane.showInputDialog(
-                            null,
-                            "¿QUE PLANTA DESEA MODIFICAR?\n",
-                            "CORTE",
-                            JOptionPane.PLAIN_MESSAGE,
-                            null,
-                            possPlanta,
-                          " ");
+        Object[] possPlanta = {"MOCHIS", "GML"};
+        String OpcionPlanta = (String) JOptionPane.showInputDialog(
+                null,
+                "¿QUE PLANTA DESEA MODIFICAR?\n",
+                "CORTE",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                possPlanta,
+                " ");
         this.hide();
-        Kachirules CConti=new Kachirules(OpcionPlanta);
+        Kachirules CConti = new Kachirules(OpcionPlanta);
         CConti.setLocationRelativeTo(null);
         CConti.setVisible(true);
     }//GEN-LAST:event_btnExtrasGerenciaActionPerformed
 
     private void jTextArea1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea1MouseClicked
         // TODO add your handling code here:
-        CapturaImpactos CI=new  CapturaImpactos();
+        CapturaImpactos CI = new CapturaImpactos();
         CI.setVisible(true);
         CI.setLocationRelativeTo(null);
-                
+
     }//GEN-LAST:event_jTextArea1MouseClicked
 
     private void btnReportes1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportes1ActionPerformed
         // TODO add your handling code here:
-        CapturaDetalladaConv SC=new  CapturaDetalladaConv();
+        CapturaDetalladaConv SC = new CapturaDetalladaConv();
         this.dispose();
         SC.setLocationRelativeTo(null);
         SC.setVisible(true);

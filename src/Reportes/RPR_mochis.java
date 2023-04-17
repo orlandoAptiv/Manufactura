@@ -26,10 +26,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import manufactura.Principal;
 
-/**
- *
- * @author gzld6k
- */
+
 public class RPR_mochis extends javax.swing.JFrame {
 
     /**

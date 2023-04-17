@@ -1,15 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package manufactura;
 
-import javax.swing.Icon;
-
-/**
- *
- * @author gzld6k
- */
 public class DatosPersonales extends javax.swing.JFrame {
 
     /**
@@ -17,7 +7,7 @@ public class DatosPersonales extends javax.swing.JFrame {
      */
     public DatosPersonales(Clases.Usuario us) {
         initComponents();
-        lblFoto.setIcon( us.Foto);
+        lblFoto.setIcon(us.Foto);
         txtNombre.setText(us.nombre);
         txtPuesto.setText(us.puesto);
     }

@@ -11,10 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-/**
- *
- * @author gzld6k
- */
+
 public class CapturaExcelGSD extends javax.swing.JFrame {
 
     /**

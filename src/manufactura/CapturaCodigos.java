@@ -7,10 +7,7 @@ package manufactura;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author gzld6k
- */
+
 public class CapturaCodigos extends javax.swing.JFrame {
 
     /**

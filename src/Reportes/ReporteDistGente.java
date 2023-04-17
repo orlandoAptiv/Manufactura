@@ -5,7 +5,6 @@
 package Reportes;
 
 import Clases.Conection;
-import java.awt.Font;
 import java.awt.Image;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -14,10 +13,6 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import manufactura.Principal;
 
-/**
- *
- * @author gzld6k
- */
 public class ReporteDistGente extends javax.swing.JFrame {
 
     /**

@@ -17,22 +17,19 @@ import javax.swing.table.DefaultTableModel;
 import manufactura.EficienciaPlanta;
 import manufactura.Principal;
 
-/**
- *
- * @author gzld6k
- */
 public class DesgloseCorte extends javax.swing.JFrame {
 
     /**
      * Creates new form DesgloseCorte
      */
     DefaultTableModel modelo;
-    ArrayList<PlataformaGenteCorte> gente=new ArrayList<PlataformaGenteCorte>();
+    ArrayList<PlataformaGenteCorte> gente = new ArrayList<PlataformaGenteCorte>();
+
     public DesgloseCorte() {
         try {
             initComponents();
-         //   Principal.cn=new Conection();
-            Thread t=new Thread(new Runnable() {
+            //   Principal.cn=new Conection();
+            Thread t = new Thread(new Runnable() {
 
                 @Override
                 public void run() {
@@ -48,91 +45,88 @@ public class DesgloseCorte extends javax.swing.JFrame {
             System.out.println(ex.toString());
         }
     }
-    
-    public void inicializarArray(){
+
+    public void inicializarArray() {
         try {
-            ResultSet rs=Principal.cn.GetConsulta("SELECT DISTINCT\n" +
-              "codigos.PLATAFORMA\n" +
-              "FROM\n" +
-              "codigos where codigos.cadena<>4 and codigos.PLATAFORMA<>'SERVICIOS' and codigos.linea<>'91'");
-            while(rs.next())
-            {
-                gente.add(new PlataformaGenteCorte(rs.getString("plataforma"), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0));
+            ResultSet rs = Principal.cn.GetConsulta("SELECT DISTINCT\n"
+                    + "codigos.PLATAFORMA\n"
+                    + "FROM\n"
+                    + "codigos where codigos.cadena<>4 and codigos.PLATAFORMA<>'SERVICIOS' and codigos.linea<>'91'");
+            while (rs.next()) {
+                gente.add(new PlataformaGenteCorte(rs.getString("plataforma"), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
             }
         } catch (SQLException ex) {
             System.out.println(ex.toString());
         }
-          
-    }
-  
-    public void crearPanelTotal(DefaultTableModel modelo){
-        int t=200;
-        inicializarArray();
-        for (int r= 0; r < modelo.getRowCount(); r++) {
-            
-                for(int i=0; i<gente.size(); i++)
-                {
-                  if(modelo.getValueAt(r, 2).equals(gente.get(i).NombrePlataforma))
-                      gente.get(i).HCCorteMSD+=Double.parseDouble(modelo.getValueAt(r, 8).toString());
-                      gente.get(i).HCCorteManuf+=Double.parseDouble(modelo.getValueAt(r, 9).toString());
-                    break;
-                }
-        
-        } 
-     for(int c=0; c<gente.size(); c++)
-     {
-       JPanel  panel1=new JPanel();
-        panel1.setBounds(t,0, 100, 100 );
-        panel1.add(new JLabel(gente.get(c).NombrePlataforma));
-        panel1.add(new JLabel(gente.get(c).HCCorteMSD.toString()));
-        panel1.add(new JLabel(gente.get(c).HCCorteManuf.toString()));
-        panel1.setBackground(Color.ORANGE);
-        t+=200;
-        Paneltotales.add(panel1); 
-     }
-        
-     
+
     }
 
-    public void SacarTablaDesgloseCorte(){
-     Double totalHrsEmbA=0.0;
-     Double totalHrsEmbB=0.0;
-     Double totalHCCorteManufA=0.0;
-     Double totalHCCorteManufB=0.0;
-    try{
-        ResultSet rs=Principal.cn.GetConsulta("SELECT codigos.turno, sum((manufactura.SALIDAENPIEZA*manufactura.PUNTOSPZAPOND)/100) as hrsemb\n" +
-                "FROM\n" +
-                "codigos ,\n" +
-                "manufactura\n" +
-                "WHERE\n" +
-                "codigos.IDCODIGO = manufactura.IDCODIGO and codigos.CADENA<>4 and codigos.CADENA<>5 and codigos.linea<>91 \n" +
-                "GROUP BY\n" +
-                "codigos.TURNO ");
-        while(rs.next())
-        {
-            if(rs.getString("TURNO").equals("A"))
-                totalHrsEmbA=rs.getDouble("hrsemb");
-            else
-                totalHrsEmbB=rs.getDouble("hrsemb");
+    public void crearPanelTotal(DefaultTableModel modelo) {
+        int t = 200;
+        inicializarArray();
+        for (int r = 0; r < modelo.getRowCount(); r++) {
+
+            for (int i = 0; i < gente.size(); i++) {
+                if (modelo.getValueAt(r, 2).equals(gente.get(i).NombrePlataforma)) {
+                    gente.get(i).HCCorteMSD += Double.parseDouble(modelo.getValueAt(r, 8).toString());
+                }
+                gente.get(i).HCCorteManuf += Double.parseDouble(modelo.getValueAt(r, 9).toString());
+                break;
+            }
+
         }
-        rs=Principal.cn.GetConsulta("SELECT\n" +
-                "codigos.CADENA, codigos.turno,\n" +
-                "manufactura.HCDIRLINEA\n" +
-                "FROM\n" +
-                "codigos ,\n" +
-                "manufactura\n" +
-                "WHERE\n" +
-                "codigos.CADENA = 4 AND\n" +
-                "codigos.IDCODIGO = manufactura.IDCODIGO");
-        while(rs.next())
-        {
-            if(rs.getString("TURNO").equals("A"))
-                totalHCCorteManufA=rs.getDouble("HCDIRLINEA");
-            else
-                totalHCCorteManufB=rs.getDouble("HCDIRLINEA");
+        for (int c = 0; c < gente.size(); c++) {
+            JPanel panel1 = new JPanel();
+            panel1.setBounds(t, 0, 100, 100);
+            panel1.add(new JLabel(gente.get(c).NombrePlataforma));
+            panel1.add(new JLabel(gente.get(c).HCCorteMSD.toString()));
+            panel1.add(new JLabel(gente.get(c).HCCorteManuf.toString()));
+            panel1.setBackground(Color.ORANGE);
+            t += 200;
+            Paneltotales.add(panel1);
         }
-        modelo=new DefaultTableModel();
-        modelo.setColumnIdentifiers(new Object[]{ "CAD", "LINEA", "PLAT.",  "CODIGO", "PUNTOS.PIEZA", "SALIDA", "HRS.EMB", "HRS. EMB. CORTE", "PORC.DE HE", "MOD. MAFRA", "MOD. ING" });
+
+    }
+
+    public void SacarTablaDesgloseCorte() {
+        Double totalHrsEmbA = 0.0;
+        Double totalHrsEmbB = 0.0;
+        Double totalHCCorteManufA = 0.0;
+        Double totalHCCorteManufB = 0.0;
+        try {
+            ResultSet rs = Principal.cn.GetConsulta("SELECT codigos.turno, sum((manufactura.SALIDAENPIEZA*manufactura.PUNTOSPZAPOND)/100) as hrsemb\n"
+                    + "FROM\n"
+                    + "codigos ,\n"
+                    + "manufactura\n"
+                    + "WHERE\n"
+                    + "codigos.IDCODIGO = manufactura.IDCODIGO and codigos.CADENA<>4 and codigos.CADENA<>5 and codigos.linea<>91 \n"
+                    + "GROUP BY\n"
+                    + "codigos.TURNO ");
+            while (rs.next()) {
+                if (rs.getString("TURNO").equals("A")) {
+                    totalHrsEmbA = rs.getDouble("hrsemb");
+                } else {
+                    totalHrsEmbB = rs.getDouble("hrsemb");
+                }
+            }
+            rs = Principal.cn.GetConsulta("SELECT\n"
+                    + "codigos.CADENA, codigos.turno,\n"
+                    + "manufactura.HCDIRLINEA\n"
+                    + "FROM\n"
+                    + "codigos ,\n"
+                    + "manufactura\n"
+                    + "WHERE\n"
+                    + "codigos.CADENA = 4 AND\n"
+                    + "codigos.IDCODIGO = manufactura.IDCODIGO");
+            while (rs.next()) {
+                if (rs.getString("TURNO").equals("A")) {
+                    totalHCCorteManufA = rs.getDouble("HCDIRLINEA");
+                } else {
+                    totalHCCorteManufB = rs.getDouble("HCDIRLINEA");
+                }
+            }
+            modelo = new DefaultTableModel();
+            modelo.setColumnIdentifiers(new Object[]{"CAD", "LINEA", "PLAT.", "CODIGO", "PUNTOS.PIEZA", "SALIDA", "HRS.EMB", "HRS. EMB. CORTE", "PORC.DE HE", "MOD. MAFRA", "MOD. ING"});
 //          rs=Principal.cn.GetConsulta("SELECT c.CADENA, c.linea, c.PLATAFORMA, c.CODIGO, c.TURNO, m.SALIDAENPIEZA, m.PUNTOSPZAPOND, ROUND(( m.SALIDAENPIEZA*m.PUNTOSPZAPOND)/100) as horasEMB,\n" +
 //                "sum((g.hcdircorte*m.salidaenpieza)/100) as 'HORASEMBCORTE'    FROM\n" +
 //                "codigos  as c, \n" +
@@ -140,47 +134,43 @@ public class DesgloseCorte extends javax.swing.JFrame {
 //                  "WHERE \n" +
 //                "c.IDCODIGO = m.IDCODIGO and  c.idcodigo=g.idcodigo and c.linea<>'91' and c.cadena<>4 \n" +
 //                "ORDER BY cadena, turno ");
-        rs=Principal.cn.GetConsulta("select manuf.CADENA, manuf.TURNO, manuf.linea, manuf.PLATAFORMA, manuf.CODIGO, manuf.horasEMB, manuf.SALIDAENPIEZA, manuf.PUNTOSPZAPOND, g.HCDIRCORTE, (manuf.SALIDAENPIEZA*g.HCDIRCORTE)/100 as HRSEMBCORTE  from (select IDCODIGO, HCDIRCORTE from gsd) as g INNER JOIN \n" +
-            "(SELECT  c.IDCODIGO, c.CADENA, c.linea, c.PLATAFORMA, c.CODIGO, c.TURNO, m.SALIDAENPIEZA, m.PUNTOSPZAPOND, ROUND(( m.SALIDAENPIEZA*m.PUNTOSPZAPOND)/100) as horasEMB\n" +
-            "  FROM\n" +
-            "codigos  as c, \n" +
-            "manufactura as m, gsd as g \n" +
-            "WHERE \n" +
-            "c.IDCODIGO = m.IDCODIGO and c.idcodigo=g.idcodigo and m.ACTIVO=1\n" +
-            "ORDER BY cadena, turno ) as manuf on g.idcodigo=manuf.IDCODIGO");
-          while(rs.next())
-          {
-              Double Porciento=0.0;
-              Double ModManufactura=0.0;
-              Double ModInge=0.0;
-              if(rs.getString("TURNO").equals("A"))
-              { Porciento=rs.getDouble("horasemb")/totalHrsEmbA;
-               ModManufactura=Porciento*totalHCCorteManufA;
-              
-              }
-                 else
-              {
-                  Porciento=rs.getDouble("horasemb")/totalHrsEmbB;
-               ModManufactura=Porciento*totalHCCorteManufB;
-               
-              }
-              ModInge=Porciento*96;
-              ModInge=EficienciaPlanta.Regresa2Decimales( ModInge);
-              Porciento=EficienciaPlanta.Regresa2Decimales(Porciento*100);
-              modelo.addRow(new Object[]{rs.getString("CADENA")+ rs.getString("TURNO"), rs.getString("linea"), rs.getString("plataforma"), rs.getString("codigo"), rs.getString("puntospzapond"), rs.getString("salidaenpieza"), rs.getString("horasemb"), EficienciaPlanta.Regresa2Decimales( rs.getDouble("HRSEMBCORTE")), Porciento, ModManufactura, ModInge });
-          }
-              tblTablaCorte.setModel(modelo);
-              tblTablaCorte.getColumnModel().getColumn(0).setMaxWidth(40);
-              tblTablaCorte.getColumnModel().getColumn(0).setMinWidth(40);
-              tblTablaCorte.getColumnModel().getColumn(0).setPreferredWidth(40);
-         //   crearPanelTotal(modelo);      
-    }catch(Exception e)
-    {
-        System.out.println(e.toString());
+            rs = Principal.cn.GetConsulta("select manuf.CADENA, manuf.TURNO, manuf.linea, manuf.PLATAFORMA, manuf.CODIGO, manuf.horasEMB, manuf.SALIDAENPIEZA, manuf.PUNTOSPZAPOND, g.HCDIRCORTE, (manuf.SALIDAENPIEZA*g.HCDIRCORTE)/100 as HRSEMBCORTE  from (select IDCODIGO, HCDIRCORTE from gsd) as g INNER JOIN \n"
+                    + "(SELECT  c.IDCODIGO, c.CADENA, c.linea, c.PLATAFORMA, c.CODIGO, c.TURNO, m.SALIDAENPIEZA, m.PUNTOSPZAPOND, ROUND(( m.SALIDAENPIEZA*m.PUNTOSPZAPOND)/100) as horasEMB\n"
+                    + "  FROM\n"
+                    + "codigos  as c, \n"
+                    + "manufactura as m, gsd as g \n"
+                    + "WHERE \n"
+                    + "c.IDCODIGO = m.IDCODIGO and c.idcodigo=g.idcodigo and m.ACTIVO=1\n"
+                    + "ORDER BY cadena, turno ) as manuf on g.idcodigo=manuf.IDCODIGO");
+            while (rs.next()) {
+                Double Porciento = 0.0;
+                Double ModManufactura = 0.0;
+                Double ModInge = 0.0;
+                if (rs.getString("TURNO").equals("A")) {
+                    Porciento = rs.getDouble("horasemb") / totalHrsEmbA;
+                    ModManufactura = Porciento * totalHCCorteManufA;
+
+                } else {
+                    Porciento = rs.getDouble("horasemb") / totalHrsEmbB;
+                    ModManufactura = Porciento * totalHCCorteManufB;
+
+                }
+                ModInge = Porciento * 96;
+                ModInge = EficienciaPlanta.Regresa2Decimales(ModInge);
+                Porciento = EficienciaPlanta.Regresa2Decimales(Porciento * 100);
+                modelo.addRow(new Object[]{rs.getString("CADENA") + rs.getString("TURNO"), rs.getString("linea"), rs.getString("plataforma"), rs.getString("codigo"), rs.getString("puntospzapond"), rs.getString("salidaenpieza"), rs.getString("horasemb"), EficienciaPlanta.Regresa2Decimales(rs.getDouble("HRSEMBCORTE")), Porciento, ModManufactura, ModInge});
+            }
+            tblTablaCorte.setModel(modelo);
+            tblTablaCorte.getColumnModel().getColumn(0).setMaxWidth(40);
+            tblTablaCorte.getColumnModel().getColumn(0).setMinWidth(40);
+            tblTablaCorte.getColumnModel().getColumn(0).setPreferredWidth(40);
+            //   crearPanelTotal(modelo);      
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+
     }
-    
-    }
-            
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -251,7 +241,7 @@ public class DesgloseCorte extends javax.swing.JFrame {
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         // TODO add your handling code here:
-        Principal p=new Principal(Principal.UsuarioLogeado);
+        Principal p = new Principal(Principal.UsuarioLogeado);
         p.setLocationRelativeTo(null);
         p.setVisible(true);
     }//GEN-LAST:event_formWindowClosed

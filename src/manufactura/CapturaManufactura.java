@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package manufactura;
 
 import Clases.DatosManufactura;
@@ -9,24 +5,20 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author gzld6k
- */
 public class CapturaManufactura extends javax.swing.JFrame {
 
     /**
      * Creates new form CapturaManufactura
      */
-    
-    Double totalHCDIR=0.0;
-    Double totalHCIND=0.0;
+    Double totalHCDIR = 0.0;
+    Double totalHCIND = 0.0;
     DatosManufactura dm;
-    public CapturaManufactura(DatosManufactura DM){
+
+    public CapturaManufactura(DatosManufactura DM) {
         initComponents();
-        dm=DM;
-        lblEtiqueta.setText("CAD.:"+DM.Codigo.Cadena+" PLAT.:"+ DM.Codigo.Plataforma+ " COD:"+ DM.Codigo.Codigo+ " L:"+DM.Codigo.Linea +" T:"+DM.Codigo.Turno );
-        hcDirLinea.setValue(Double.parseDouble( DM.HCDIRLINEA));
+        dm = DM;
+        lblEtiqueta.setText("CAD.:" + DM.Codigo.Cadena + " PLAT.:" + DM.Codigo.Plataforma + " COD:" + DM.Codigo.Codigo + " L:" + DM.Codigo.Linea + " T:" + DM.Codigo.Turno);
+        hcDirLinea.setValue(Double.parseDouble(DM.HCDIRLINEA));
         hcDirSistemas.setValue(Double.parseDouble(DM.HCDIRSISTEMAS));
         HCDirLPS.setValue(Double.parseDouble(DM.HCDIRLPS));
         hcDirSop.setValue(Double.parseDouble(DM.HCDIRSOPORTE));
@@ -40,46 +32,42 @@ public class CapturaManufactura extends javax.swing.JFrame {
         capUtilHta.setValue(Double.parseDouble(DM.CAP_UTIL_HTA));
         SalidaPieza.setValue(Double.parseDouble(DM.SalidaEnPieza));
         hcDirSopLPS.setValue(Double.parseDouble(DM.HCDIRSOPLPS));
-        totalHCDIR=Double.parseDouble( DM.HCDIRLINEA)+Double.parseDouble(DM.HCDIRSISTEMAS)+Double.parseDouble(DM.HCDIRLPS)+Double.parseDouble(DM.HCDIRSOPORTE)+Double.parseDouble(DM.HCDIRCONTE)+Double.parseDouble(DM.HCDIRFTQ)+Double.parseDouble(DM.HCDIRSOPLPS);
-        totalHCDIR+=Double.parseDouble(DM.HCDIRPILOTOS)+Double.parseDouble(DM.HCDIRTABINSP);
-        totalHCIND=Double.parseDouble(DM.HCINDRUTAS);
+        totalHCDIR = Double.parseDouble(DM.HCDIRLINEA) + Double.parseDouble(DM.HCDIRSISTEMAS) + Double.parseDouble(DM.HCDIRLPS) + Double.parseDouble(DM.HCDIRSOPORTE) + Double.parseDouble(DM.HCDIRCONTE) + Double.parseDouble(DM.HCDIRFTQ) + Double.parseDouble(DM.HCDIRSOPLPS);
+        totalHCDIR += Double.parseDouble(DM.HCDIRPILOTOS) + Double.parseDouble(DM.HCDIRTABINSP);
+        totalHCIND = Double.parseDouble(DM.HCINDRUTAS);
         lblHCDIR.setText(totalHCDIR.toString());
         lblHCIND.setText(totalHCIND.toString());
-         ObtenerHorasPagadas(DM.Codigo.Idcodigo);
+        ObtenerHorasPagadas(DM.Codigo.Idcodigo);
     }
-      public Double Regresa2Decimales(Double Valor)
-    {
-        try{
-         int aux = (int)(Valor*100);//1243
-            Valor = aux/100d;// 
-        }catch(Exception e)
-        {
+
+    public Double Regresa2Decimales(Double Valor) {
+        try {
+            int aux = (int) (Valor * 100);//1243
+            Valor = aux / 100d;// 
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
         return Valor;
     }
-    
-    public void Sumar()
-    {
-        totalHCDIR=Double.parseDouble(HCDirLPS.getValue().toString())+Double.parseDouble(hcDirLinea.getValue().toString())+Double.parseDouble(hcDirSistemas.getValue().toString())+Double.parseDouble(hcDirSop.getValue().toString())+
-         Double.parseDouble(hcDirConten.getValue().toString())   +Double.parseDouble(hcDIrFTQ.getValue().toString()) +Double.parseDouble(hcDirPilot.getValue().toString()) +Double.parseDouble(hcDirTabInsp.getValue().toString()) ;
-        totalHCIND=Double.parseDouble(hcIndRutas.getValue().toString());
+
+    public void Sumar() {
+        totalHCDIR = Double.parseDouble(HCDirLPS.getValue().toString()) + Double.parseDouble(hcDirLinea.getValue().toString()) + Double.parseDouble(hcDirSistemas.getValue().toString()) + Double.parseDouble(hcDirSop.getValue().toString())
+                + Double.parseDouble(hcDirConten.getValue().toString()) + Double.parseDouble(hcDIrFTQ.getValue().toString()) + Double.parseDouble(hcDirPilot.getValue().toString()) + Double.parseDouble(hcDirTabInsp.getValue().toString());
+        totalHCIND = Double.parseDouble(hcIndRutas.getValue().toString());
         lblHCDIR.setText(totalHCDIR.toString());
         lblHCIND.setText(totalHCIND.toString());
     }
-    public void ObtenerHorasPagadas(String Idcodigo)
-    {
-        try{
-             ResultSet rs=Principal.cn.GetConsulta("select manu.IDCODIGO, manu.CADENA, manu.LINEA,  ROUND((manu.horasemb),2) as horasemb, ROUND((manu.hrsPagadas),2) as hrsPagadas,  TRUNCATE(( manu.horasemb/manu.hrsPagadas)*100,2) as efic from \n" +
-                "(select c.LINEA, c.CADENA, c.IDCODIGO, (m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100) as horasemb,  IF(c.TURNO='A',(m.HCDIRLINEA*9),(m.HCDIRLINEA*7.9)) as hrsPagadas  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO) as manu where manu.idcodigo="+Idcodigo);
-             if(rs.next())
-             {
-                 lblHorasEmb.setText(Regresa2Decimales(rs.getDouble("horasemb")).toString());
-                 lblHorasPag.setText(Regresa2Decimales( rs.getDouble("hrspagadas")).toString());
-                 lblObjetivoManuf.setText(Regresa2Decimales( rs.getDouble("efic")).toString());
-             }
-        }catch(Exception e)
-        {
+
+    public void ObtenerHorasPagadas(String Idcodigo) {
+        try {
+            ResultSet rs = Principal.cn.GetConsulta("select manu.IDCODIGO, manu.CADENA, manu.LINEA,  ROUND((manu.horasemb),2) as horasemb, ROUND((manu.hrsPagadas),2) as hrsPagadas,  TRUNCATE(( manu.horasemb/manu.hrsPagadas)*100,2) as efic from \n"
+                    + "(select c.LINEA, c.CADENA, c.IDCODIGO, (m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100) as horasemb,  IF(c.TURNO='A',(m.HCDIRLINEA*9),(m.HCDIRLINEA*7.9)) as hrsPagadas  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO) as manu where manu.idcodigo=" + Idcodigo);
+            if (rs.next()) {
+                lblHorasEmb.setText(Regresa2Decimales(rs.getDouble("horasemb")).toString());
+                lblHorasPag.setText(Regresa2Decimales(rs.getDouble("hrspagadas")).toString());
+                lblObjetivoManuf.setText(Regresa2Decimales(rs.getDouble("efic")).toString());
+            }
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }
@@ -706,9 +694,8 @@ public class CapturaManufactura extends javax.swing.JFrame {
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
         // TODO add your handling code here:
         //JOptionPane.showConfirmDialog(null, "", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
-        if((JOptionPane.showConfirmDialog(null, "Esta seguro que desea actualizar?", "Confirmar", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION))
-        {
-            ArrayList<String> listaInsert=new ArrayList<String>();
+        if ((JOptionPane.showConfirmDialog(null, "Esta seguro que desea actualizar?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)) {
+            ArrayList<String> listaInsert = new ArrayList<String>();
             listaInsert.add(hcDirLinea.getValue().toString());
             listaInsert.add(HCDirLPS.getValue().toString());
             listaInsert.add(hcDirSop.getValue().toString());
@@ -725,38 +712,34 @@ public class CapturaManufactura extends javax.swing.JFrame {
             listaInsert.add(hcDirSopLPS.getValue().toString());
             listaInsert.add(Principal.UsuarioLogeado.codigo);
             listaInsert.add(dm.Codigo.Idcodigo);
-           if( Principal.cn.EjecutarInsert("update  MANUFACTURA SET HCDIRLINEA=?, HCDIRLPS=?, HCDIRSOPORTE=?, HCDIRTABINSP=?, HCDIRCONTE=?, HCDIRFTQ=?, HCDIRPILOTOS=?, HCDIRSISTEMAS=?, HCINDRUTAS=?, hcrutasint=?, PUNTOSPZAPOND=?, CAP_UTIL_HTA=?, salidaenpieza=?, HCDIRSOPLPS=?, USUARIOMODIF=?  WHERE IDCODIGO=?", listaInsert))
-           {
-             //  JOptionPane.showMessageDialog(null, "Datos Actualizados", "Confirmacion", JOptionPane.INFORMATION_MESSAGE);
-               this.dispose();
-           }
-           else
-           {
-               JOptionPane.showMessageDialog(null, "Error, al guardar", "Confirmacion", JOptionPane.WARNING_MESSAGE);
-           }
-           
+            if (Principal.cn.EjecutarInsert("update  MANUFACTURA SET HCDIRLINEA=?, HCDIRLPS=?, HCDIRSOPORTE=?, HCDIRTABINSP=?, HCDIRCONTE=?, HCDIRFTQ=?, HCDIRPILOTOS=?, HCDIRSISTEMAS=?, HCINDRUTAS=?, hcrutasint=?, PUNTOSPZAPOND=?, CAP_UTIL_HTA=?, salidaenpieza=?, HCDIRSOPLPS=?, USUARIOMODIF=?  WHERE IDCODIGO=?", listaInsert)) {
+                //  JOptionPane.showMessageDialog(null, "Datos Actualizados", "Confirmacion", JOptionPane.INFORMATION_MESSAGE);
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(null, "Error, al guardar", "Confirmacion", JOptionPane.WARNING_MESSAGE);
+            }
+
         }
 
     }//GEN-LAST:event_btnEntrarActionPerformed
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         // TODO add your handling code here:
-        SelectCodigo p=new SelectCodigo();
+        SelectCodigo p = new SelectCodigo();
         p.setLocationRelativeTo(null);
         p.setVisible(true);
     }//GEN-LAST:event_formWindowClosed
 
     private void hcDirLineaVetoableChange(java.beans.PropertyChangeEvent evt)throws java.beans.PropertyVetoException {//GEN-FIRST:event_hcDirLineaVetoableChange
         // TODO add your handling code here:
-        if(Double.parseDouble( hcDirLinea.getValue().toString())<0)
-        {
-         hcDirLinea.setValue(0);
+        if (Double.parseDouble(hcDirLinea.getValue().toString()) < 0) {
+            hcDirLinea.setValue(0);
         }
     }//GEN-LAST:event_hcDirLineaVetoableChange
 
     private void hcDirLineaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_hcDirLineaFocusLost
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_hcDirLineaFocusLost
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -805,7 +788,7 @@ public class CapturaManufactura extends javax.swing.JFrame {
 
     private void ptosPzasPondFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ptosPzasPondFocusLost
         // TODO add your handling code here:
-       Sumar();
+        Sumar();
     }//GEN-LAST:event_ptosPzasPondFocusLost
 
     private void HCDirLPSStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_HCDirLPSStateChanged

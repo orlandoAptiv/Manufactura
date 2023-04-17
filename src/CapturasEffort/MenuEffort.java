@@ -1,17 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package CapturasEffort;
 
 import Reportes.MenuReportes;
 
-/**
- *
- * @author FelipeM
- */
 public class MenuEffort extends javax.swing.JFrame {
 
     /**
@@ -180,50 +170,50 @@ public class MenuEffort extends javax.swing.JFrame {
 
     private void btnCapturaScrapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCapturaScrapActionPerformed
         // TODO add your handling code here:
-        CapturaTotales cp=new CapturaTotales();
+        CapturaTotales cp = new CapturaTotales();
         cp.setVisible(true);
     }//GEN-LAST:event_btnCapturaScrapActionPerformed
 
     private void btnCapturaDeptoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCapturaDeptoActionPerformed
         // TODO add your handling code here:
-        clasificacionPlataforma cL=new clasificacionPlataforma();
+        clasificacionPlataforma cL = new clasificacionPlataforma();
         cL.setVisible(true);
     }//GEN-LAST:event_btnCapturaDeptoActionPerformed
 
     private void btnCapturaHCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCapturaHCActionPerformed
         // TODO add your handling code here:
-        CapturaHCR hc=new CapturaHCR();
+        CapturaHCR hc = new CapturaHCR();
         hc.setVisible(true);
     }//GEN-LAST:event_btnCapturaHCActionPerformed
 
     private void btnCapturas3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCapturas3ActionPerformed
         // TODO add your handling code here:c
-        CapturaDepto dt=new CapturaDepto();
+        CapturaDepto dt = new CapturaDepto();
         dt.setVisible(true);
     }//GEN-LAST:event_btnCapturas3ActionPerformed
 
     private void btnCapturas4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCapturas4ActionPerformed
         // TODO add your handling code here:ble
-        cablesBateria cb=new cablesBateria();
+        cablesBateria cb = new cablesBateria();
         cb.setVisible(true);
     }//GEN-LAST:event_btnCapturas4ActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // TODO add your handling code here:
-        Reportes.MenuReportes menu=new MenuReportes();
+        Reportes.MenuReportes menu = new MenuReportes();
         menu.setVisible(true);
     }//GEN-LAST:event_formWindowClosing
 
     private void btnCapturas6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCapturas6ActionPerformed
         // TODO add your handling code here:
-        CapturaPorcentajes p=new CapturaPorcentajes();
+        CapturaPorcentajes p = new CapturaPorcentajes();
         p.setVisible(true);
     }//GEN-LAST:event_btnCapturas6ActionPerformed
 
     private void btnCapturas7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCapturas7ActionPerformed
         // TODO add your handling code here:
-        
-          PorcentajesHC p=new PorcentajesHC();
+
+        PorcentajesHC p = new PorcentajesHC();
         p.setVisible(true);
     }//GEN-LAST:event_btnCapturas7ActionPerformed
 
@@ -273,5 +263,4 @@ public class MenuEffort extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 
-    
 }

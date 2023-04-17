@@ -14,10 +14,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-/**
- *
- * @author gzld6k
- */
+
 public class CapturaExcelMSD extends javax.swing.JFrame {
 
     /**

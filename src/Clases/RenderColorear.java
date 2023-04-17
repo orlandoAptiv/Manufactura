@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Clases;
 
 import java.awt.Color;
@@ -9,19 +5,17 @@ import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-/**
- *
- * @author bzc85r
- */
 public class RenderColorear extends DefaultTableCellRenderer {
-Color color=null;
-    public RenderColorear(Color ligColo)
-    {
-        color=ligColo;
+
+    Color color = null;
+
+    public RenderColorear(Color ligColo) {
+        color = ligColo;
     }
+
     @Override
     public Component getTableCellRendererComponent(JTable jtable, Object o, boolean bln, boolean bln1, int i, int i1) {
-        Component cell= super.getTableCellRendererComponent(jtable, o, bln, bln1, i, i1); //To change body of generated methods, choose Tools | Templates.
+        Component cell = super.getTableCellRendererComponent(jtable, o, bln, bln1, i, i1); //To change body of generated methods, choose Tools | Templates.
 //            if(o instanceof  Integer)
 //            {
 //                Integer valor=(Integer) o;
@@ -30,10 +24,9 @@ Color color=null;
 //                    cell.setBackground(Color.GREEN);
 //                }
 //                else
-                    cell.setBackground(color);
+        cell.setBackground(color);
 //            }
         return cell;
     }
-    
-    
+
 }

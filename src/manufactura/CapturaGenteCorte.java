@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package manufactura;
 
 import java.sql.ResultSet;
@@ -10,146 +6,133 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author gzld6k
- */
 public class CapturaGenteCorte extends javax.swing.JFrame {
 
     /**
      * Creates new form CapturaGenteCorte
      */
-    String idcodigo="";
+    String idcodigo = "";
+
     public CapturaGenteCorte(String Planta, String Turno) {
         initComponents();
         setLocationRelativeTo(null);
-        if(Planta.equals("MOCHIS"))
-        {
-        Planta="4";
+        if (Planta.equals("MOCHIS")) {
+            Planta = "4";
+        } else {
+            Planta = "6";
         }
-        else
-            Planta="6";
         Enlazar(Planta, Turno);
         EnlazarPorc(Planta, Turno);
     }
-    public void Enlazar(String Planta, String turno){
-        try{
-            ResultSet rs=Principal.cn.GetConsulta("SELECT"
-          + " codigos.idcodigo,\n" +
-            "codigos.CADENA,\n" +
-            "codigos.CODIGO,\n" +
-            "codigos.TURNO,\n" +
-            "tablacorte.operativoMaq,\n" +
-            "tablacorte.lideManufactura,\n" +
-            "tablacorte.SoportManufactura,\n" +
-            "tablacorte.RecuperacionDonas,\n" +
-            "tablacorte.bto,\n" +
-            "tablacorte.Capturista,\n" +
-            "tablacorte.Retrabajo,\n" +
-            "tablacorte.Contension,\n" +
-            "tablacorte.AudSistema,\n" +
-            "tablacorte.Servicios,\n" +
-            "tablacorte.Ataderos,\n" +
-            "tablacorte.OTROS,\n" +
-            " tablacorte.Recuperador,\n" +
-            "tablacorte.Covid,\n" +
-            " tablacorte.Ruteros\n" +
-            "FROM\n" +
-            "codigos ,\n" +
-            "tablacorte\n" +
-            "WHERE\n" +
-            "codigos.IDCODIGO = tablacorte.idcodigo\n" +
-            "and codigos.TURNO='"+turno+"' and codigos.cadena='"+Planta+"'");
-            if(rs.next())
-            {
-               idcodigo=rs.getString("idcodigo");
-               hcOPmAQ.setValue(rs.getDouble("operativoMaq"));
-               hcLidManu.setValue(rs.getDouble("lideManufactura"));
-               SopManuf.setValue(rs.getDouble("SoportManufactura"));
-               RecDonas.setValue(rs.getDouble("RecuperacionDonas"));
-               Ataderos.setValue(rs.getDouble("Ataderos"));
-               Servicios.setValue(rs.getDouble("Servicios"));
-               audSistemas.setValue(rs.getDouble("AudSistema"));
-               contension.setValue(rs.getDouble("Contension"));
-               retrabajo.setValue(rs.getDouble("Retrabajo"));
-               capturista.setValue(rs.getDouble("Capturista"));
-               bto.setValue(rs.getDouble("bto"));
-               ENTO.setValue(rs.getDouble("OTROS"));
-               RECUPERADOR.setValue(rs.getDouble("Recuperador"));
-               COVID.setValue(rs.getDouble("Covid"));
-               RUTEROS.setValue(rs.getDouble("Ruteros"));
+
+    public void Enlazar(String Planta, String turno) {
+        try {
+            ResultSet rs = Principal.cn.GetConsulta("SELECT"
+                    + " codigos.idcodigo,\n"
+                    + "codigos.CADENA,\n"
+                    + "codigos.CODIGO,\n"
+                    + "codigos.TURNO,\n"
+                    + "tablacorte.operativoMaq,\n"
+                    + "tablacorte.lideManufactura,\n"
+                    + "tablacorte.SoportManufactura,\n"
+                    + "tablacorte.RecuperacionDonas,\n"
+                    + "tablacorte.bto,\n"
+                    + "tablacorte.Capturista,\n"
+                    + "tablacorte.Retrabajo,\n"
+                    + "tablacorte.Contension,\n"
+                    + "tablacorte.AudSistema,\n"
+                    + "tablacorte.Servicios,\n"
+                    + "tablacorte.Ataderos,\n"
+                    + "tablacorte.OTROS,\n"
+                    + " tablacorte.Recuperador,\n"
+                    + "tablacorte.Covid,\n"
+                    + " tablacorte.Ruteros\n"
+                    + "FROM\n"
+                    + "codigos ,\n"
+                    + "tablacorte\n"
+                    + "WHERE\n"
+                    + "codigos.IDCODIGO = tablacorte.idcodigo\n"
+                    + "and codigos.TURNO='" + turno + "' and codigos.cadena='" + Planta + "'");
+            if (rs.next()) {
+                idcodigo = rs.getString("idcodigo");
+                hcOPmAQ.setValue(rs.getDouble("operativoMaq"));
+                hcLidManu.setValue(rs.getDouble("lideManufactura"));
+                SopManuf.setValue(rs.getDouble("SoportManufactura"));
+                RecDonas.setValue(rs.getDouble("RecuperacionDonas"));
+                Ataderos.setValue(rs.getDouble("Ataderos"));
+                Servicios.setValue(rs.getDouble("Servicios"));
+                audSistemas.setValue(rs.getDouble("AudSistema"));
+                contension.setValue(rs.getDouble("Contension"));
+                retrabajo.setValue(rs.getDouble("Retrabajo"));
+                capturista.setValue(rs.getDouble("Capturista"));
+                bto.setValue(rs.getDouble("bto"));
+                ENTO.setValue(rs.getDouble("OTROS"));
+                RECUPERADOR.setValue(rs.getDouble("Recuperador"));
+                COVID.setValue(rs.getDouble("Covid"));
+                RUTEROS.setValue(rs.getDouble("Ruteros"));
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }
-    
-    public void EnlazarPorc(String Planta, String Turno)
-    {
-          try {
-             ResultSet  rs=Principal.cn.GetConsulta("SELECT DISTINCT\n" +
-"                corte.idcodigo,\n" +
-"                hcpag.IDCODIGO, hcpag.HCDIRLINEA, corte.hrsEMBC, hcpag.horaspagadas, hcpag.TURNO, truncate((corte.hrsEMBC/hcpag.horaspagadas)*100,2) as eficiencia \n" +
-"                from \n" +
-"                (select c.IDCODIGO, c.LINEA, c.CODIGO, c.TURNO, m.SALIDAENPIEZA, g.HCDIRCORTE as cortee,  SUM(TRUNCATE((((g.HCDIRCORTE*m.SALIDAENPIEZA)/100)),2)) as hrsEMBC,   g.HCDIRLPS as 'POND.LPS', TRUNCATE( if(c.TURNO='B' or c.TURNO='C', ((g.HCDIRLPS*m.SALIDAENPIEZA)/7.9/100),((g.HCDIRLPS *m.SALIDAENPIEZA)/9/100)) ,2) as LPS, g.HCDIRENSFINAL as 'PUNTOS.EF', TRUNCATE( if(c.TURNO='B' or c.TURNO='C',((g.HCDIRENSFINAL*m.SALIDAENPIEZA)/7.9/100), ((g.HCDIRENSFINAL *m.SALIDAENPIEZA)/9/100)),2) as ENSFINAL  FROM codigos as c, manufactura as m, gsd  as g where c.IDCODIGO=m.IDCODIGO and c.IDCODIGO=g.IDCODIGO and m.activo=1   GROUP BY c.TURNO) as corte,\n" +
-"                (select c.IDCODIGO, HCDIRLINEA, C.TURNO, "+
-                     "case c.TURNO when'B' THEN SUM((M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*7.9) "
-                     + " WHEN 'A' THEN sum((M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*9) "+
-                      " WHEN 'C' THEN sum((M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*7.32)  END "+
-                     "as horaspagadas from manufactura as m, codigos as c where m.IDCODIGO=c.IDCODIGO and c.CADENA=4  and c.turno='"+Turno+"' and C.cadena='"+Planta+"' GROUP BY c.TURNO) as hcpag ");
-             int cont=1; 
-            
-             while(rs.next())
-               {
 
-              if ("A".equals(Turno))
-             {
-              if(cont==1)
-                { 
-                       lblhorasEmb1A.setText(rs.getString("hrsEMBC"));
-                       lblHorasPagIA.setText(rs.getString("horaspagadas"));
-                       lblEficManufIA.setText(rs.getString("eficiencia"));
+    public void EnlazarPorc(String Planta, String Turno) {
+        try {
+            ResultSet rs = Principal.cn.GetConsulta("SELECT DISTINCT\n"
+                    + "                corte.idcodigo,\n"
+                    + "                hcpag.IDCODIGO, hcpag.HCDIRLINEA, corte.hrsEMBC, hcpag.horaspagadas, hcpag.TURNO, truncate((corte.hrsEMBC/hcpag.horaspagadas)*100,2) as eficiencia \n"
+                    + "                from \n"
+                    + "                (select c.IDCODIGO, c.LINEA, c.CODIGO, c.TURNO, m.SALIDAENPIEZA, g.HCDIRCORTE as cortee,  SUM(TRUNCATE((((g.HCDIRCORTE*m.SALIDAENPIEZA)/100)),2)) as hrsEMBC,   g.HCDIRLPS as 'POND.LPS', TRUNCATE( if(c.TURNO='B' or c.TURNO='C', ((g.HCDIRLPS*m.SALIDAENPIEZA)/7.9/100),((g.HCDIRLPS *m.SALIDAENPIEZA)/9/100)) ,2) as LPS, g.HCDIRENSFINAL as 'PUNTOS.EF', TRUNCATE( if(c.TURNO='B' or c.TURNO='C',((g.HCDIRENSFINAL*m.SALIDAENPIEZA)/7.9/100), ((g.HCDIRENSFINAL *m.SALIDAENPIEZA)/9/100)),2) as ENSFINAL  FROM codigos as c, manufactura as m, gsd  as g where c.IDCODIGO=m.IDCODIGO and c.IDCODIGO=g.IDCODIGO and m.activo=1   GROUP BY c.TURNO) as corte,\n"
+                    + "                (select c.IDCODIGO, HCDIRLINEA, C.TURNO, "
+                    + "case c.TURNO when'B' THEN SUM((M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*7.9) "
+                    + " WHEN 'A' THEN sum((M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*9) "
+                    + " WHEN 'C' THEN sum((M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*7.32)  END "
+                    + "as horaspagadas from manufactura as m, codigos as c where m.IDCODIGO=c.IDCODIGO and c.CADENA=4  and c.turno='" + Turno + "' and C.cadena='" + Planta + "' GROUP BY c.TURNO) as hcpag ");
+            int cont = 1;
+
+            while (rs.next()) {
+
+                if ("A".equals(Turno)) {
+                    if (cont == 1) {
+                        lblhorasEmb1A.setText(rs.getString("hrsEMBC"));
+                        lblHorasPagIA.setText(rs.getString("horaspagadas"));
+                        lblEficManufIA.setText(rs.getString("eficiencia"));
+                    }
                 }
-             }
-              
-                if ("B".equals(Turno))
-             {
-              if(cont==2)
-                { 
-                       lblhorasEmb1A.setText(rs.getString("hrsEMBC"));
-                       lblHorasPagIA.setText(rs.getString("horaspagadas"));
-                       lblEficManufIA.setText(rs.getString("eficiencia"));
+
+                if ("B".equals(Turno)) {
+                    if (cont == 2) {
+                        lblhorasEmb1A.setText(rs.getString("hrsEMBC"));
+                        lblHorasPagIA.setText(rs.getString("horaspagadas"));
+                        lblEficManufIA.setText(rs.getString("eficiencia"));
+                    }
                 }
-             }
-                    if ("C".equals(Turno))
-             {
-              if(cont==3)
-                { 
-                       lblhorasEmb1A.setText(rs.getString("hrsEMBC"));
-                       lblHorasPagIA.setText(rs.getString("horaspagadas"));
-                       lblEficManufIA.setText(rs.getString("eficiencia"));
+                if ("C".equals(Turno)) {
+                    if (cont == 3) {
+                        lblhorasEmb1A.setText(rs.getString("hrsEMBC"));
+                        lblHorasPagIA.setText(rs.getString("horaspagadas"));
+                        lblEficManufIA.setText(rs.getString("eficiencia"));
+                    }
                 }
-             }
-          
-               cont++;
-               }
-          }
-            catch (SQLException ex) {
-                Logger.getLogger(CapturaGenteCorte.class.getName()).log(Level.SEVERE, null, ex);
+
+                cont++;
             }
-                
+        } catch (SQLException ex) {
+            Logger.getLogger(CapturaGenteCorte.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
-    public void sacarTotal()
-    {
-        try{
-            
-            Double total=Double.parseDouble(hcOPmAQ.getValue().toString())+Double.parseDouble(hcLidManu.getValue().toString())+Double.parseDouble(SopManuf.getValue().toString())+Double.parseDouble(RecDonas.getValue().toString())+Double.parseDouble(Ataderos.getValue().toString())+Double.parseDouble(bto.getValue().toString())+Double.parseDouble(capturista.getValue().toString())+Double.parseDouble(retrabajo.getValue().toString())+Double.parseDouble(contension.getValue().toString())+Double.parseDouble(audSistemas.getValue().toString())+Double.parseDouble(Servicios.getValue().toString())+ Double.parseDouble(ENTO.getValue().toString())+ Double.parseDouble(RECUPERADOR.getValue().toString())+ Double.parseDouble(COVID.getValue().toString())+ Double.parseDouble(RUTEROS.getValue().toString());
+
+    public void sacarTotal() {
+        try {
+
+            Double total = Double.parseDouble(hcOPmAQ.getValue().toString()) + Double.parseDouble(hcLidManu.getValue().toString()) + Double.parseDouble(SopManuf.getValue().toString()) + Double.parseDouble(RecDonas.getValue().toString()) + Double.parseDouble(Ataderos.getValue().toString()) + Double.parseDouble(bto.getValue().toString()) + Double.parseDouble(capturista.getValue().toString()) + Double.parseDouble(retrabajo.getValue().toString()) + Double.parseDouble(contension.getValue().toString()) + Double.parseDouble(audSistemas.getValue().toString()) + Double.parseDouble(Servicios.getValue().toString()) + Double.parseDouble(ENTO.getValue().toString()) + Double.parseDouble(RECUPERADOR.getValue().toString()) + Double.parseDouble(COVID.getValue().toString()) + Double.parseDouble(RUTEROS.getValue().toString());
             lblHCDIR.setText(String.valueOf(total));
-        }catch(Exception e)
-        {
-         System.out.println(e.toString());
+        } catch (Exception e) {
+            System.out.println(e.toString());
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -642,8 +625,8 @@ public class CapturaGenteCorte extends javax.swing.JFrame {
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
-        try{
-            ArrayList<Object> objetos=new ArrayList<Object>();
+        try {
+            ArrayList<Object> objetos = new ArrayList<Object>();
             objetos.add(hcOPmAQ.getValue());
             objetos.add(hcLidManu.getValue());
             objetos.add(SopManuf.getValue());
@@ -659,16 +642,15 @@ public class CapturaGenteCorte extends javax.swing.JFrame {
             objetos.add(RECUPERADOR.getValue());
             objetos.add(COVID.getValue());
             objetos.add(RUTEROS.getValue());
-            
-          //  objetos.add(Principal.UsuarioLogeado.codigo);
+
+            //  objetos.add(Principal.UsuarioLogeado.codigo);
             objetos.add(idcodigo);
             Principal.cn.EjecutarInsertOb("update tablacorte set operativomaq=?, lidemanufactura=?, soportmanufactura=?, recuperaciondonas=?,  bto=?, capturista=?,  retrabajo=?,  contension=?, audsistema=?, servicios=?, ataderos=?, OTROS=? , Recuperador=?, Covid=?, Ruteros=? where idcodigo=?", objetos);
-                    
-        }catch(Exception e)
-        {
-            
+
+        } catch (Exception e) {
+
         }
- 
+
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
@@ -680,16 +662,15 @@ public class CapturaGenteCorte extends javax.swing.JFrame {
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         // TODO add your handling code here:
-        Principal p=new Principal(Principal.UsuarioLogeado);
+        Principal p = new Principal(Principal.UsuarioLogeado);
         p.setLocationRelativeTo(null);
         p.setVisible(true);
     }//GEN-LAST:event_formWindowClosed
 
     private void hcOPmAQVetoableChange(java.beans.PropertyChangeEvent evt)throws java.beans.PropertyVetoException {//GEN-FIRST:event_hcOPmAQVetoableChange
         // TODO add your handling code here:
-        if(Double.parseDouble( hcOPmAQ.getValue().toString())<0)
-        {
-         hcOPmAQ.setValue(0);
+        if (Double.parseDouble(hcOPmAQ.getValue().toString()) < 0) {
+            hcOPmAQ.setValue(0);
         }
     }//GEN-LAST:event_hcOPmAQVetoableChange
 
@@ -755,12 +736,12 @@ public class CapturaGenteCorte extends javax.swing.JFrame {
 
     private void ENTOVetoableChange(java.beans.PropertyChangeEvent evt)throws java.beans.PropertyVetoException {//GEN-FIRST:event_ENTOVetoableChange
         // TODO add your handling code here:
-     
+
     }//GEN-LAST:event_ENTOVetoableChange
 
     private void COVIDStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_COVIDStateChanged
         // TODO add your handling code here:
-         sacarTotal();
+        sacarTotal();
     }//GEN-LAST:event_COVIDStateChanged
 
     private void COVIDVetoableChange(java.beans.PropertyChangeEvent evt)throws java.beans.PropertyVetoException {//GEN-FIRST:event_COVIDVetoableChange
@@ -769,7 +750,7 @@ public class CapturaGenteCorte extends javax.swing.JFrame {
 
     private void RUTEROSStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_RUTEROSStateChanged
         // TODO add your handling code here:
-         sacarTotal();
+        sacarTotal();
     }//GEN-LAST:event_RUTEROSStateChanged
 
     private void RUTEROSVetoableChange(java.beans.PropertyChangeEvent evt)throws java.beans.PropertyVetoException {//GEN-FIRST:event_RUTEROSVetoableChange
@@ -778,7 +759,7 @@ public class CapturaGenteCorte extends javax.swing.JFrame {
 
     private void RECUPERADORStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_RECUPERADORStateChanged
         // TODO add your handling code here:
-         sacarTotal();
+        sacarTotal();
     }//GEN-LAST:event_RECUPERADORStateChanged
 
     /**
@@ -811,7 +792,7 @@ public class CapturaGenteCorte extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CapturaGenteCorte("","").setVisible(true);
+                new CapturaGenteCorte("", "").setVisible(true);
             }
         });
     }

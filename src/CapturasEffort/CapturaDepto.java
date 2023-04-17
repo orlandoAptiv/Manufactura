@@ -1,69 +1,52 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package CapturasEffort;
 
-import Clases.Conection;
 import java.awt.Point;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import manufactura.Principal;
 
-/**
- *
- * @author Felipe M
- */
 public class CapturaDepto extends javax.swing.JFrame {
 
     /**
      * Creates new form CapturaDepto
      */
     public CapturaDepto() {
-       
-            initComponents();
+
+        initComponents();
 //            Principal.cn=new Conection();
-            txtClave.requestFocus();
-            setLocationRelativeTo(null);
-            cargardepto();
-        
+        txtClave.requestFocus();
+        setLocationRelativeTo(null);
+        cargardepto();
+
     }
 
-    public  void cargardepto()
-    {
-        try
-        {
-            DefaultTableModel modelo=new DefaultTableModel()
-            {
+    public void cargardepto() {
+        try {
+            DefaultTableModel modelo = new DefaultTableModel() {
                 @Override
                 public boolean isCellEditable(int row, int column) {
-                    if(column==0)
+                    if (column == 0) {
                         return false;
-                    else
-                       return true;     
+                    } else {
+                        return true;
+                    }
 //To change body of generated methods, choose Tools | Templates.
                 }
-            
+
             };
             modelo.setColumnIdentifiers(new Object[]{"CLAVE", "DEPTO"});
-            ResultSet rs=Principal.cn.GetConsulta("SELECT * FROM DEPARTAMENTOS");
-            while(rs.next())
-            {
-            modelo.addRow(new Object[]{rs.getString(1), rs.getString(2)});
+            ResultSet rs = Principal.cn.GetConsulta("SELECT * FROM DEPARTAMENTOS");
+            while (rs.next()) {
+                modelo.addRow(new Object[]{rs.getString(1), rs.getString(2)});
             }
             tblConc.setModel(modelo);
-        } catch(Exception e)
-        {
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -191,18 +174,15 @@ public class CapturaDepto extends javax.swing.JFrame {
 
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
         // TODO add your handling code here:
-        ArrayList<String> lista=new  ArrayList<String>();
+        ArrayList<String> lista = new ArrayList<String>();
         lista.add(txtClave.getText().toUpperCase());
         lista.add(txtDepto.getText().toUpperCase());
-        if(Principal.cn.EjecutarInsert("INSERT INTO DEPARTAMENTOS (ID_DEPTO, DESCRIPCION) VALUES (?, ?)", lista))
-        {
+        if (Principal.cn.EjecutarInsert("INSERT INTO DEPARTAMENTOS (ID_DEPTO, DESCRIPCION) VALUES (?, ?)", lista)) {
             cargardepto();
             txtClave.setText("");
             txtDepto.setText("");
             txtClave.requestFocus();
-        }
-        else
-        {
+        } else {
             JOptionPane.showMessageDialog(null, "Error al guardar, consulte asu administrador", "ERROR", JOptionPane.WARNING_MESSAGE);
         }
 
@@ -211,7 +191,7 @@ public class CapturaDepto extends javax.swing.JFrame {
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
         // TODO add your handling code here:\
         this.dispose();
-        
+
     }//GEN-LAST:event_btnSalirActionPerformed
 
     private void tblConcMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblConcMouseClicked
@@ -219,32 +199,28 @@ public class CapturaDepto extends javax.swing.JFrame {
         Point point = evt.getPoint();
         int row = tblConc.rowAtPoint(point);
         if (evt.getClickCount() == 2) {
-            int reply = JOptionPane.showConfirmDialog(null, "Desea eliminar el departamento "+tblConc.getModel().getValueAt(row, 1).toString()+" ?", "CONFIRMACION", JOptionPane.YES_NO_OPTION);
-                if (reply == JOptionPane.YES_OPTION)
-                  {
-                      ArrayList<String> lista=new  ArrayList<String>();
-                     Principal.cn.EjecutarInsert("DELETE   FROM DEPARTAMENTOS WHERE ID_DEPTO="+tblConc.getModel().getValueAt(row, 0).toString(), lista);
-                     cargardepto();
-                }
-   
-}
+            int reply = JOptionPane.showConfirmDialog(null, "Desea eliminar el departamento " + tblConc.getModel().getValueAt(row, 1).toString() + " ?", "CONFIRMACION", JOptionPane.YES_NO_OPTION);
+            if (reply == JOptionPane.YES_OPTION) {
+                ArrayList<String> lista = new ArrayList<String>();
+                Principal.cn.EjecutarInsert("DELETE   FROM DEPARTAMENTOS WHERE ID_DEPTO=" + tblConc.getModel().getValueAt(row, 0).toString(), lista);
+                cargardepto();
+            }
+
+        }
     }//GEN-LAST:event_tblConcMouseClicked
 
     private void tblConcPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tblConcPropertyChange
         // TODO add your handling code here:
-        try{
-                        if((tblConc.getSelectedRow()>-1))
-                        {
-                                ArrayList<Object> lista=new ArrayList<Object>();
-                                lista.add(tblConc.getValueAt(tblConc.getSelectedRow(), 1).toString().toUpperCase());
-                                lista.add(tblConc.getValueAt(tblConc.getSelectedRow(), 0).toString().toUpperCase());
-                                Principal.cn.EjecutarInsertOb("update departamentos set descripcion=?  where id_depto=?", lista);
-                                    cargardepto();
-                                
-                          }
-        }
-        catch(Exception e)
-        {
+        try {
+            if ((tblConc.getSelectedRow() > -1)) {
+                ArrayList<Object> lista = new ArrayList<Object>();
+                lista.add(tblConc.getValueAt(tblConc.getSelectedRow(), 1).toString().toUpperCase());
+                lista.add(tblConc.getValueAt(tblConc.getSelectedRow(), 0).toString().toUpperCase());
+                Principal.cn.EjecutarInsertOb("update departamentos set descripcion=?  where id_depto=?", lista);
+                cargardepto();
+
+            }
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }//GEN-LAST:event_tblConcPropertyChange
@@ -255,7 +231,7 @@ public class CapturaDepto extends javax.swing.JFrame {
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_formWindowClosed
 
     /**

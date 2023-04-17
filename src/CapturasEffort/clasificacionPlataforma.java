@@ -1,24 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package CapturasEffort;
 
-import Clases.Conection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import manufactura.Principal;
 
-/**
- *
- * @author Felipe M
- */
 public class clasificacionPlataforma extends javax.swing.JFrame {
 
     /**
@@ -31,66 +20,63 @@ public class clasificacionPlataforma extends javax.swing.JFrame {
 //            Principal.cn=new Conection();
             enlazartablaDisp("TODOS", "TODOS");
             EnlazarTablaClasificacion("25962");
-            
+
         } catch (Exception ex) {
             Logger.getLogger(clasificacionPlataforma.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
     }
-    
-    public void enlazartablaDisp(String Cadena, String Turno){
-        try{
-            DefaultTableModel  modelo=new DefaultTableModel();
-            modelo.setColumnIdentifiers(new Object[]{"IDCODIGO","CADENA", "CODIGO", "LINEA", "TURNO" });
-            String query="SELECT IDCODIGO, CADENA, CODIGO, LINEA, TURNO FROM CODIGOS where DEPTO is NULL and cadena<>7  and codigo<>'SERV  ' ";
-            if(!Cadena.equals("TODOS"))
-                query+="and  CADENA='"+Cadena+"' ";   
-            if(!Turno.equals("TODOS"))
-            {
-                    query+= "AND  Turno='"+Turno+"'";
-           }
-             query+=" order by cadena asc";
-            ResultSet rs=Principal.cn.GetConsulta(query);
-            while(rs.next())
-            {
+
+    public void enlazartablaDisp(String Cadena, String Turno) {
+        try {
+            DefaultTableModel modelo = new DefaultTableModel();
+            modelo.setColumnIdentifiers(new Object[]{"IDCODIGO", "CADENA", "CODIGO", "LINEA", "TURNO"});
+            String query = "SELECT IDCODIGO, CADENA, CODIGO, LINEA, TURNO FROM CODIGOS where DEPTO is NULL and cadena<>7  and codigo<>'SERV  ' ";
+            if (!Cadena.equals("TODOS")) {
+                query += "and  CADENA='" + Cadena + "' ";
+            }
+            if (!Turno.equals("TODOS")) {
+                query += "AND  Turno='" + Turno + "'";
+            }
+            query += " order by cadena asc";
+            ResultSet rs = Principal.cn.GetConsulta(query);
+            while (rs.next()) {
                 modelo.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5)});
             }
-              tblConc.setModel(modelo);
-              tblConc.getColumnModel().getColumn(0).setMaxWidth(0);
-              tblConc.getColumnModel().getColumn(0).setMinWidth(0);
-              tblConc.getColumnModel().getColumn(0).setPreferredWidth(0);
-        }catch(Exception  e)
-        {
-    
+            tblConc.setModel(modelo);
+            tblConc.getColumnModel().getColumn(0).setMaxWidth(0);
+            tblConc.getColumnModel().getColumn(0).setMinWidth(0);
+            tblConc.getColumnModel().getColumn(0).setPreferredWidth(0);
+        } catch (Exception e) {
+
         }
     }
 
-    public void EnlazarTablaClasificacion(String Depto){
-         try{
-        DefaultTableModel modelo=new DefaultTableModel(){
+    public void EnlazarTablaClasificacion(String Depto) {
+        try {
+            DefaultTableModel modelo = new DefaultTableModel() {
 
-            @Override
-            public boolean isCellEditable(int row, int column) {
-               return false;//To change body of generated methods, choose Tools | Templates.
-            }
-        
-        };
-             modelo.setColumnIdentifiers(new Object[]{"IDCODIGO", "CADENA", "CODIGO", "LINEA", "TURNO" });
-        
-             ResultSet rs=Principal.cn.GetConsulta("SELECT IDCODIGO, CADENA, CODIGO, LINEA, TURNO FROM CODIGOS where DEPTO='"+Depto+"' and cadena<>7  and codigo<>'SERV' order by cadena asc ");
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;//To change body of generated methods, choose Tools | Templates.
+                }
+
+            };
+            modelo.setColumnIdentifiers(new Object[]{"IDCODIGO", "CADENA", "CODIGO", "LINEA", "TURNO"});
+
+            ResultSet rs = Principal.cn.GetConsulta("SELECT IDCODIGO, CADENA, CODIGO, LINEA, TURNO FROM CODIGOS where DEPTO='" + Depto + "' and cadena<>7  and codigo<>'SERV' order by cadena asc ");
 //              query+=" ";
-             while(rs.next())
-             {
-                 modelo.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5)});
-             }
-             tblConc1.setModel(modelo);
-             tblConc1.getColumnModel().getColumn(0).setMaxWidth(0);
-             tblConc1.getColumnModel().getColumn(0).setMinWidth(0);
-             tblConc1.getColumnModel().getColumn(0).setPreferredWidth(0);
-        }catch(Exception e)
-        {
-        
+            while (rs.next()) {
+                modelo.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5)});
+            }
+            tblConc1.setModel(modelo);
+            tblConc1.getColumnModel().getColumn(0).setMaxWidth(0);
+            tblConc1.getColumnModel().getColumn(0).setMinWidth(0);
+            tblConc1.getColumnModel().getColumn(0).setPreferredWidth(0);
+        } catch (Exception e) {
+
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -338,9 +324,8 @@ public class clasificacionPlataforma extends javax.swing.JFrame {
 
     private void tblConcPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tblConcPropertyChange
         // TODO add your handling code here:
-        try{
-            if((tblConc.getSelectedRow()>-1))
-            {
+        try {
+            if ((tblConc.getSelectedRow() > -1)) {
 //                ArrayList<Object> lista=new ArrayList<Object>();
 //                lista.add(tblConc.getValueAt(tblConc.getSelectedRow(), 1).toString().toUpperCase());
 //                lista.add(tblConc.getValueAt(tblConc.getSelectedRow(), 0).toString().toUpperCase());
@@ -348,9 +333,7 @@ public class clasificacionPlataforma extends javax.swing.JFrame {
 //                cargardepto();
 
             }
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }//GEN-LAST:event_tblConcPropertyChange
@@ -373,34 +356,30 @@ public class clasificacionPlataforma extends javax.swing.JFrame {
 
     private void cbxCadenaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxCadenaItemStateChanged
         // TODO add your handling code here:.
-        if((cbxCadena.getSelectedItem()!=null))
-        {
-          enlazartablaDisp(cbxCadena.getSelectedItem().toString(), cbxTurno.getSelectedItem().toString());
+        if ((cbxCadena.getSelectedItem() != null)) {
+            enlazartablaDisp(cbxCadena.getSelectedItem().toString(), cbxTurno.getSelectedItem().toString());
         }
     }//GEN-LAST:event_cbxCadenaItemStateChanged
 
     private void cbxTurnoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxTurnoItemStateChanged
         // TODO add your handling code here:
-        if(cbxTurno.getSelectedItem()!=null)
-        {
+        if (cbxTurno.getSelectedItem() != null) {
             enlazartablaDisp(cbxCadena.getSelectedItem().toString(), cbxTurno.getSelectedItem().toString());
         }
     }//GEN-LAST:event_cbxTurnoItemStateChanged
 
     private void cbxDeptoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxDeptoItemStateChanged
         // TODO add your handling code here:
-        if(cbxDepto.getSelectedItem()!=null)
-        {
+        if (cbxDepto.getSelectedItem() != null) {
             EnlazarTablaClasificacion(cbxDepto.getSelectedItem().toString());
         }
     }//GEN-LAST:event_cbxDeptoItemStateChanged
 
     private void btnEnviarUnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarUnoActionPerformed
         // TODO add your handling code here:
-        if(tblConc.getSelectedRow()>-1)
-        {
-            String idcodigo= tblConc.getModel().getValueAt(tblConc.getSelectedRow(), 0).toString();
-            ArrayList<String> lista=new  ArrayList<String>();
+        if (tblConc.getSelectedRow() > -1) {
+            String idcodigo = tblConc.getModel().getValueAt(tblConc.getSelectedRow(), 0).toString();
+            ArrayList<String> lista = new ArrayList<String>();
             lista.add(cbxDepto.getSelectedItem().toString());
             lista.add(idcodigo);
             Principal.cn.EjecutarInsert("UPDATE CODIGOS SET DEPTO=? WHERE IDCODIGO=?", lista);
@@ -411,25 +390,23 @@ public class clasificacionPlataforma extends javax.swing.JFrame {
 
     private void btnEnviarTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarTodosActionPerformed
         // TODO add your handling code here:
-        for(int i=0; i<tblConc.getModel().getRowCount(); i++)
-        {
-            String idcodigo= tblConc.getModel().getValueAt(i, 0).toString();
-            ArrayList<String> lista=new  ArrayList<String>();
+        for (int i = 0; i < tblConc.getModel().getRowCount(); i++) {
+            String idcodigo = tblConc.getModel().getValueAt(i, 0).toString();
+            ArrayList<String> lista = new ArrayList<String>();
             lista.add(cbxDepto.getSelectedItem().toString());
             lista.add(idcodigo);
             Principal.cn.EjecutarInsert("UPDATE CODIGOS SET DEPTO=? WHERE IDCODIGO=?", lista);
-           
+
         }
-         EnlazarTablaClasificacion(cbxDepto.getSelectedItem().toString());
+        EnlazarTablaClasificacion(cbxDepto.getSelectedItem().toString());
         enlazartablaDisp(cbxCadena.getSelectedItem().toString(), cbxTurno.getSelectedItem().toString());
     }//GEN-LAST:event_btnEnviarTodosActionPerformed
 
     private void btnRegUnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegUnoActionPerformed
         // TODO add your handling code here:
-         if(tblConc1.getSelectedRow()>-1)
-        {
-            String idcodigo= tblConc1.getModel().getValueAt(tblConc1.getSelectedRow(), 0).toString();
-            ArrayList<String> lista=new  ArrayList<String>();
+        if (tblConc1.getSelectedRow() > -1) {
+            String idcodigo = tblConc1.getModel().getValueAt(tblConc1.getSelectedRow(), 0).toString();
+            ArrayList<String> lista = new ArrayList<String>();
 //            lista.add(cbxDepto.getSelectedItem().toString());
             lista.add(idcodigo);
             Principal.cn.EjecutarInsert("UPDATE CODIGOS SET DEPTO=Null WHERE IDCODIGO=?", lista);
@@ -440,15 +417,14 @@ public class clasificacionPlataforma extends javax.swing.JFrame {
 
     private void btnRegTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegTodosActionPerformed
         // TODO add your handling code here:
-          for(int i=0; i<tblConc1.getModel().getRowCount(); i++)
-        {
-            String idcodigo= tblConc1.getModel().getValueAt(i, 0).toString();
-            ArrayList<String> lista=new  ArrayList<String>();
+        for (int i = 0; i < tblConc1.getModel().getRowCount(); i++) {
+            String idcodigo = tblConc1.getModel().getValueAt(i, 0).toString();
+            ArrayList<String> lista = new ArrayList<String>();
 //            lista.add(cbxDepto.getSelectedItem().toString());
             lista.add(idcodigo);
             Principal.cn.EjecutarInsert("UPDATE CODIGOS SET DEPTO=Null WHERE IDCODIGO=?", lista);
         }
-         EnlazarTablaClasificacion(cbxDepto.getSelectedItem().toString());
+        EnlazarTablaClasificacion(cbxDepto.getSelectedItem().toString());
         enlazartablaDisp(cbxCadena.getSelectedItem().toString(), cbxTurno.getSelectedItem().toString());
     }//GEN-LAST:event_btnRegTodosActionPerformed
 
@@ -510,5 +486,4 @@ public class clasificacionPlataforma extends javax.swing.JFrame {
     private Compille.RXTable tblConc1;
     // End of variables declaration//GEN-END:variables
 
-  
 }

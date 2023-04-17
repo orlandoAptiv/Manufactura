@@ -27,10 +27,7 @@ import javax.swing.table.DefaultTableModel;
 import manufactura.EficienciaPlanta;
 import manufactura.Principal;
 
-/**
- *
- * @author gzld6k
- */
+
 public class RPR_Gua extends javax.swing.JFrame {
 
     /**

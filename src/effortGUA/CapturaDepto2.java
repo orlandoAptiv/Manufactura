@@ -6,22 +6,14 @@
 
 package effortGUA;
 
-import CapturasEffort.*;
-import Clases.Conection;
 import java.awt.Point;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import manufactura.Principal;
 
-/**
- *
- * @author Felipe M
- */
+
 public class CapturaDepto2 extends javax.swing.JFrame {
 
     /**

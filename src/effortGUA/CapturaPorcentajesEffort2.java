@@ -6,8 +6,6 @@
 
 package effortGUA;
 
-import CapturasEffort.*;
-import Clases.Conection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,10 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import manufactura.Principal;
 
-/**
- *
- * @author Felipe M
- */
+
 public class CapturaPorcentajesEffort2 extends javax.swing.JFrame {
 
     /**

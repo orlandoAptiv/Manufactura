@@ -1,16 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package manufactura;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author bzc85r
- */
 public class Processbar extends javax.swing.JFrame {
 
     /**
@@ -19,7 +11,7 @@ public class Processbar extends javax.swing.JFrame {
     public Processbar() {
         initComponents();
         setLocationRelativeTo(null);
-        Thread t=new Thread(new Runnable() {
+        Thread t = new Thread(new Runnable() {
 
             @Override
             public void run() {
@@ -29,28 +21,25 @@ public class Processbar extends javax.swing.JFrame {
         t.start();
     }
 
-    public void thread()
-    {
-        int i=0;
-        while(true){
+    public void thread() {
+        int i = 0;
+        while (true) {
             try {
-                if(i!=Proceso.getMaximum())
-                {
-                   Proceso.setValue(i); 
-                   i++;
-                }else
-                { 
+                if (i != Proceso.getMaximum()) {
+                    Proceso.setValue(i);
+                    i++;
+                } else {
                     Proceso.setValue(0);
-                    i=0;
+                    i = 0;
                 }
-            
+
                 Thread.sleep(20);
             } catch (Exception ex) {
                 Logger.getLogger(Processbar.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }        
-            
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

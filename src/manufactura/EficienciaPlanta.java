@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package manufactura;
 
 import Clases.Cadena;
@@ -13,38 +9,34 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author gzld6k
- */
 public class EficienciaPlanta extends javax.swing.JFrame {
 
     /**
      * Creates new form EficienciaPlanta
      */
-     Double  HrsEmbCA, HrsEmbCB, HcCA, HcCB,HrsPagCA, HrsPagCB, EficCA, EficCB, EficCadCorte;
-     Double  HrsEmbIA, HrsEmbIB, HcIA, HcIB,HrsPagIA, HrsPagIB, EficIA, EficIB, EficCadI;
-     Double  HrsEmbIIA, HrsEmbIIB, HcIIA, HcIIB,HrsPagIIA, HrsPagIIB, EficIIA, EficIIB, EficCadII;
-     Double  HrsEmbIIIA, HrsEmbIIIB, HcIIIA, HcIIIB,HrsPagIIIA, HrsPagIIIB, EficIIIA, EficIIIB, EficCadIII;
-    Double  HrsEmbSA,  HcSA, HrsPagSA, HrsPagSB, EficSA, EficCadS;
-    Double  HrsEmbSB,  HcSB,  EficSB;
-    Double totalHCTurnoA=0.0;
-    Double totalHCTurnoB=0.0;
-    Double totalHrsEMbA=0.0;
-    Double totalHrsEMbB=0.0;
-    Double totalHrsPagA=0.0;
-    Double totalHrsPagB=0.0;
-    Double TotaleficA=0.0;
-    Double TotaleficB=0.0;
-    Double TotalHC=0.0;
-    Double TotalHrsEMB=00.0;
-    Double TotalHrsPag=0.0;
+    Double HrsEmbCA, HrsEmbCB, HcCA, HcCB, HrsPagCA, HrsPagCB, EficCA, EficCB, EficCadCorte;
+    Double HrsEmbIA, HrsEmbIB, HcIA, HcIB, HrsPagIA, HrsPagIB, EficIA, EficIB, EficCadI;
+    Double HrsEmbIIA, HrsEmbIIB, HcIIA, HcIIB, HrsPagIIA, HrsPagIIB, EficIIA, EficIIB, EficCadII;
+    Double HrsEmbIIIA, HrsEmbIIIB, HcIIIA, HcIIIB, HrsPagIIIA, HrsPagIIIB, EficIIIA, EficIIIB, EficCadIII;
+    Double HrsEmbSA, HcSA, HrsPagSA, HrsPagSB, EficSA, EficCadS;
+    Double HrsEmbSB, HcSB, EficSB;
+    Double totalHCTurnoA = 0.0;
+    Double totalHCTurnoB = 0.0;
+    Double totalHrsEMbA = 0.0;
+    Double totalHrsEMbB = 0.0;
+    Double totalHrsPagA = 0.0;
+    Double totalHrsPagB = 0.0;
+    Double TotaleficA = 0.0;
+    Double TotaleficB = 0.0;
+    Double TotalHC = 0.0;
+    Double TotalHrsEMB = 00.0;
+    Double TotalHrsPag = 0.0;
     Double TotalEficiencia;
-    
-     public EficienciaPlanta() {
+
+    public EficienciaPlanta() {
         try {
             initComponents();
-            Principal.cn=new Conection();
+            Principal.cn = new Conection();
             ObtenerCorte();
             ObtenerCadenas();
             SacarTotales();
@@ -54,49 +46,46 @@ public class EficienciaPlanta extends javax.swing.JFrame {
             Logger.getLogger(EficienciaPlanta.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
- 
-     public static Double Regresa2Decimales(Double Valor){
-        try{
-         int aux = (int)(Valor*100);//1243
-            Valor = aux/100d;// 
-     
-        }catch(Exception e)
-        {
+
+    public static Double Regresa2Decimales(Double Valor) {
+        try {
+            int aux = (int) (Valor * 100);//1243
+            Valor = aux / 100d;// 
+
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
-         System.out.println(Valor.toString());
+        System.out.println(Valor.toString());
         return Valor;
-        
+
     }
-     
-     public void ObtenerCorte(){
+
+    public void ObtenerCorte() {
         try {
-            ResultSet st=Principal.cn.GetConsulta("SELECT DISTINCT\n" +
-                "corte.idcodigo,\n" +
-                "hcpag.IDCODIGO, hcpag.HCDIRLINEA, corte.hrsEMBC, hcpag.horaspagadas, hcpag.TURNO, truncate((corte.hrsEMBC/hcpag.horaspagadas)*100,2) as eficiencia \n" +
-                "from \n" +
-                "(select c.IDCODIGO, c.LINEA, c.CODIGO, c.TURNO, m.SALIDAENPIEZA, g.HCDIRCORTE as cortee,  SUM(TRUNCATE((((g.HCDIRCORTE*m.SALIDAENPIEZA)/100)),2)) as hrsEMBC,   g.HCDIRLPS as 'POND.LPS', TRUNCATE( if(c.TURNO='A', ((g.HCDIRLPS *m.SALIDAENPIEZA)/9/100), ((g.HCDIRLPS*m.SALIDAENPIEZA)/7.9/100)),2) as LPS, g.HCDIRENSFINAL as 'PUNTOS.EF', TRUNCATE( if(c.TURNO='A', ((g.HCDIRENSFINAL *m.SALIDAENPIEZA)/9/100),  ((g.HCDIRENSFINAL*m.SALIDAENPIEZA)/7.9/100)),2) as ENSFINAL  FROM codigos as c, manufactura as m, gsd  as g where c.IDCODIGO=m.IDCODIGO and c.IDCODIGO=g.IDCODIGO   GROUP BY c.TURNO) as corte,\n" +
-                "(select c.IDCODIGO, HCDIRLINEA, C.TURNO, if(c.TURNO='A', sum((M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*9), SUM((M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*7.9)) as horaspagadas from manufactura as m, codigos as c where m.IDCODIGO=c.IDCODIGO and c.CADENA=4 GROUP BY c.TURNO) as hcpag");
-          int cont=1;
-            while(st.next())
-            {
-                if(cont==1)
-                { HrsEmbCA=st.getDouble("hrsEMBC");
-                HrsPagCA=st.getDouble("horaspagadas");
-                HcCA=st.getDouble("hcdirlinea");
-                EficCA=st.getDouble("eficiencia");
+            ResultSet st = Principal.cn.GetConsulta("SELECT DISTINCT\n"
+                    + "corte.idcodigo,\n"
+                    + "hcpag.IDCODIGO, hcpag.HCDIRLINEA, corte.hrsEMBC, hcpag.horaspagadas, hcpag.TURNO, truncate((corte.hrsEMBC/hcpag.horaspagadas)*100,2) as eficiencia \n"
+                    + "from \n"
+                    + "(select c.IDCODIGO, c.LINEA, c.CODIGO, c.TURNO, m.SALIDAENPIEZA, g.HCDIRCORTE as cortee,  SUM(TRUNCATE((((g.HCDIRCORTE*m.SALIDAENPIEZA)/100)),2)) as hrsEMBC,   g.HCDIRLPS as 'POND.LPS', TRUNCATE( if(c.TURNO='A', ((g.HCDIRLPS *m.SALIDAENPIEZA)/9/100), ((g.HCDIRLPS*m.SALIDAENPIEZA)/7.9/100)),2) as LPS, g.HCDIRENSFINAL as 'PUNTOS.EF', TRUNCATE( if(c.TURNO='A', ((g.HCDIRENSFINAL *m.SALIDAENPIEZA)/9/100),  ((g.HCDIRENSFINAL*m.SALIDAENPIEZA)/7.9/100)),2) as ENSFINAL  FROM codigos as c, manufactura as m, gsd  as g where c.IDCODIGO=m.IDCODIGO and c.IDCODIGO=g.IDCODIGO   GROUP BY c.TURNO) as corte,\n"
+                    + "(select c.IDCODIGO, HCDIRLINEA, C.TURNO, if(c.TURNO='A', sum((M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*9), SUM((M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*7.9)) as horaspagadas from manufactura as m, codigos as c where m.IDCODIGO=c.IDCODIGO and c.CADENA=4 GROUP BY c.TURNO) as hcpag");
+            int cont = 1;
+            while (st.next()) {
+                if (cont == 1) {
+                    HrsEmbCA = st.getDouble("hrsEMBC");
+                    HrsPagCA = st.getDouble("horaspagadas");
+                    HcCA = st.getDouble("hcdirlinea");
+                    EficCA = st.getDouble("eficiencia");
                 }
-                if(cont==4)
-                {
-                 HrsEmbCB=st.getDouble("hrsEMBC");
-                 HrsPagCB=st.getDouble("horaspagadas");
-                 HcCB=st.getDouble("hcdirlinea");
-                 EficCB=st.getDouble("eficiencia");
+                if (cont == 4) {
+                    HrsEmbCB = st.getDouble("hrsEMBC");
+                    HrsPagCB = st.getDouble("horaspagadas");
+                    HcCB = st.getDouble("hcdirlinea");
+                    EficCB = st.getDouble("eficiencia");
                 }
                 cont++;
             }
-            EficCadCorte= (((HrsEmbCA+HrsEmbCB)/(HrsPagCA+HrsPagCB))*100);
-            EficCadCorte=Regresa2Decimales(EficCadCorte);
+            EficCadCorte = (((HrsEmbCA + HrsEmbCB) / (HrsPagCA + HrsPagCB)) * 100);
+            EficCadCorte = Regresa2Decimales(EficCadCorte);
             lblEficCADCA.setText(EficCadCorte.toString());
             lblEmbCA.setText(HrsEmbCA.toString());
             lblHrsPagCA.setText(HrsPagCA.toString());
@@ -106,72 +95,63 @@ public class EficienciaPlanta extends javax.swing.JFrame {
             lblEficCB.setText(EficCB.toString());
             lblHrsPagCB.setText(HrsPagCB.toString());
             lblGenteCB.setText(HcCB.toString());
-        }catch(Exception e )
-        {
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
-        
-    }  
-    
-    public void ObtenerCadenas(){
+
+    }
+
+    public void ObtenerCadenas() {
         try {
-            HrsEmbSB=0.0;
-            HrsPagSB=0.0;
-            EficSB=0.0;
-            HcSB=0.0;
-            ResultSet rs=Principal.cn.GetConsulta("select  manu.CADENA, manu.turno, manu.hc,  ROUND((manu.horasemb),2) as horasemb, ROUND((manu.hrsPagadas),2) as hrsPagadas,  ( manu.horasemb/manu.hrsPagadas)*100 as efic from \n" +
-            "(select c.LINEA, c.CADENA, c.turno, sum((M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)) as hc, sum((m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100)) as horasemb,  IF(c.TURNO='A',sum(((M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*9)),sum(((M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*7.9))) as hrsPagadas  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO GROUP BY c.CADENA, c.TURNO) as manu ");
-            while(rs.next())
-            {
-                if((rs.getString("Cadena").equals("1")) && (rs.getString("TURNO").equals("A")))
-                {
-                    HcIA=rs.getDouble("hc");
-                   HrsEmbIA=rs.getDouble("horasemb");
-                   HrsPagIA=rs.getDouble("hrspagadas");
-                   EficIA=Regresa2Decimales( rs.getDouble("efic"));
+            HrsEmbSB = 0.0;
+            HrsPagSB = 0.0;
+            EficSB = 0.0;
+            HcSB = 0.0;
+            ResultSet rs = Principal.cn.GetConsulta("select  manu.CADENA, manu.turno, manu.hc,  ROUND((manu.horasemb),2) as horasemb, ROUND((manu.hrsPagadas),2) as hrsPagadas,  ( manu.horasemb/manu.hrsPagadas)*100 as efic from \n"
+                    + "(select c.LINEA, c.CADENA, c.turno, sum((M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)) as hc, sum((m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100)) as horasemb,  IF(c.TURNO='A',sum(((M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*9)),sum(((M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*7.9))) as hrsPagadas  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO GROUP BY c.CADENA, c.TURNO) as manu ");
+            while (rs.next()) {
+                if ((rs.getString("Cadena").equals("1")) && (rs.getString("TURNO").equals("A"))) {
+                    HcIA = rs.getDouble("hc");
+                    HrsEmbIA = rs.getDouble("horasemb");
+                    HrsPagIA = rs.getDouble("hrspagadas");
+                    EficIA = Regresa2Decimales(rs.getDouble("efic"));
                 }
-                if((rs.getString("Cadena").equals("2")) && (rs.getString("TURNO").equals("A")))
-                {
-                    HcIIA=rs.getDouble("hc");
-                   HrsEmbIIA=rs.getDouble("horasemb");
-                   HrsPagIIA=rs.getDouble("hrspagadas");
-                   EficIIA=Regresa2Decimales( rs.getDouble("efic"));
+                if ((rs.getString("Cadena").equals("2")) && (rs.getString("TURNO").equals("A"))) {
+                    HcIIA = rs.getDouble("hc");
+                    HrsEmbIIA = rs.getDouble("horasemb");
+                    HrsPagIIA = rs.getDouble("hrspagadas");
+                    EficIIA = Regresa2Decimales(rs.getDouble("efic"));
                 }
-               if((rs.getString("Cadena").equals("3")) && (rs.getString("TURNO").equals("A")))
-                {
-                    HcIIIA=rs.getDouble("hc");
-                   HrsEmbIIIA=rs.getDouble("horasemb");
-                   HrsPagIIIA=rs.getDouble("hrspagadas");
-                   EficIIIA=Regresa2Decimales( rs.getDouble("efic"));
+                if ((rs.getString("Cadena").equals("3")) && (rs.getString("TURNO").equals("A"))) {
+                    HcIIIA = rs.getDouble("hc");
+                    HrsEmbIIIA = rs.getDouble("horasemb");
+                    HrsPagIIIA = rs.getDouble("hrspagadas");
+                    EficIIIA = Regresa2Decimales(rs.getDouble("efic"));
                 }
-               if((rs.getString("Cadena").equals("1")) && (rs.getString("TURNO").equals("B")))
-                {
-                    HcIB=rs.getDouble("hc");
-                   HrsEmbIB=rs.getDouble("horasemb");
-                   HrsPagIB=rs.getDouble("hrspagadas");
-                   EficIB=Regresa2Decimales(rs.getDouble("efic"));
+                if ((rs.getString("Cadena").equals("1")) && (rs.getString("TURNO").equals("B"))) {
+                    HcIB = rs.getDouble("hc");
+                    HrsEmbIB = rs.getDouble("horasemb");
+                    HrsPagIB = rs.getDouble("hrspagadas");
+                    EficIB = Regresa2Decimales(rs.getDouble("efic"));
                 }
-               if((rs.getString("Cadena").equals("2")) && (rs.getString("TURNO").equals("B")))
-                {
-                    HcIIB=rs.getDouble("hc");
-                   HrsEmbIIB=rs.getDouble("horasemb");
-                   HrsPagIIB=rs.getDouble("hrspagadas");
-                   EficIIB=Regresa2Decimales(rs.getDouble("efic"));
+                if ((rs.getString("Cadena").equals("2")) && (rs.getString("TURNO").equals("B"))) {
+                    HcIIB = rs.getDouble("hc");
+                    HrsEmbIIB = rs.getDouble("horasemb");
+                    HrsPagIIB = rs.getDouble("hrspagadas");
+                    EficIIB = Regresa2Decimales(rs.getDouble("efic"));
                 }
-                 if((rs.getString("Cadena").equals("3")) && (rs.getString("TURNO").equals("B")))
-                {
-                    HcIIIB=rs.getDouble("hc");
-                   HrsEmbIIIB=rs.getDouble("horasemb");
-                   HrsPagIIIB=rs.getDouble("hrspagadas");
-                   EficIIIB=Regresa2Decimales(rs.getDouble("efic"));
-                   
+                if ((rs.getString("Cadena").equals("3")) && (rs.getString("TURNO").equals("B"))) {
+                    HcIIIB = rs.getDouble("hc");
+                    HrsEmbIIIB = rs.getDouble("horasemb");
+                    HrsPagIIIB = rs.getDouble("hrspagadas");
+                    EficIIIB = Regresa2Decimales(rs.getDouble("efic"));
+
                 }
-                if((rs.getString("Cadena").equals("5")) && (rs.getString("TURNO").equals("A")))
-                {
-                    HcSA=rs.getDouble("hc");
-                   HrsEmbSA=rs.getDouble("horasemb");
-                   HrsPagSA=rs.getDouble("hrspagadas");
-                   EficSA=Regresa2Decimales(rs.getDouble("efic"));
+                if ((rs.getString("Cadena").equals("5")) && (rs.getString("TURNO").equals("A"))) {
+                    HcSA = rs.getDouble("hc");
+                    HrsEmbSA = rs.getDouble("horasemb");
+                    HrsPagSA = rs.getDouble("hrspagadas");
+                    EficSA = Regresa2Decimales(rs.getDouble("efic"));
                 }
             }
             lblGenteIA.setText(HcIA.toString());
@@ -198,10 +178,10 @@ public class EficienciaPlanta extends javax.swing.JFrame {
             lblEficIB.setText(EficIB.toString());
             lblEficIIB.setText(EficIIB.toString());
             lblEficIIIB.setText(EficIIIB.toString());
-            EficCadI=Regresa2Decimales(((HrsEmbIA+HrsEmbIB)/ (HrsPagIA+HrsPagIB))*100);
-            EficCadII=Regresa2Decimales(((HrsEmbIIA+HrsEmbIIB)/ (HrsPagIIA+HrsPagIIB))*100);
-            EficCadIII= Regresa2Decimales(((HrsEmbIIIA+HrsEmbIIIB)/ (HrsPagIIIA+HrsPagIIIB))*100);
-            EficCadS=Regresa2Decimales((HrsEmbSA/HrsPagSA)*100);
+            EficCadI = Regresa2Decimales(((HrsEmbIA + HrsEmbIB) / (HrsPagIA + HrsPagIB)) * 100);
+            EficCadII = Regresa2Decimales(((HrsEmbIIA + HrsEmbIIB) / (HrsPagIIA + HrsPagIIB)) * 100);
+            EficCadIII = Regresa2Decimales(((HrsEmbIIIA + HrsEmbIIIB) / (HrsPagIIIA + HrsPagIIIB)) * 100);
+            EficCadS = Regresa2Decimales((HrsEmbSA / HrsPagSA) * 100);
             lblEficCADIA.setText(EficCadI.toString());
             lblEficCADIIA.setText(EficCadII.toString());
             lblEficCADIIIA.setText(EficCadIII.toString());
@@ -213,45 +193,44 @@ public class EficienciaPlanta extends javax.swing.JFrame {
             lblEmbSB.setText(HrsEmbSB.toString());
             lblHrsPagSB.setText(HrsPagSB.toString());
             lblEficSB.setText(EficSB.toString());
-        }catch(Exception e)
-        {
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }
-    
-    public void SacarTotales(){
+
+    public void SacarTotales() {
         try {
-            totalHCTurnoA=Regresa2Decimales( HcCA+HcIA+HcIIA+HcIIIA+HcSA);
-            totalHCTurnoB=Regresa2Decimales( HcCB+HcIB+HcIIB+HcIIIB+HcSB);
-            totalHrsEMbA=Regresa2Decimales( HrsEmbCA+HrsEmbIA+HrsEmbIIA+HrsEmbIIIA+HrsEmbSA);
-            totalHrsEMbB=Regresa2Decimales( HrsEmbCB+HrsEmbIB+HrsEmbIIB+HrsEmbIIIB+HrsEmbSB);
-            totalHrsPagA=Regresa2Decimales( HrsPagCA+HrsPagIA+HrsPagIIA+HrsPagIIIA+HrsPagSA);
-            totalHrsPagB=Regresa2Decimales( HrsPagCB+HrsPagIB+HrsPagIIB+HrsPagIIIB+HrsPagSB);
-            TotaleficA=Regresa2Decimales((totalHrsEMbA/totalHrsPagA)*100);
-            TotaleficB=Regresa2Decimales((totalHrsEMbB/totalHrsPagB)*100);
-            TotalHC=Regresa2Decimales(totalHCTurnoA+totalHCTurnoB);
-            TotalHrsEMB=Regresa2Decimales( totalHrsEMbA+totalHrsEMbB);
-            TotalHrsPag=totalHrsPagA+totalHrsPagB;
-            TotalEficiencia=Regresa2Decimales((TotalHrsEMB/TotalHrsPag)*100);
-           lblGenteTA.setText(totalHCTurnoA.toString());
-           lblGenteTB.setText(totalHCTurnoB.toString());
-           lblHrsPagTotalA.setText(totalHrsPagA.toString());
-           lblHrsPagTotalB.setText(totalHrsPagB.toString());
-           lblEmbTotalA.setText(totalHrsEMbA.toString());
-           lblEmbTotalB.setText(totalHrsEMbB.toString());
-           lblEficTotalA.setText(Regresa2Decimales(TotaleficA).toString());
-           lblEficTotalB.setText(Regresa2Decimales(TotaleficB).toString());
-           lbltotalGenteAB.setText(TotalHC.toString());
-           lblTotalHrsPagadasAB.setText(TotalHrsPag.toString());
-           lblTotalEmbAB.setText(TotalHrsEMB.toString());
-           lbleficienciaTurnos.setText(TotalEficiencia.toString());
-           lblEficPlanta.setText(lbleficienciaTurnos.getText());
-           
-        }catch(Exception e)
-        {
+            totalHCTurnoA = Regresa2Decimales(HcCA + HcIA + HcIIA + HcIIIA + HcSA);
+            totalHCTurnoB = Regresa2Decimales(HcCB + HcIB + HcIIB + HcIIIB + HcSB);
+            totalHrsEMbA = Regresa2Decimales(HrsEmbCA + HrsEmbIA + HrsEmbIIA + HrsEmbIIIA + HrsEmbSA);
+            totalHrsEMbB = Regresa2Decimales(HrsEmbCB + HrsEmbIB + HrsEmbIIB + HrsEmbIIIB + HrsEmbSB);
+            totalHrsPagA = Regresa2Decimales(HrsPagCA + HrsPagIA + HrsPagIIA + HrsPagIIIA + HrsPagSA);
+            totalHrsPagB = Regresa2Decimales(HrsPagCB + HrsPagIB + HrsPagIIB + HrsPagIIIB + HrsPagSB);
+            TotaleficA = Regresa2Decimales((totalHrsEMbA / totalHrsPagA) * 100);
+            TotaleficB = Regresa2Decimales((totalHrsEMbB / totalHrsPagB) * 100);
+            TotalHC = Regresa2Decimales(totalHCTurnoA + totalHCTurnoB);
+            TotalHrsEMB = Regresa2Decimales(totalHrsEMbA + totalHrsEMbB);
+            TotalHrsPag = totalHrsPagA + totalHrsPagB;
+            TotalEficiencia = Regresa2Decimales((TotalHrsEMB / TotalHrsPag) * 100);
+            lblGenteTA.setText(totalHCTurnoA.toString());
+            lblGenteTB.setText(totalHCTurnoB.toString());
+            lblHrsPagTotalA.setText(totalHrsPagA.toString());
+            lblHrsPagTotalB.setText(totalHrsPagB.toString());
+            lblEmbTotalA.setText(totalHrsEMbA.toString());
+            lblEmbTotalB.setText(totalHrsEMbB.toString());
+            lblEficTotalA.setText(Regresa2Decimales(TotaleficA).toString());
+            lblEficTotalB.setText(Regresa2Decimales(TotaleficB).toString());
+            lbltotalGenteAB.setText(TotalHC.toString());
+            lblTotalHrsPagadasAB.setText(TotalHrsPag.toString());
+            lblTotalEmbAB.setText(TotalHrsEMB.toString());
+            lbleficienciaTurnos.setText(TotalEficiencia.toString());
+            lblEficPlanta.setText(lbleficienciaTurnos.getText());
+
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -1392,7 +1371,7 @@ public class EficienciaPlanta extends javax.swing.JFrame {
 
     private void btnCad1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCad1ActionPerformed
         // TODO add your handling code here:
-        DetalleEficiencia DE=new DetalleEficiencia("1");
+        DetalleEficiencia DE = new DetalleEficiencia("1");
         DE.setLocationRelativeTo(null);
         DE.setVisible(true);
     }//GEN-LAST:event_btnCad1ActionPerformed
@@ -1678,51 +1657,51 @@ public class EficienciaPlanta extends javax.swing.JFrame {
     }//GEN-LAST:event_lblEficTotalBActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
-         try {
-             // TODO add your handling code here:
-             ArrayList<Cadena> Cadenas=new ArrayList<Cadena>();
-             Cadenas.add(new Cadena("1", HcIA, HcIB, HrsEmbIA, HrsEmbIB, HrsPagIA, HrsPagIB, EficIA, EficIB, EficCadI ));
-             Cadenas.add(new Cadena("2", HcIIA, HcIIB, HrsEmbIIA, HrsEmbIIB, HrsPagIIA, HrsPagIIB, EficIIA, EficIIB, EficCadII));
-             Cadenas.add(new Cadena("3", HcIIIA, HcIIIB, HrsEmbIIIA, HrsEmbIIIB, HrsPagIIIA, HrsPagIIIB, EficIIIA, EficIIIB, EficCadIII));
-             Cadenas.add(new Cadena("Corte", HcCA, HcCB, HrsEmbCA, HrsEmbCB, HrsPagCA, HrsPagCB, EficCA, EficCB, EficCadCorte));
-             Cadenas.add(new Cadena("Servicio", HcSA, HcSB, HrsEmbSA, HrsEmbSB, HrsPagSA, HrsPagSB, EficSA, EficSB, EficCadS));
-             Cadenas.add(new Cadena("Total", totalHCTurnoA, totalHCTurnoB, totalHrsEMbA, totalHrsEMbB, totalHrsPagA, totalHrsPagB, TotaleficA, TotaleficB, TotalEficiencia));
-             Cadena total=new Cadena( "TOTALES", TotalHC, 0.0,  TotalHrsEMB, 0.0, TotalHrsPag, 0.0, TotalEficiencia, 0.0,TotalEficiencia);
-             Excel E=new Excel(Cadenas, total );
-         } catch (IOException ex) {
-             Logger.getLogger(EficienciaPlanta.class.getName()).log(Level.SEVERE, null, ex);
-         }
-       
+        try {
+            // TODO add your handling code here:
+            ArrayList<Cadena> Cadenas = new ArrayList<Cadena>();
+            Cadenas.add(new Cadena("1", HcIA, HcIB, HrsEmbIA, HrsEmbIB, HrsPagIA, HrsPagIB, EficIA, EficIB, EficCadI));
+            Cadenas.add(new Cadena("2", HcIIA, HcIIB, HrsEmbIIA, HrsEmbIIB, HrsPagIIA, HrsPagIIB, EficIIA, EficIIB, EficCadII));
+            Cadenas.add(new Cadena("3", HcIIIA, HcIIIB, HrsEmbIIIA, HrsEmbIIIB, HrsPagIIIA, HrsPagIIIB, EficIIIA, EficIIIB, EficCadIII));
+            Cadenas.add(new Cadena("Corte", HcCA, HcCB, HrsEmbCA, HrsEmbCB, HrsPagCA, HrsPagCB, EficCA, EficCB, EficCadCorte));
+            Cadenas.add(new Cadena("Servicio", HcSA, HcSB, HrsEmbSA, HrsEmbSB, HrsPagSA, HrsPagSB, EficSA, EficSB, EficCadS));
+            Cadenas.add(new Cadena("Total", totalHCTurnoA, totalHCTurnoB, totalHrsEMbA, totalHrsEMbB, totalHrsPagA, totalHrsPagB, TotaleficA, TotaleficB, TotalEficiencia));
+            Cadena total = new Cadena("TOTALES", TotalHC, 0.0, TotalHrsEMB, 0.0, TotalHrsPag, 0.0, TotalEficiencia, 0.0, TotalEficiencia);
+            Excel E = new Excel(Cadenas, total);
+        } catch (IOException ex) {
+            Logger.getLogger(EficienciaPlanta.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }//GEN-LAST:event_jButton11ActionPerformed
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         // TODO add your handling code here:
-        Principal p=new Principal(Principal.UsuarioLogeado);
+        Principal p = new Principal(Principal.UsuarioLogeado);
         p.setLocationRelativeTo(null);
         p.setVisible(true);
     }//GEN-LAST:event_formWindowClosed
 
     private void btnCad2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCad2ActionPerformed
         // TODO add your handling code here:
-        DetalleEficiencia DE=new DetalleEficiencia("2");
+        DetalleEficiencia DE = new DetalleEficiencia("2");
         DE.setLocationRelativeTo(null);
         DE.setVisible(true);
     }//GEN-LAST:event_btnCad2ActionPerformed
 
     private void btnCad3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCad3ActionPerformed
         // TODO add your handling code here:
-        DetalleEficiencia DE=new DetalleEficiencia("3");
+        DetalleEficiencia DE = new DetalleEficiencia("3");
         DE.setLocationRelativeTo(null);
         DE.setVisible(true);
     }//GEN-LAST:event_btnCad3ActionPerformed
 
     private void btnCadCorteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadCorteActionPerformed
         // TODO add your handling code here:
-        DetalleEficiencia DE=new DetalleEficiencia("4");
+        DetalleEficiencia DE = new DetalleEficiencia("4");
         DE.setLocationRelativeTo(null);
         DE.setVisible(true);
     }//GEN-LAST:event_btnCadCorteActionPerformed
-   /**
+    /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {

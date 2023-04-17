@@ -1,26 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package CapturasEffort;
 
-import Clases.Conection;
 import Reportes.CeldaCheck;
 import Reportes.Render_CheckBox;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import manufactura.Principal;
 
-/**
- *
- * @author Felipe M
- */
 public class cablesBateria extends javax.swing.JFrame {
 
     /**
@@ -36,23 +24,21 @@ public class cablesBateria extends javax.swing.JFrame {
             Logger.getLogger(cablesBateria.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void CargarDgv(String Cadena, String Turno)
-    {
-        try{
-            DefaultTableModel modelo=new DefaultTableModel();
-            modelo.setColumnIdentifiers(new Object[]{ "IDCODIGO" ,"CADENA", "PLATAFORMA", "CODIGO", "LINEA", "TURNO", "CABLE.BATERIA"           });
-            String query="SELECT C.IDCODIGO,  c.CADENA, c.PLATAFORMA, c.CODIGO, C.LINEA, C.TURNO, m.BCABLE FROM CODIGOS c, manufactura  m where c.IDCODIGO=m.IDCODIGo and m.ACTIVO=1 ";
-            if(!Cadena.equals("TODOS"))
-                query+="and  CADENA='"+Cadena+"' ";   
-            if(!Turno.equals("TODOS"))
-            {
-                    query+= "AND  Turno='"+Turno+"'";
-           }
-            ResultSet rs=Principal.cn.GetConsulta(query);
-            while(rs.next())
-            {
-             modelo.addRow(new  Object[]{rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getBoolean(7)});   
+
+    public void CargarDgv(String Cadena, String Turno) {
+        try {
+            DefaultTableModel modelo = new DefaultTableModel();
+            modelo.setColumnIdentifiers(new Object[]{"IDCODIGO", "CADENA", "PLATAFORMA", "CODIGO", "LINEA", "TURNO", "CABLE.BATERIA"});
+            String query = "SELECT C.IDCODIGO,  c.CADENA, c.PLATAFORMA, c.CODIGO, C.LINEA, C.TURNO, m.BCABLE FROM CODIGOS c, manufactura  m where c.IDCODIGO=m.IDCODIGo and m.ACTIVO=1 ";
+            if (!Cadena.equals("TODOS")) {
+                query += "and  CADENA='" + Cadena + "' ";
+            }
+            if (!Turno.equals("TODOS")) {
+                query += "AND  Turno='" + Turno + "'";
+            }
+            ResultSet rs = Principal.cn.GetConsulta(query);
+            while (rs.next()) {
+                modelo.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getBoolean(7)});
             }
             tblConc.setModel(modelo);
             tblConc.getColumnModel().getColumn(0).setMaxWidth(0);
@@ -63,11 +49,11 @@ public class cablesBateria extends javax.swing.JFrame {
             tblConc.getColumnModel().getColumn(6).setMaxWidth(100);
             tblConc.getColumnModel().getColumn(6).setMinWidth(100);
             tblConc.getColumnModel().getColumn(6).setPreferredWidth(100);
-        }catch(Exception e)
-        {
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -194,23 +180,21 @@ public class cablesBateria extends javax.swing.JFrame {
 
     private void tblConcPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tblConcPropertyChange
         // TODO add your handling code here:
-        try{
-            if((tblConc.getSelectedRow()>-1))
-            {
-                                ArrayList<Object> lista=new ArrayList<Object>();
-                                if(tblConc.getValueAt(tblConc.getSelectedRow(), 6).toString().equals("true"))
-                                    lista.add(1);
-                                   else
-                                    lista.add(0);
-                                lista.add(tblConc.getValueAt(tblConc.getSelectedRow(), 0).toString()); 
-                                //lista.add(tblConc.getValueAt(tblConc.getSelectedRow(), 0).toString().toUpperCase());
-                                Principal.cn.EjecutarInsertOb("update manufactura set bcable=?  where idcodigo=?", lista);
-                                CargarDgv(cbxCadena.getSelectedItem().toString(), cbxTurno.getSelectedItem().toString());
+        try {
+            if ((tblConc.getSelectedRow() > -1)) {
+                ArrayList<Object> lista = new ArrayList<Object>();
+                if (tblConc.getValueAt(tblConc.getSelectedRow(), 6).toString().equals("true")) {
+                    lista.add(1);
+                } else {
+                    lista.add(0);
+                }
+                lista.add(tblConc.getValueAt(tblConc.getSelectedRow(), 0).toString());
+                //lista.add(tblConc.getValueAt(tblConc.getSelectedRow(), 0).toString().toUpperCase());
+                Principal.cn.EjecutarInsertOb("update manufactura set bcable=?  where idcodigo=?", lista);
+                CargarDgv(cbxCadena.getSelectedItem().toString(), cbxTurno.getSelectedItem().toString());
 
             }
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }//GEN-LAST:event_tblConcPropertyChange
@@ -221,16 +205,14 @@ public class cablesBateria extends javax.swing.JFrame {
 
     private void cbxCadenaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxCadenaItemStateChanged
         // TODO add your handling code here:.
-        if((cbxCadena.getSelectedItem()!=null))
-        {
+        if ((cbxCadena.getSelectedItem() != null)) {
             CargarDgv(cbxCadena.getSelectedItem().toString(), cbxTurno.getSelectedItem().toString());
         }
     }//GEN-LAST:event_cbxCadenaItemStateChanged
 
     private void cbxTurnoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxTurnoItemStateChanged
         // TODO add your handling code here:
-        if(cbxTurno.getSelectedItem()!=null)
-        {
+        if (cbxTurno.getSelectedItem() != null) {
             CargarDgv(cbxCadena.getSelectedItem().toString(), cbxTurno.getSelectedItem().toString());
         }
     }//GEN-LAST:event_cbxTurnoItemStateChanged
@@ -280,5 +262,4 @@ public class cablesBateria extends javax.swing.JFrame {
     private Compille.RXTable tblConc;
     // End of variables declaration//GEN-END:variables
 
-    
 }

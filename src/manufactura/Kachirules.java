@@ -1,12 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package manufactura;
 
 import Clases.Conection;
 import Reportes.EXCELKACHIRULES;
-import java.awt.Image;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,29 +11,27 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author gzld6k
- */
 public class Kachirules extends javax.swing.JFrame {
 
     /**
      * Creates new form Kachirules
      */
     DefaultTableModel modelo;
-    String  planta;
+    String planta;
+
     public Kachirules(String planta) {
         try {
             initComponents();
             setIconImage(new ImageIcon(getClass().getResource("/Images/competitors-icon.png")).getImage());
-            Principal.cn=new Conection();
+            Principal.cn = new Conection();
             tblCodigos.setVisible(false);
             jPanel1.setVisible(false);
-             if(!planta.equals("MOCHIS"))
-                this.planta="6";
-             else
-                 this.planta="7";
-            
+            if (!planta.equals("MOCHIS")) {
+                this.planta = "6";
+            } else {
+                this.planta = "7";
+            }
+
             enlazarCbxPlataforma(this.planta);
             enlazarDgv(this.planta);
         } catch (SQLException ex) {
@@ -47,66 +40,59 @@ public class Kachirules extends javax.swing.JFrame {
             Logger.getLogger(Kachirules.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void enlazarCbxPlataforma(String planta){
-        try{
-            ResultSet rs= Principal.cn.GetConsulta("SELECT DISTINCT (codigos.PLATAFORMA)\n" +
-                "FROM\n" +
-                "codigos\n" +
-                "WHERE LINEA<>'91' AND CADENA<>'4' and cadena='"+planta+"'");
-            while(rs.next())
-            {
+
+    public void enlazarCbxPlataforma(String planta) {
+        try {
+            ResultSet rs = Principal.cn.GetConsulta("SELECT DISTINCT (codigos.PLATAFORMA)\n"
+                    + "FROM\n"
+                    + "codigos\n"
+                    + "WHERE LINEA<>'91' AND CADENA<>'4' and cadena='" + planta + "'");
+            while (rs.next()) {
                 cbxPlataforma.addItem(rs.getString("PLATAFORMA"));
             }
-        }catch(Exception e)
-        {
-            
+        } catch (Exception e) {
+
         }
     }
-    
-    public void enlazarDgv(String planta){
-        try{
-             ResultSet rs=Principal.cn.GetConsulta("SELECT * FROM manufactura AS M INNER JOIN codigos AS C on c.IDCODIGO=m.IDCODIGO where linea=91 and cadena='"+planta+"' and  TURNO='"+cbxTurno.getSelectedItem().toString()+"'");
-            if(rs.next())
-            {
+
+    public void enlazarDgv(String planta) {
+        try {
+            ResultSet rs = Principal.cn.GetConsulta("SELECT * FROM manufactura AS M INNER JOIN codigos AS C on c.IDCODIGO=m.IDCODIGO where linea=91 and cadena='" + planta + "' and  TURNO='" + cbxTurno.getSelectedItem().toString() + "'");
+            if (rs.next()) {
                 txtCantidad.setText(rs.getString("hcdirlinea"));
             }
-            
+
 //   
-        }catch(Exception e )
-        {
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
-        
+
     }
-    
-    public void eliminar(String numero, String Turno){
-        try{
-            int rsp= JOptionPane.showConfirmDialog(this, "Desea eliminar kachirul?","", JOptionPane.YES_NO_OPTION );
-            if(rsp==JOptionPane.YES_OPTION)
-            {
-                ArrayList<String> sl=new ArrayList<String>();
-                if(Principal.cn.EjecutarInsert("delete from kachirules where kachirules.nombre='"+numero +"'" , sl))
-                {
-                    Principal.cn.EjecutarInsert("update manufactura set HCDIRLINEA=HCDIRLINEA-1 where IDCODIGO in (select IDCODIGO from codigos where codigos.LINEA='91' and turno='"+Turno+"' )", sl);
-                   // enlazarDgv();
+
+    public void eliminar(String numero, String Turno) {
+        try {
+            int rsp = JOptionPane.showConfirmDialog(this, "Desea eliminar kachirul?", "", JOptionPane.YES_NO_OPTION);
+            if (rsp == JOptionPane.YES_OPTION) {
+                ArrayList<String> sl = new ArrayList<String>();
+                if (Principal.cn.EjecutarInsert("delete from kachirules where kachirules.nombre='" + numero + "'", sl)) {
+                    Principal.cn.EjecutarInsert("update manufactura set HCDIRLINEA=HCDIRLINEA-1 where IDCODIGO in (select IDCODIGO from codigos where codigos.LINEA='91' and turno='" + Turno + "' )", sl);
+                    // enlazarDgv();
                 }
             }
-        }catch(Exception e)
-        {
-            
+        } catch (Exception e) {
+
         }
-        }
-    
-    public void Limpiar()
-    {
+    }
+
+    public void Limpiar() {
         txtDescripcion.setText("");
         txtLinea.setText("");
         txtNombre.setText("");
         cbxPlataforma.setSelectedIndex(0);
         cbxTurno.setSelectedIndex(0);
-                
+
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -377,39 +363,33 @@ public class Kachirules extends javax.swing.JFrame {
     private void cbxPlataformaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxPlataformaItemStateChanged
         // TODO add your handling code here:
         // cbxCodigo.removeAllItems();
-        if(cbxPlataforma.getSelectedItem()!=null)
-        {
-
+        if (cbxPlataforma.getSelectedItem() != null) {
 
         }
     }//GEN-LAST:event_cbxPlataformaItemStateChanged
 
     private void tblCodigosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCodigosMouseClicked
         // TODO add your handling code here:
-               try 
-        {
-         int fila = tblCodigos.rowAtPoint(evt.getPoint());
-         int columna = tblCodigos.columnAtPoint(evt.getPoint());
-         if ((fila > -1) && (columna > -1))
-              eliminar(modelo.getValueAt(fila, 2 ).toString(), modelo.getValueAt(fila, 3 ).toString());
-        }catch(Exception e)
-        {
-            
+        try {
+            int fila = tblCodigos.rowAtPoint(evt.getPoint());
+            int columna = tblCodigos.columnAtPoint(evt.getPoint());
+            if ((fila > -1) && (columna > -1)) {
+                eliminar(modelo.getValueAt(fila, 2).toString(), modelo.getValueAt(fila, 3).toString());
+            }
+        } catch (Exception e) {
+
         }
 
     }//GEN-LAST:event_tblCodigosMouseClicked
 
     private void tblCodigosPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tblCodigosPropertyChange
         // TODO add your handling code here:
-        try{
-            if( (tblCodigos.getSelectedRow()>-1))
-            {
+        try {
+            if ((tblCodigos.getSelectedRow() > -1)) {
 
             }
-            
-        }
-        catch(Exception e)
-        {
+
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }//GEN-LAST:event_tblCodigosPropertyChange
@@ -426,42 +406,40 @@ public class Kachirules extends javax.swing.JFrame {
 
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
 
-                ArrayList<String> lista=new ArrayList<String>();
-                Principal.cn.EjecutarInsert("update manufactura set HCDIRLINEA="+txtCantidad.getText()+" where IDCODIGO in (select IDCODIGO from codigos where codigos.LINEA='91' and CADENA='"+this.planta+"' AND  turno='"+cbxTurno.getSelectedItem().toString()+"' )", lista);
-                txtCantidad.setText("0");
-                enlazarDgv(this.planta);
-                JOptionPane.showMessageDialog(null, "Agregado correctamente", "Confirmacion", JOptionPane.INFORMATION_MESSAGE);
-                
+        ArrayList<String> lista = new ArrayList<String>();
+        Principal.cn.EjecutarInsert("update manufactura set HCDIRLINEA=" + txtCantidad.getText() + " where IDCODIGO in (select IDCODIGO from codigos where codigos.LINEA='91' and CADENA='" + this.planta + "' AND  turno='" + cbxTurno.getSelectedItem().toString() + "' )", lista);
+        txtCantidad.setText("0");
+        enlazarDgv(this.planta);
+        JOptionPane.showMessageDialog(null, "Agregado correctamente", "Confirmacion", JOptionPane.INFORMATION_MESSAGE);
+
 
     }//GEN-LAST:event_btnEntrarActionPerformed
 
     private void cbxTurnoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxTurnoItemStateChanged
         try {
             // TODO add your handling code here:
-            ResultSet rs=Principal.cn.GetConsulta("SELECT * FROM manufactura AS M INNER JOIN codigos AS C on c.IDCODIGO=m.IDCODIGO where linea=91  and cadena='"+this.planta+"' and TURNO='"+cbxTurno.getSelectedItem().toString()+"'");
-            if(rs.next())
-            {
+            ResultSet rs = Principal.cn.GetConsulta("SELECT * FROM manufactura AS M INNER JOIN codigos AS C on c.IDCODIGO=m.IDCODIGO where linea=91  and cadena='" + this.planta + "' and TURNO='" + cbxTurno.getSelectedItem().toString() + "'");
+            if (rs.next()) {
                 txtCantidad.setText(rs.getString("hcdirlinea"));
             }
         } catch (SQLException ex) {
             Logger.getLogger(Kachirules.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }//GEN-LAST:event_cbxTurnoItemStateChanged
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         // TODO add your handling code here:
-          Principal p=new Principal(Principal.UsuarioLogeado);
-           p.setLocationRelativeTo(null);
-           p.setVisible(true);
+        Principal p = new Principal(Principal.UsuarioLogeado);
+        p.setLocationRelativeTo(null);
+        p.setVisible(true);
     }//GEN-LAST:event_formWindowClosed
 
     private void btnImportar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportar1ActionPerformed
         // TODO add your handling code here:
-        try{
-            EXCELKACHIRULES exportar=new EXCELKACHIRULES((DefaultTableModel)tblCodigos.getModel(), "Reporte ");
-        }catch(Exception e )
-        {
+        try {
+            EXCELKACHIRULES exportar = new EXCELKACHIRULES((DefaultTableModel) tblCodigos.getModel(), "Reporte ");
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
 

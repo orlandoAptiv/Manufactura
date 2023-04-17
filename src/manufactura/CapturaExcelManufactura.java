@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package manufactura;
 
 import Clases.DatosManufactura;
@@ -18,10 +15,6 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author gzld6k
- */
 
 
 public class CapturaExcelManufactura extends javax.swing.JFrame {

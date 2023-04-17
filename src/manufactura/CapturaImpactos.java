@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package manufactura;
 
 import Clases.Conection;
@@ -17,36 +13,30 @@ import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import static org.apache.poi.hssf.usermodel.HeaderFooter.file;
-//import org.apache.poi.hssf.usermodel.HeaderFooter;
-/**
- *
- * @author gzld6k
- */
+
 public class CapturaImpactos extends javax.swing.JFrame {
 
     /**
      * Creates new form CapturaImpactos
      */
-    DefaultTableModel  modeloCausas;
-    ResultSet rs=null;
-    ArrayList<String> idcausa=new ArrayList<String>();
-    Double EficiencObjetivo=0.0;
-    Double DifHoras=0.0, DifPorc=0.0;
-    String fecha="";
-    boolean BandActivarCbx=false;
-    String FechaSemana="";
+    DefaultTableModel modeloCausas;
+    ResultSet rs = null;
+    ArrayList<String> idcausa = new ArrayList<String>();
+    Double EficiencObjetivo = 0.0;
+    Double DifHoras = 0.0, DifPorc = 0.0;
+    String fecha = "";
+    boolean BandActivarCbx = false;
+    String FechaSemana = "";
+
     public CapturaImpactos() {
         try {
             initComponents();
-             Image icon = new ImageIcon(getClass().getResource("/Images/competitors-icon.png")).getImage();
+            Image icon = new ImageIcon(getClass().getResource("/Images/competitors-icon.png")).getImage();
             setIconImage(icon);
-            Principal.cn=new Conection();
+            Principal.cn = new Conection();
             setLocationRelativeTo(null);
             DatFeccha.setDate(new Date());
             EnlazarCbxCausas();
@@ -54,31 +44,30 @@ public class CapturaImpactos extends javax.swing.JFrame {
             EnlazarCbxCadena();
             SacarEficienciaObj();
             InsertarFechaImpacto();
-            BandActivarCbx=true;
+            BandActivarCbx = true;
         } catch (Exception ex) {
-            System.out.println(ex.toString()+" Line:48");
-        } 
+            System.out.println(ex.toString() + " Line:48");
+        }
     }
-    
-    public void SacarTotal(){
-        Double totalHoras=0.0;
-        Double totalPuntos=0.0;
-        for(int r=0; r<modeloCausas.getRowCount(); r++)
-        {
-            try{
-                totalHoras+=(Double) modeloCausas.getValueAt(r, 2);
-                totalPuntos+=(Double) modeloCausas.getValueAt(r, 3);
-            }catch(Exception e){
-                
+
+    public void SacarTotal() {
+        Double totalHoras = 0.0;
+        Double totalPuntos = 0.0;
+        for (int r = 0; r < modeloCausas.getRowCount(); r++) {
+            try {
+                totalHoras += (Double) modeloCausas.getValueAt(r, 2);
+                totalPuntos += (Double) modeloCausas.getValueAt(r, 3);
+            } catch (Exception e) {
+
             }
             lblTotHrsCausa.setText(Regresa2Decimales(totalHoras).toString());
             lblTotPtoCausa.setText(Regresa2Decimales(totalPuntos).toString());
         }
     }
-    
-    public void Actualizar(){
-        try{
-            ArrayList<Object> objetos=new ArrayList<Object>();
+
+    public void Actualizar() {
+        try {
+            ArrayList<Object> objetos = new ArrayList<Object>();
             objetos.add(EficiencObjetivo);
             objetos.add(txtHrsEmb.getValue());
             objetos.add(txtHrsPag.getValue());
@@ -89,139 +78,129 @@ public class CapturaImpactos extends javax.swing.JFrame {
             objetos.add(cbxCadena.getSelectedItem());
             objetos.add(cbxTurno.getSelectedItem());
             Principal.cn.EjecutarInsertOb("UPDATE EFICIENCIALABOR SET eficienciaobjetivo=?, HRSEMB=?, HRSREALES=?, EFICIENCIALABOR=?, DIFERENCIA=?, COMENTARIO=? WHERE  DATE(FECHAHORA)=? AND CADENA=? AND TURNO=?", objetos);
-                    
-        }catch(Exception e)
-        {
-            System.out.println(e.toString()+"Line: 74");
+
+        } catch (Exception e) {
+            System.out.println(e.toString() + "Line: 74");
         }
     }
-    
-    public void InsertarFechaImpacto(){
-        try{
+
+    public void InsertarFechaImpacto() {
+        try {
             //BandActivarCbx=false;
-            rs=Principal.cn.GetConsulta("SELECT eficiencialabor.fechahora,  eficiencialabor.cadena, eficiencialabor.turno, eficiencialabor.eficienciaobjetivo,\n" +
-            "eficiencialabor.hrsEmb, eficiencialabor.hrsReales, eficiencialabor.EficienciaLabor, eficiencialabor.Diferencia, eficiencialabor.comentario  \n" +
-            "FROM eficiencialaboR  where  DATE(fechahora)='"+  RegresaFecha()+"' and cadena='"+cbxCadena.getSelectedItem().toString()+"' and Turno='"+cbxTurno.getSelectedItem().toString()+"'");
-            if((rs.next())  && (rs.getString(1).length()>0))
-            {
-               txtHrsEmb.setValue(rs.getDouble("hrsEmb"));
-               txtComentarios.setText(rs.getString("comentario"));
-               txtHrsPag.setValue(rs.getDouble("hrsReales"));
-               rs=Principal.cn.GetConsulta("SELECT\n" +
-                "detalleeficiencialabor.fecha,\n" +
-                "detalleeficiencialabor.cadena,\n" +
-                "detalleeficiencialabor.Turno,\n" +
-                "detalleeficiencialabor.idcausa,\n" +
-                "detalleeficiencialabor.descripcion,\n" +
-                "detalleeficiencialabor.horas,\n" +
-                "detalleeficiencialabor.puntos\n" +
-                "FROM\n" +
-                "detalleeficiencialabor\n" +
-                "WHERE\n" +
-                "date(detalleeficiencialabor.fecha)='"+RegresaFecha()+"' and cadena='"+cbxCadena.getSelectedItem().toString()+"'\n" +
-                " and Turno='"+cbxTurno.getSelectedItem().toString()+"'");
-               Enlazardgv();
-               while(rs.next())
-               {
-                   AgregarCausa(rs.getString("idcausa"), rs.getString("descripcion"), rs.getDouble("horas"), rs.getDouble("puntos"));
-               }
-               SacarTotal();
+            rs = Principal.cn.GetConsulta("SELECT eficiencialabor.fechahora,  eficiencialabor.cadena, eficiencialabor.turno, eficiencialabor.eficienciaobjetivo,\n"
+                    + "eficiencialabor.hrsEmb, eficiencialabor.hrsReales, eficiencialabor.EficienciaLabor, eficiencialabor.Diferencia, eficiencialabor.comentario  \n"
+                    + "FROM eficiencialaboR  where  DATE(fechahora)='" + RegresaFecha() + "' and cadena='" + cbxCadena.getSelectedItem().toString() + "' and Turno='" + cbxTurno.getSelectedItem().toString() + "'");
+            if ((rs.next()) && (rs.getString(1).length() > 0)) {
+                txtHrsEmb.setValue(rs.getDouble("hrsEmb"));
+                txtComentarios.setText(rs.getString("comentario"));
+                txtHrsPag.setValue(rs.getDouble("hrsReales"));
+                rs = Principal.cn.GetConsulta("SELECT\n"
+                        + "detalleeficiencialabor.fecha,\n"
+                        + "detalleeficiencialabor.cadena,\n"
+                        + "detalleeficiencialabor.Turno,\n"
+                        + "detalleeficiencialabor.idcausa,\n"
+                        + "detalleeficiencialabor.descripcion,\n"
+                        + "detalleeficiencialabor.horas,\n"
+                        + "detalleeficiencialabor.puntos\n"
+                        + "FROM\n"
+                        + "detalleeficiencialabor\n"
+                        + "WHERE\n"
+                        + "date(detalleeficiencialabor.fecha)='" + RegresaFecha() + "' and cadena='" + cbxCadena.getSelectedItem().toString() + "'\n"
+                        + " and Turno='" + cbxTurno.getSelectedItem().toString() + "'");
+                Enlazardgv();
+                while (rs.next()) {
+                    AgregarCausa(rs.getString("idcausa"), rs.getString("descripcion"), rs.getDouble("horas"), rs.getDouble("puntos"));
+                }
+                SacarTotal();
+            } else {
+                ArrayList<Object> objetos = new ArrayList<Object>();
+                objetos.add(cbxCadena.getSelectedItem());
+                objetos.add(cbxTurno.getSelectedItem());
+                objetos.add(EficiencObjetivo);
+
+                if (Principal.cn.EjecutarInsertOb("INSERT  INTO eficiencialabor (fechahora, cadena, turno, eficienciaObjetivo) VALUES ('" + RegresaFecha() + "', ?, ?, ?)", objetos)) {
+                    Enlazardgv();
+                    Enlazardetalle();
+                    txtHrsEmb.setValue(0.0);
+                    txtHrsPag.setValue(0.0);
+                    DifHoras = 0.0;
+                    DifPorc = 0.0;
+                    lblTotHrsCausa.setText("0.0");
+                    lblTotPtoCausa.setText("0.0");
+                    lblDifHras.setText("0");
+                    lblDifPorc.setText("0 %");
+                    txtComentarios.setText("");
+                }
             }
-            else
-                
-            {
-             ArrayList<Object> objetos=new ArrayList<Object>();
-             objetos.add(cbxCadena.getSelectedItem());
-             objetos.add(cbxTurno.getSelectedItem());
-             objetos.add(EficiencObjetivo);
-             
-             if(Principal.cn.EjecutarInsertOb("INSERT  INTO eficiencialabor (fechahora, cadena, turno, eficienciaObjetivo) VALUES ('"+RegresaFecha()+"', ?, ?, ?)", objetos))
-             {
-                 Enlazardgv();
-                 Enlazardetalle();
-                 txtHrsEmb.setValue(0.0);
-                 txtHrsPag.setValue(0.0);
-                 DifHoras=0.0;
-                 DifPorc=0.0;
-                 lblTotHrsCausa.setText("0.0");
-                 lblTotPtoCausa.setText("0.0");
-                 lblDifHras.setText("0");
-                 lblDifPorc.setText("0 %");
-                 txtComentarios.setText("");
-             }
-            }
-        }catch(Exception e){
-            System.out.println(e.toString()+" Line:InsertarFechaImpacto");
+        } catch (Exception e) {
+            System.out.println(e.toString() + " Line:InsertarFechaImpacto");
         }
     }
-    
-    public void InsertarCausaBD(String IDCAUSA, String Causa, Double Horas, Double puntos){
-        try{
-           ArrayList<Object> objetos=new ArrayList<Object>();
-           objetos.add(RegresaFecha());
-           objetos.add(cbxCadena.getSelectedItem());
-           objetos.add(cbxTurno.getSelectedItem());
-           objetos.add(IDCAUSA);
-           objetos.add(Causa);
-           objetos.add(Horas);
-           objetos.add(puntos);
-           Principal.cn.EjecutarInsertOb("insert into detalleeficiencialabor  (detalleeficiencialabor.fecha, detalleeficiencialabor.cadena, detalleeficiencialabor.Turno, detalleeficiencialabor.idcausa, detalleeficiencialabor.descripcion, detalleeficiencialabor.horas, detalleeficiencialabor.puntos) VALUES (?, ?, ?, ?, ?, ?, ?)", objetos);
+
+    public void InsertarCausaBD(String IDCAUSA, String Causa, Double Horas, Double puntos) {
+        try {
+            ArrayList<Object> objetos = new ArrayList<Object>();
+            objetos.add(RegresaFecha());
+            objetos.add(cbxCadena.getSelectedItem());
+            objetos.add(cbxTurno.getSelectedItem());
+            objetos.add(IDCAUSA);
+            objetos.add(Causa);
+            objetos.add(Horas);
+            objetos.add(puntos);
+            Principal.cn.EjecutarInsertOb("insert into detalleeficiencialabor  (detalleeficiencialabor.fecha, detalleeficiencialabor.cadena, detalleeficiencialabor.Turno, detalleeficiencialabor.idcausa, detalleeficiencialabor.descripcion, detalleeficiencialabor.horas, detalleeficiencialabor.puntos) VALUES (?, ?, ?, ?, ?, ?, ?)", objetos);
 //           Enlazardgv();
 //           Enlazardetalle();
-       }catch(Exception e)
-       {
-          System.out.println(e.toString()+" Line: InsertarCausaBD" );
-       }
-    }
-            
-    public void AgregarCausa(String IDCAUSA, String Causa, Double Horas, Double puntos){
-        try{
-            modeloCausas.addRow(new Object[]{IDCAUSA, Causa,  Horas, puntos});
-        }catch(Exception e){
-            
+        } catch (Exception e) {
+            System.out.println(e.toString() + " Line: InsertarCausaBD");
         }
     }
-    
-    public Double Regresa2Decimales(Double Valor){
-        try{
-         int aux = (int)(Valor*100);//1243
-            Valor = aux/100d;// 
-        }catch(Exception e)
-        {
-            System.out.println(e.toString()+" Line:149");
+
+    public void AgregarCausa(String IDCAUSA, String Causa, Double Horas, Double puntos) {
+        try {
+            modeloCausas.addRow(new Object[]{IDCAUSA, Causa, Horas, puntos});
+        } catch (Exception e) {
+
+        }
+    }
+
+    public Double Regresa2Decimales(Double Valor) {
+        try {
+            int aux = (int) (Valor * 100);//1243
+            Valor = aux / 100d;// 
+        } catch (Exception e) {
+            System.out.println(e.toString() + " Line:149");
         }
         return Valor;
-      }
-    
-    public void SacarEficienciaObj(){
-        try{
-            rs= Principal.cn.GetConsulta("SELECT\n" +
-                "eficsemana.SEMANA,\n" +
-                "DATEDIFF(eficsemana.SEMANA, now()),\n" +
-                "eficsemana.CAD"+cbxCadena.getSelectedItem().toString()+cbxTurno.getSelectedItem().toString()+" \n" +
-                "FROM\n" +
-                "eficsemana \n" +
-                "where \n" +
-                "DATEDIFF(eficsemana.SEMANA, date('"+RegresaFecha()+"'))<1 and DATEDIFF(eficsemana.SEMANA, date('"+RegresaFecha()+"'))>=-6");
-            if(rs.next())
-            {
-                FechaSemana=rs.getString("semana");
-                EficiencObjetivo=rs.getDouble(3);
+    }
+
+    public void SacarEficienciaObj() {
+        try {
+            rs = Principal.cn.GetConsulta("SELECT\n"
+                    + "eficsemana.SEMANA,\n"
+                    + "DATEDIFF(eficsemana.SEMANA, now()),\n"
+                    + "eficsemana.CAD" + cbxCadena.getSelectedItem().toString() + cbxTurno.getSelectedItem().toString() + " \n"
+                    + "FROM\n"
+                    + "eficsemana \n"
+                    + "where \n"
+                    + "DATEDIFF(eficsemana.SEMANA, date('" + RegresaFecha() + "'))<1 and DATEDIFF(eficsemana.SEMANA, date('" + RegresaFecha() + "'))>=-6");
+            if (rs.next()) {
+                FechaSemana = rs.getString("semana");
+                EficiencObjetivo = rs.getDouble(3);
                 lblObetivoCadena.setText(EficiencObjetivo.toString() + " %");
             }
-        }catch(Exception e){
-            System.out.println(e.toString()+ "LINE:SacarEficienciaObj");
+        } catch (Exception e) {
+            System.out.println(e.toString() + "LINE:SacarEficienciaObj");
         }
     }
-     
-    public  void Enlazardgv(){
-        modeloCausas=new DefaultTableModel(){
+
+    public void Enlazardgv() {
+        modeloCausas = new DefaultTableModel() {
 
             @Override
             public boolean isCellEditable(int i, int i1) {
-                return  false;//To change body of generated methods, choose Tools | Templates.
+                return false;//To change body of generated methods, choose Tools | Templates.
             }
-            
+
         };
         modeloCausas.setColumnIdentifiers(new Object[]{"IDCAUSA", "CAUSA", "HORAS", "PUNTOS"});
         tblCodigos.setModel(modeloCausas);
@@ -232,202 +211,183 @@ public class CapturaImpactos extends javax.swing.JFrame {
         tblCodigos.getColumnModel().getColumn(1).setMinWidth(300);
         tblCodigos.getColumnModel().getColumn(1).setPreferredWidth(300);
     }
-   
-    public void Enlazardetalle(){
+
+    public void Enlazardetalle() {
         try {
-            rs=Principal.cn.GetConsulta("SELECT\n" +
-                "detalleeficiencialabor.fecha,\n" +
-                "detalleeficiencialabor.cadena,\n" +
-                "detalleeficiencialabor.Turno,\n" +
-                "detalleeficiencialabor.idcausa,\n" +
-                "detalleeficiencialabor.descripcion,\n" +
-                "detalleeficiencialabor.horas,\n" +
-                "detalleeficiencialabor.puntos\n" +
-                "FROM\n" +
-                "detalleeficiencialabor\n" +
-                "WHERE\n" +
-                "date(detalleeficiencialabor.fecha)='"+RegresaFecha()+"' and cadena='"+cbxCadena.getSelectedItem().toString()+"'\n" +
-                " and Turno='"+cbxTurno.getSelectedItem().toString()+"'");
-            while(rs.next())
-            {
-             AgregarCausa(rs.getString("idcausa"), rs.getString("descripcion"), rs.getDouble("horas"), rs.getDouble("puntos"));
+            rs = Principal.cn.GetConsulta("SELECT\n"
+                    + "detalleeficiencialabor.fecha,\n"
+                    + "detalleeficiencialabor.cadena,\n"
+                    + "detalleeficiencialabor.Turno,\n"
+                    + "detalleeficiencialabor.idcausa,\n"
+                    + "detalleeficiencialabor.descripcion,\n"
+                    + "detalleeficiencialabor.horas,\n"
+                    + "detalleeficiencialabor.puntos\n"
+                    + "FROM\n"
+                    + "detalleeficiencialabor\n"
+                    + "WHERE\n"
+                    + "date(detalleeficiencialabor.fecha)='" + RegresaFecha() + "' and cadena='" + cbxCadena.getSelectedItem().toString() + "'\n"
+                    + " and Turno='" + cbxTurno.getSelectedItem().toString() + "'");
+            while (rs.next()) {
+                AgregarCausa(rs.getString("idcausa"), rs.getString("descripcion"), rs.getDouble("horas"), rs.getDouble("puntos"));
             }
             SacarTotal();
-                
-        }catch(Exception e)
-        {
+
+        } catch (Exception e) {
         }
     }
-    
-    public void EnlazarCbxCausas(){
-        try{
-           rs=Principal.cn.GetConsulta("SELECT * FROM CAUSAS");
-           while(rs.next())
-           {
-               idcausa.add(rs.getString(1));
-               cbxCausas.addItem(rs.getString(2));
-           }
-               
-        }catch(Exception e)
-        {
-            System.out.println(e.toString()+ " Line:219");
-        }
-    }
-    
-    public void EnlazarCbxCadena(){
-        try{
-           rs=Principal.cn.GetConsulta("SELECT DISTINCT\n" +
-                "codigos.CADENA\n" +
-                "FROM\n" +
-                "codigos");
-           while(rs.next())
-           {
-              cbxCadena.addItem(rs.getString(1));
-           }
-               
-        }catch(Exception e)
-        {
-            System.out.println(e.toString() +" Line:236");
-        }
-    }
-    
-    public boolean EstaEnTabla(){
-        boolean rsp=false;
+
+    public void EnlazarCbxCausas() {
         try {
-            for(int i=0; i<modeloCausas.getRowCount(); i++)
-            {
-             if(modeloCausas.getValueAt(i, 0).toString().equals(idcausa.get(cbxCausas.getSelectedIndex())))
-             { 
-                 rsp=true; 
-                 break;
-             }
+            rs = Principal.cn.GetConsulta("SELECT * FROM CAUSAS");
+            while (rs.next()) {
+                idcausa.add(rs.getString(1));
+                cbxCausas.addItem(rs.getString(2));
             }
-        }catch(Exception e)
-        {
+
+        } catch (Exception e) {
+            System.out.println(e.toString() + " Line:219");
+        }
+    }
+
+    public void EnlazarCbxCadena() {
+        try {
+            rs = Principal.cn.GetConsulta("SELECT DISTINCT\n"
+                    + "codigos.CADENA\n"
+                    + "FROM\n"
+                    + "codigos");
+            while (rs.next()) {
+                cbxCadena.addItem(rs.getString(1));
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.toString() + " Line:236");
+        }
+    }
+
+    public boolean EstaEnTabla() {
+        boolean rsp = false;
+        try {
+            for (int i = 0; i < modeloCausas.getRowCount(); i++) {
+                if (modeloCausas.getValueAt(i, 0).toString().equals(idcausa.get(cbxCausas.getSelectedIndex()))) {
+                    rsp = true;
+                    break;
+                }
+            }
+        } catch (Exception e) {
         }
         return rsp;
     }
-     
-    public Double SacarPorcentajeEfic(){ 
-         Double resp=0.0;
-        try{
-            if(((Double)txtHrsPag.getValue())>0)
-            {
-                resp=Regresa2Decimales(((Double)txtHrsEmb.getValue()/(Double)txtHrsPag.getValue())*100);
-                DifPorc=resp-EficiencObjetivo;
-                DifHoras=((Double)txtHrsEmb.getValue()/( EficiencObjetivo/100))-(Double)txtHrsPag.getValue();
+
+    public Double SacarPorcentajeEfic() {
+        Double resp = 0.0;
+        try {
+            if (((Double) txtHrsPag.getValue()) > 0) {
+                resp = Regresa2Decimales(((Double) txtHrsEmb.getValue() / (Double) txtHrsPag.getValue()) * 100);
+                DifPorc = resp - EficiencObjetivo;
+                DifHoras = ((Double) txtHrsEmb.getValue() / (EficiencObjetivo / 100)) - (Double) txtHrsPag.getValue();
                 lblDifPorc.setText(Regresa2Decimales(DifPorc).toString() + " %");
-                lblDifHras.setText(Regresa2Decimales(DifHoras).toString() );
-                if(resp<EficiencObjetivo)
-                {
+                lblDifHras.setText(Regresa2Decimales(DifHoras).toString());
+                if (resp < EficiencObjetivo) {
                     txtEfic.setBackground(Color.RED);
-                }else if(resp==EficiencObjetivo)
-                {
+                } else if (resp == EficiencObjetivo) {
                     txtEfic.setBackground(Color.ORANGE);
-                }else if(resp>EficiencObjetivo)
-                {
+                } else if (resp > EficiencObjetivo) {
                     txtEfic.setBackground(Color.GREEN);
                 }
             }
-            
-            
-        }catch(Exception e){
+
+        } catch (Exception e) {
         }
-         return resp;
-     }
-    
-    public void Limpiar(){
+        return resp;
+    }
+
+    public void Limpiar() {
         cbxCadena.setSelectedIndex(0);
         txtHoras.setValue(0.0);
     }
-    
-    public void LimpiarHoras(){
+
+    public void LimpiarHoras() {
         lblDifHras.setText(DifHoras.toString());
-        lblDifPorc.setText(DifPorc+ " %");
+        lblDifPorc.setText(DifPorc + " %");
         txtPuntos.setValue(0);
         txtHrsEmb.setValue(0);
         txtHrsPag.setValue(0);
-        EficiencObjetivo=0.0;
-        txtEfic.setText("0 %" );
+        EficiencObjetivo = 0.0;
+        txtEfic.setText("0 %");
         lblObetivoCadena.setText("0 %");
     }
-    
-    public void eliminar(String fecha, String idcausa, String Cadena, String Turno){
-        try{
-            ArrayList<String> objetos=new  ArrayList<String>();
+
+    public void eliminar(String fecha, String idcausa, String Cadena, String Turno) {
+        try {
+            ArrayList<String> objetos = new ArrayList<String>();
             objetos.add(fecha);
             objetos.add(Cadena);
             objetos.add(Turno);
             objetos.add(idcausa);
             Principal.cn.EjecutarInsert("delete from detalleeficiencialabor where date(detalleeficiencialabor.fecha)=? and cadena=? and turno=? and detalleeficiencialabor.idcausa=?", objetos);
-            
-        }catch(Exception e)
-        {
-         System.out.println(e.toString());   
+
+        } catch (Exception e) {
+            System.out.println(e.toString());
         }
     }
-    
-    private String RegresaFecha(){
+
+    private String RegresaFecha() {
         return new SimpleDateFormat("yyyy-MM-dd").format(DatFeccha.getDate()).toString();
     }
-    
-    public void Exportar(String Ruta){
+
+    public void Exportar(String Ruta) {
         DefaultTableModel modeloExportar;
-        try{
-           rs=Principal.cn.GetConsulta("SELECT\n" +
-                "date(eficiencialabor.fechahora) as fecha,\n" +
-                "eficiencialabor.cadena,\n" +
-                "eficiencialabor.turno,\n" +
-                "eficiencialabor.eficienciaObjetivo,\n" +
-                "eficiencialabor.hrsEmb,\n" +
-                "eficiencialabor.hrsReales,\n" +
-                "eficiencialabor.EficienciaLabor,\n" +
-                "eficiencialabor.Diferencia,\n" +
-                "eficiencialabor.comentario,\n" +
-                "DATEDIFF((fechahora), '2014-10-06')\n" +
-                "FROM\n" +
-                "eficiencialabor\n" +
-                "where \n" +
-                "DATEDIFF((fechahora), '"+FechaSemana+"')>=0 and DATEDIFF((fechahora), '"+FechaSemana+"')<=5 AND CADENA='"+cbxCadena.getSelectedItem().toString()+"' AND TURNO ='"+cbxTurno.getSelectedItem().toString()+"'");
-               modeloExportar=new DefaultTableModel();
-            modeloExportar.setColumnIdentifiers(new Object[]{"FECHA", "CADENA", "TURNO", "EFICIENCIAOBJETIVO", "hrsEmb", "hrsReales", "EficienciaLabor", "Diferencia", "COMENTARIO"});               
-           while(rs.next())
-           {
-            modeloExportar.addRow(new Object[]{rs.getDate("fecha"), rs.getString("cadena"), rs.getString("turno"), rs.getString("eficienciaObjetivo"), rs.getString("hrsEmb"), rs.getString("hrsReales"), rs.getString("EficienciaLabor"), rs.getString("Diferencia"), rs.getString("comentario")});
-           }
-            ExcelImpactos excelImpactos=new ExcelImpactos();
+        try {
+            rs = Principal.cn.GetConsulta("SELECT\n"
+                    + "date(eficiencialabor.fechahora) as fecha,\n"
+                    + "eficiencialabor.cadena,\n"
+                    + "eficiencialabor.turno,\n"
+                    + "eficiencialabor.eficienciaObjetivo,\n"
+                    + "eficiencialabor.hrsEmb,\n"
+                    + "eficiencialabor.hrsReales,\n"
+                    + "eficiencialabor.EficienciaLabor,\n"
+                    + "eficiencialabor.Diferencia,\n"
+                    + "eficiencialabor.comentario,\n"
+                    + "DATEDIFF((fechahora), '2014-10-06')\n"
+                    + "FROM\n"
+                    + "eficiencialabor\n"
+                    + "where \n"
+                    + "DATEDIFF((fechahora), '" + FechaSemana + "')>=0 and DATEDIFF((fechahora), '" + FechaSemana + "')<=5 AND CADENA='" + cbxCadena.getSelectedItem().toString() + "' AND TURNO ='" + cbxTurno.getSelectedItem().toString() + "'");
+            modeloExportar = new DefaultTableModel();
+            modeloExportar.setColumnIdentifiers(new Object[]{"FECHA", "CADENA", "TURNO", "EFICIENCIAOBJETIVO", "hrsEmb", "hrsReales", "EficienciaLabor", "Diferencia", "COMENTARIO"});
+            while (rs.next()) {
+                modeloExportar.addRow(new Object[]{rs.getDate("fecha"), rs.getString("cadena"), rs.getString("turno"), rs.getString("eficienciaObjetivo"), rs.getString("hrsEmb"), rs.getString("hrsReales"), rs.getString("EficienciaLabor"), rs.getString("Diferencia"), rs.getString("comentario")});
+            }
+            ExcelImpactos excelImpactos = new ExcelImpactos();
             excelImpactos.ExcelImpactos(Ruta, FechaSemana, modeloExportar);
-        }catch(Exception e)
-        {
-            System.out.println(e.toString()+"LINE: EXPORTAR");
+        } catch (Exception e) {
+            System.out.println(e.toString() + "LINE: EXPORTAR");
         }
     }
-    
+
     public void copyFile(File sourceFile, File destFile) throws IOException {
-    if(!destFile.exists()) {
-        destFile.createNewFile();
-    }
-    FileChannel origen = null;
-    FileChannel destino = null;
-    try {
-        origen = new FileInputStream(sourceFile).getChannel();
-        destino = new FileOutputStream(destFile).getChannel();
- 
-        long count = 0;
-        long size = origen.size();              
-        while((count += destino.transferFrom(origen, count, size-count))<size);
-    }
-    finally {
-        if(origen != null) {
-            origen.close();
+        if (!destFile.exists()) {
+            destFile.createNewFile();
         }
-        if(destino != null) {
-            destino.close();
+        FileChannel origen = null;
+        FileChannel destino = null;
+        try {
+            origen = new FileInputStream(sourceFile).getChannel();
+            destino = new FileOutputStream(destFile).getChannel();
+
+            long count = 0;
+            long size = origen.size();
+            while ((count += destino.transferFrom(origen, count, size - count)) < size);
+        } finally {
+            if (origen != null) {
+                origen.close();
+            }
+            if (destino != null) {
+                destino.close();
+            }
         }
     }
-}
-    
-   
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -840,29 +800,28 @@ public class CapturaImpactos extends javax.swing.JFrame {
 
     private void cbxCausasItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxCausasItemStateChanged
         // TODO add your handling code here:
-     //   JOptionPane.showMessageDialog(null, idcausa.get(cbxCausas.getSelectedIndex()), "", JOptionPane.INFORMATION_MESSAGE);
+        //   JOptionPane.showMessageDialog(null, idcausa.get(cbxCausas.getSelectedIndex()), "", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_cbxCausasItemStateChanged
 
     private void cbxTurnoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxTurnoItemStateChanged
         // TODO add your handling code here:
-          try{
+        try {
             //  if(BandActivarCbx)
-                    InsertarFechaImpacto();
-        }catch(Exception e){
+            InsertarFechaImpacto();
+        } catch (Exception e) {
             //System.out.println(e.toString());
         }
     }//GEN-LAST:event_cbxTurnoItemStateChanged
 
     private void cbxCadenaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxCadenaItemStateChanged
         // TODO add your handling code here:
-        try{
-            if(BandActivarCbx) 
-            {
+        try {
+            if (BandActivarCbx) {
                 InsertarFechaImpacto();
-              //  Limpiar();
-               
+                //  Limpiar();
+
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             //System.out.println(e.toString());
         }
     }//GEN-LAST:event_cbxCadenaItemStateChanged
@@ -879,94 +838,88 @@ public class CapturaImpactos extends javax.swing.JFrame {
 
     private void txtHrsEmbFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtHrsEmbFocusLost
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_txtHrsEmbFocusLost
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
-           if(((Double)txtHoras.getValue()>0) && (lblDifHras.getText().length()>0) && (!EstaEnTabla())) {
-               {  
-                  InsertarCausaBD(idcausa.get(cbxCausas.getSelectedIndex()), cbxCausas.getSelectedItem().toString(), Double.parseDouble(txtHoras.getValue().toString()), Double.parseDouble(txtPuntos.getValue().toString()));
-                  Enlazardgv();
-                  Enlazardetalle();
-                  txtHoras.setValue(0.0);
-                  txtPuntos.setValue(0.0);
-                  txtHoras.requestFocus();
-               }
-           }else
-           {
-               JOptionPane.showMessageDialog(null, "Algunos datos estan vacios o ya se encuentran en tabla...", "Error", JOptionPane.WARNING_MESSAGE);
-           }
+        if (((Double) txtHoras.getValue() > 0) && (lblDifHras.getText().length() > 0) && (!EstaEnTabla())) {
+            {
+                InsertarCausaBD(idcausa.get(cbxCausas.getSelectedIndex()), cbxCausas.getSelectedItem().toString(), Double.parseDouble(txtHoras.getValue().toString()), Double.parseDouble(txtPuntos.getValue().toString()));
+                Enlazardgv();
+                Enlazardetalle();
+                txtHoras.setValue(0.0);
+                txtPuntos.setValue(0.0);
+                txtHoras.requestFocus();
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Algunos datos estan vacios o ya se encuentran en tabla...", "Error", JOptionPane.WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void txtHorasStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_txtHorasStateChanged
         // TODO add your handling code here:
-        if((((Double)txtHrsPag.getValue())>0) && (((Double)txtHoras.getValue())>0))
-        {
-            txtPuntos.setValue(Regresa2Decimales(((Double)txtHoras.getValue()/(Double)txtHrsPag.getValue())*100));
+        if ((((Double) txtHrsPag.getValue()) > 0) && (((Double) txtHoras.getValue()) > 0)) {
+            txtPuntos.setValue(Regresa2Decimales(((Double) txtHoras.getValue() / (Double) txtHrsPag.getValue()) * 100));
             SacarTotal();
         }
     }//GEN-LAST:event_txtHorasStateChanged
 
     private void tblCodigosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCodigosMouseClicked
         // TODO add your handling code here:
-        if(evt.getClickCount()==2)
-        {
-           int rsp = JOptionPane.showConfirmDialog(null, "DESEA ELIMINAR LA CAUSA?", "CONFIRMACION", JOptionPane.YES_NO_OPTION);
-           if(rsp==JOptionPane.YES_OPTION)
-           {
-               eliminar(RegresaFecha(), modeloCausas.getValueAt(tblCodigos.rowAtPoint(evt.getPoint()),0) .toString(), cbxCadena.getSelectedItem().toString(), cbxTurno.getSelectedItem().toString());           
-               lblTotHrsCausa.setText("0");
-               lblTotPtoCausa.setText("0");
-               Enlazardgv();
-               Enlazardetalle();
-               
-           }  
+        if (evt.getClickCount() == 2) {
+            int rsp = JOptionPane.showConfirmDialog(null, "DESEA ELIMINAR LA CAUSA?", "CONFIRMACION", JOptionPane.YES_NO_OPTION);
+            if (rsp == JOptionPane.YES_OPTION) {
+                eliminar(RegresaFecha(), modeloCausas.getValueAt(tblCodigos.rowAtPoint(evt.getPoint()), 0).toString(), cbxCadena.getSelectedItem().toString(), cbxTurno.getSelectedItem().toString());
+                lblTotHrsCausa.setText("0");
+                lblTotPtoCausa.setText("0");
+                Enlazardgv();
+                Enlazardetalle();
+
+            }
         }
     }//GEN-LAST:event_tblCodigosMouseClicked
 
     private void DatFecchaPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_DatFecchaPropertyChange
         // TODO add your handling code here:
-        try{
-            if(BandActivarCbx)
+        try {
+            if (BandActivarCbx) {
                 InsertarFechaImpacto();
-        }catch(Exception e){
-            System.out.println(e.toString() +" Line:798");
+            }
+        } catch (Exception e) {
+            System.out.println(e.toString() + " Line:798");
         }
     }//GEN-LAST:event_DatFecchaPropertyChange
 
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
         // TODO add your handling code here:
-        try{
+        try {
             Actualizar();
-            
-        } catch(Exception e)
-        {
-            
+
+        } catch (Exception e) {
+
         }
-           
+
     }//GEN-LAST:event_btnActualizarActionPerformed
 
     private void btnExportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportarActionPerformed
         // TODO add your handling code here:
-        String curDir = System.getProperty("user.dir")+"\\dist\\lib\\Archivo Impactos.xls";
-       File file=new File(curDir);
-        if(file.exists())
-       { 
+        String curDir = System.getProperty("user.dir") + "\\dist\\lib\\Archivo Impactos.xls";
+        File file = new File(curDir);
+        if (file.exists()) {
             try {
-                copyFile(new File(curDir), new File(System.getProperty("user.home")+"/desktop/Impactos.xls"));
-                Exportar(System.getProperty("user.home")+"/desktop/Impactos.xls");
+                copyFile(new File(curDir), new File(System.getProperty("user.home") + "/desktop/Impactos.xls"));
+                Exportar(System.getProperty("user.home") + "/desktop/Impactos.xls");
             } catch (IOException ex) {
-                System.out.println(ex.toString()+ "BTNEXPORTAR");
+                System.out.println(ex.toString() + "BTNEXPORTAR");
             }
-       }else
-           JOptionPane.showMessageDialog(null, "ERROR AL CARGAR EL FORMATO ARCHIVO IMPACTOS...", "", JOptionPane.INFORMATION_MESSAGE);
+        } else
+            JOptionPane.showMessageDialog(null, "ERROR AL CARGAR EL FORMATO ARCHIVO IMPACTOS...", "", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_btnExportarActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // TODO add your handling code here:
-        if(JOptionPane.showConfirmDialog (null, "Desea guardar los cambios realizados?","Warning",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION)
-        {
+        if (JOptionPane.showConfirmDialog(null, "Desea guardar los cambios realizados?", "Warning", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             Actualizar();
         }
     }//GEN-LAST:event_formWindowClosing

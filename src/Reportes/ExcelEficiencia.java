@@ -26,29 +26,27 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
-/**
- *
- * @author gzld6k
- */
+
 public final class ExcelEficiencia {
-    
+
     File ArchivoXLS;
     HSSFSheet hoja;
     HSSFWorkbook libro;
-    int Renglon=0;
-    int columna=0;
+    int Renglon = 0;
+    int columna = 0;
     CellStyle celdaStiloCabecera;
     CellStyle celdaDetalle;
     CellStyle celdaTotales;
-    
-       public ExcelEficiencia(){
-        
-    }  
-       public ExcelEficiencia (DefaultTableModel modelo, String Nombre,String FECHA) throws IOException{
-       FileOutputStream archivo = null;
+
+    public ExcelEficiencia() {
+
+    }
+
+    public ExcelEficiencia(DefaultTableModel modelo, String Nombre, String FECHA) throws IOException {
+        FileOutputStream archivo = null;
         try {
             /*La ruta donde se creará el archivo*/
-              String rutaArchivo ="C:\\compartida\\produccion_corte\\templates\\ReporteHC"+FECHA+".xls";
+            String rutaArchivo = "C:\\compartida\\produccion_corte\\templates\\ReporteHC" + FECHA + ".xls";
             /*Se crea el objeto de tipo File con la ruta del archivo*/
             File archivoXLS = new File(rutaArchivo);
             libro = new HSSFWorkbook();
@@ -56,117 +54,110 @@ public final class ExcelEficiencia {
             hoja = libro.createSheet("Reporte");
             getTituloStyle();
             getStyleDetalle();
-            if(modelo.getRowCount()>0)
-            {
-                Row renglon=hoja.createRow(1);
-                hoja.addMergedRegion(new CellRangeAddress(1,1, 1,6));
-                 Cell celda=renglon.createCell(1);
-                    celda.setCellValue("REPORTE DE EFICIENCIA");
-                    celda.setCellStyle(celdaStiloCabecera);
-                renglon=hoja.createRow(0);
-                celda=renglon.createCell(modelo.getColumnCount());
+            if (modelo.getRowCount() > 0) {
+                Row renglon = hoja.createRow(1);
+                hoja.addMergedRegion(new CellRangeAddress(1, 1, 1, 6));
+                Cell celda = renglon.createCell(1);
+                celda.setCellValue("REPORTE DE EFICIENCIA");
+                celda.setCellStyle(celdaStiloCabecera);
+                renglon = hoja.createRow(0);
+                celda = renglon.createCell(modelo.getColumnCount());
                 celda.setCellValue("Fecha: ");
-                celda=renglon.createCell(modelo.getColumnCount()+1);
+                celda = renglon.createCell(modelo.getColumnCount() + 1);
                 celda.setCellValue(GetFecha(new Date()));
-                                        
-                 renglon=hoja.createRow(2);
-                for(int i=2; i<modelo.getColumnCount()+2; i++)
-                {
-                   hoja.setColumnWidth(i, modelo.getColumnName(i-2).length()*400);
-                   // hoja.autoSizeColumn(i);
-                    celda=renglon.createCell(i);
-                    celda.setCellValue(modelo.getColumnName(i-2));
+
+                renglon = hoja.createRow(2);
+                for (int i = 2; i < modelo.getColumnCount() + 2; i++) {
+                    hoja.setColumnWidth(i, modelo.getColumnName(i - 2).length() * 400);
+                    // hoja.autoSizeColumn(i);
+                    celda = renglon.createCell(i);
+                    celda.setCellValue(modelo.getColumnName(i - 2));
                     celda.setCellStyle(getTituloStyleTotales(HSSFColor.YELLOW.index));
                 }
             }
-            for(int x=0; x<modelo.getRowCount(); x++)
-            {
-                     Row renglon=hoja.createRow((x+3));
+            for (int x = 0; x < modelo.getRowCount(); x++) {
+                Row renglon = hoja.createRow((x + 3));
 
-                     Cell celda=null;
-                   for(int i=2; i<modelo.getColumnCount()+2; i++)
-                    {
-                        celda =renglon.createCell(i);
-                        try{
-                            celda.setCellValue(Double.parseDouble( modelo.getValueAt(x, i-2).toString()));
-                        }catch(NumberFormatException e)
-                        {
-                            celda.setCellValue( modelo.getValueAt(x, i-2).toString());
-                        }
-
-                       celda.setCellStyle(celdaDetalle);
+                Cell celda = null;
+                for (int i = 2; i < modelo.getColumnCount() + 2; i++) {
+                    celda = renglon.createCell(i);
+                    try {
+                        celda.setCellValue(Double.parseDouble(modelo.getValueAt(x, i - 2).toString()));
+                    } catch (NumberFormatException e) {
+                        celda.setCellValue(modelo.getValueAt(x, i - 2).toString());
                     }
+
+                    celda.setCellStyle(celdaDetalle);
+                }
             }
-            
-           
+
 //                AGREGAR RENGLON EN LA LIBRETA
-                     Row renglon=hoja.createRow((modelo.getRowCount()+3));
-                     Cell celda=null;
-                     celda=renglon.createCell(2);
-                     celda.setCellValue("TOTAL PLANTAaa");
-                     celda.setCellStyle(celdaDetalle);
-                     celda=renglon.createCell(3);
-                       celda.setCellStyle(celdaDetalle);
+            Row renglon = hoja.createRow((modelo.getRowCount() + 3));
+            Cell celda = null;
+            celda = renglon.createCell(2);
+            celda.setCellValue("TOTAL PLANTAaa");
+            celda.setCellStyle(celdaDetalle);
+            celda = renglon.createCell(3);
+            celda.setCellStyle(celdaDetalle);
 //                     celda=renglon.createCell(4);
 //                     celda.setCellStyle(celdaDetalle);
 //                     celda.setCellFormula("SUM(E4:E"+(modelo.getRowCount()+3)+")");
 //                     celda=renglon.createCell(5);
 //                     celda.setCellStyle(celdaDetalle);
 //                     celda.setCellFormula("SUM(F4:F"+(modelo.getRowCount()+3)+")");
-                     
-                    for (int i = 0; i < modelo.getRowCount()+1; i++) {
-                      renglon=hoja.getRow(i+3);
-                      celda=renglon.createCell(10);
-                     celda.setCellStyle(getStyleDetallePorc());
-                    celda.setCellFormula("E"+(i+4)+"/F"+(i+4));
-                    }
+
+            for (int i = 0; i < modelo.getRowCount() + 1; i++) {
+                renglon = hoja.getRow(i + 3);
+                celda = renglon.createCell(10);
+                celda.setCellStyle(getStyleDetallePorc());
+                celda.setCellFormula("E" + (i + 4) + "/F" + (i + 4));
+            }
 // 
-               //
-            
-        libro.write(archivo);
-        /*Cerramos el flujo de datos*/
-        archivo.close();
-        /*Y abrimos el archivo con la clase Desktop*/
-        Desktop.getDesktop().open(archivoXLS);
+            //
+
+            libro.write(archivo);
+            /*Cerramos el flujo de datos*/
+            archivo.close();
+            /*Y abrimos el archivo con la clase Desktop*/
+            Desktop.getDesktop().open(archivoXLS);
         } catch (FormulaParseException | IOException ex) {
-           System.out.println(ex.toString()+ "aqui fue el pedo 7");
+            System.out.println(ex.toString() + "aqui fue el pedo 7");
         } finally {
             try {
                 archivo.close();
             } catch (IOException ex) {
-                System.out.println(ex.toString()+"aqui fue el pedo 8");
+                System.out.println(ex.toString() + "aqui fue el pedo 8");
             }
         }
     }
-       //CONSTRUCTOR QUE EXPORTA A EXCEL TODAS LAS CADENA Y TURNO EL BUENO MIRIAM
-       public ExcelEficiencia(ArrayList<DefaultTableModel> modelo, DefaultTableModel  modeloTotal, ArrayList<String> Nombre, DefaultTableModel modeloTotal2, DefaultTableModel ModelocorteM,DefaultTableModel plataformas,DefaultTableModel plataformasMSD,DefaultTableModel TCODIGOS,DefaultTableModel plataformasT,DefaultTableModel concentradoplataformaslm,DefaultTableModel concentradoplataformasgml,DefaultTableModel concentradoplataformasLMYGML,DefaultTableModel plataformasGMTLM ,DefaultTableModel plataformaK2XXLM,DefaultTableModel plataformaT1XXLM,DefaultTableModel plataformaE2XXLM,DefaultTableModel plataformaISUZULM,DefaultTableModel plataformaSERVICIOSLM,DefaultTableModel plataformaCORTELM,DefaultTableModel plataformasGMTGML,DefaultTableModel plataformasK2XXGML,DefaultTableModel plataformasT1XXGML,DefaultTableModel plataformascorteGML,DefaultTableModel plataformasserviciosGML,DefaultTableModel TBLCATIA,DefaultTableModel PPCORTE ,String Nota, String FECHA) throws IOException{
-       FileOutputStream archivo = null;
-       int ho=0;
-       try {
+    //CONSTRUCTOR QUE EXPORTA A EXCEL TODAS LAS CADENA Y TURNO EL BUENO MIRIAM
+
+    public ExcelEficiencia(ArrayList<DefaultTableModel> modelo, DefaultTableModel modeloTotal, ArrayList<String> Nombre, DefaultTableModel modeloTotal2, DefaultTableModel ModelocorteM, DefaultTableModel plataformas, DefaultTableModel plataformasMSD, DefaultTableModel TCODIGOS, DefaultTableModel plataformasT, DefaultTableModel concentradoplataformaslm, DefaultTableModel concentradoplataformasgml, DefaultTableModel concentradoplataformasLMYGML, DefaultTableModel plataformasGMTLM, DefaultTableModel plataformaK2XXLM, DefaultTableModel plataformaT1XXLM, DefaultTableModel plataformaE2XXLM, DefaultTableModel plataformaISUZULM, DefaultTableModel plataformaSERVICIOSLM, DefaultTableModel plataformaCORTELM, DefaultTableModel plataformasGMTGML, DefaultTableModel plataformasK2XXGML, DefaultTableModel plataformasT1XXGML, DefaultTableModel plataformascorteGML, DefaultTableModel plataformasserviciosGML, DefaultTableModel TBLCATIA, DefaultTableModel PPCORTE, String Nota, String FECHA) throws IOException {
+        FileOutputStream archivo = null;
+        int ho = 0;
+        try {
             /*La ruta donde se creará el archivo*/
             //String rutaArchivo = System.getProperty("user.home")+"/desktop/Reporte HC "+Nombre+".xls";
-            String rutaArchivo ="C:\\REPORTES HC\\ReporteHC " + FECHA+".xls";
+            String rutaArchivo = "C:\\REPORTES HC\\ReporteHC " + FECHA + ".xls";
             /*Se crea el objeto de tipo File con la ruta del archivo*/
             File archivoXLS = new File(rutaArchivo);
             libro = new HSSFWorkbook();
             archivo = new FileOutputStream(archivoXLS);
-            for(ho=0; ho<modelo.size(); ho++){
-            hoja = libro.createSheet(Nombre.get(ho));
-            getTituloStyle();
-            getStyleDetalle();
-            if(modelo.get(ho).getRowCount()>0)
-            {
-                Row renglon=hoja.createRow(2);
-                for(int i=0; i<modelo.get(ho).getColumnCount(); i++)
-                {
-                    hoja.setColumnWidth(i, modelo.get(ho).getColumnName(i).length()*350);
-                    Cell celda=renglon.createCell(i);
-                    celda.setCellValue(modelo.get(ho).getColumnName(i));
-                    celda.setCellStyle(celdaStiloCabecera);
-                    
+            for (ho = 0; ho < modelo.size(); ho++) {
+                hoja = libro.createSheet(Nombre.get(ho));
+                getTituloStyle();
+                getStyleDetalle();
+                if (modelo.get(ho).getRowCount() > 0) {
+                    Row renglon = hoja.createRow(2);
+                    for (int i = 0; i < modelo.get(ho).getColumnCount(); i++) {
+                        hoja.setColumnWidth(i, modelo.get(ho).getColumnName(i).length() * 350);
+                        Cell celda = renglon.createCell(i);
+                        celda.setCellValue(modelo.get(ho).getColumnName(i));
+                        celda.setCellStyle(celdaStiloCabecera);
+
+                    }
                 }
-            }
-            ///aqui es el pedo
+                ///aqui es el pedo
                 for (int x = 0; x < modelo.get(ho).getRowCount(); x++) {
                     Row renglon = hoja.createRow(x + 3);
                     for (int i = 0; i < modelo.get(ho).getColumnCount(); i++) {
@@ -186,709 +177,635 @@ public final class ExcelEficiencia {
                         }
                     }
                 }
-            for(int x=0; x<modelo.get(ho).getRowCount(); x++)
-            {
-               try      {
-                   Row renglon=hoja.getRow(x+3);
-                   Cell celda=renglon.createCell(modelo.get(ho).getColumnCount()-1);
-                celda.setCellFormula("+"+getColumnName(modelo.get(ho).getColumnCount()-3)+""+(x+4)+"/"+getColumnName(modelo.get(ho).getColumnCount()-2)+""+(x+4));
-                   celda.setCellStyle(getStyleDetallePorc());
-               }catch(Exception e){
-            System.out.println(e.toString()+"aqui fue el pedo");
-            }
-                
-            }
-            
-            Row renglon=hoja.createRow(modelo.get(ho).getRowCount()+3);
-            Cell celda=renglon.createCell(0);
-            celda.setCellValue("TOTAL");
-            celda.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-          
-            for(int i =3; i<modelo.get(ho).getColumnCount()-1; i++)
-            {
-               // if(modelo.get(ho).getColumnName(i).toString().equals("HC")
-                 celda=renglon.createCell(i);
-                String formula="SUM("+getColumnName(i)+"4:"+getColumnName(i)+(modelo.get(ho).getRowCount()+3)+")";
-                celda.setCellFormula(formula);
+                for (int x = 0; x < modelo.get(ho).getRowCount(); x++) {
+                    try {
+                        Row renglon = hoja.getRow(x + 3);
+                        Cell celda = renglon.createCell(modelo.get(ho).getColumnCount() - 1);
+                        celda.setCellFormula("+" + getColumnName(modelo.get(ho).getColumnCount() - 3) + "" + (x + 4) + "/" + getColumnName(modelo.get(ho).getColumnCount() - 2) + "" + (x + 4));
+                        celda.setCellStyle(getStyleDetallePorc());
+                    } catch (Exception e) {
+                        System.out.println(e.toString() + "aqui fue el pedo");
+                    }
+
+                }
+
+                Row renglon = hoja.createRow(modelo.get(ho).getRowCount() + 3);
+                Cell celda = renglon.createCell(0);
+                celda.setCellValue("TOTAL");
                 celda.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-                //celda.setCellStyle(celdaDetalle);
-            }
-            
-            celda=renglon.createCell(modelo.get(ho).getColumnCount()-1);
-                String formula="+"+getColumnName(modelo.get(ho).getColumnCount()-3)+String.valueOf(modelo.get(ho).getRowCount()+4)+"/+"+getColumnName(modelo.get(ho).getColumnCount()-2)+String.valueOf(modelo.get(ho).getRowCount()+4);
+
+                for (int i = 3; i < modelo.get(ho).getColumnCount() - 1; i++) {
+                    // if(modelo.get(ho).getColumnName(i).toString().equals("HC")
+                    celda = renglon.createCell(i);
+                    String formula = "SUM(" + getColumnName(i) + "4:" + getColumnName(i) + (modelo.get(ho).getRowCount() + 3) + ")";
+                    celda.setCellFormula(formula);
+                    celda.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+                    //celda.setCellStyle(celdaDetalle);
+                }
+
+                celda = renglon.createCell(modelo.get(ho).getColumnCount() - 1);
+                String formula = "+" + getColumnName(modelo.get(ho).getColumnCount() - 3) + String.valueOf(modelo.get(ho).getRowCount() + 4) + "/+" + getColumnName(modelo.get(ho).getColumnCount() - 2) + String.valueOf(modelo.get(ho).getRowCount() + 4);
                 celda.setCellFormula(formula);
                 celda.setCellStyle(getStyleDetallePorc(HSSFColor.GREEN.index));
             }
             ////METODO PARA CREAR HOJA DE CORTE TREES TURNOS 
-            
-            hoja=libro.createSheet("CORTE MOCHIS");
-            Row r=hoja.createRow(3);
-            for(int c=0; c<ModelocorteM.getColumnCount()+1; c++)
-                    {
-                        //hoja.setColumnWidth(i, Modelocorte.getColumnName(i).length()*450);
-                        hoja.setColumnWidth(c, ModelocorteM.getColumnName(c).length()*350);
-                         Cell celda=r.createCell(c);
-                         celda.setCellStyle(celdaStiloCabecera);
-                        try{
-                            celda.setCellValue(ModelocorteM.getColumnName(c));
-                        }catch(Exception e)
-                        {
-//                            celda.setCellValue( modelo.get(ho).getValueAt(x, i).toString());
-                        }       
-                    }
-            for(int i=0; i<ModelocorteM.getRowCount(); i++)
-            {
 
-                   r=hoja.createRow(r.getRowNum()+1);
-                    for(int x=0; x<ModelocorteM.getColumnCount(); x++)
-                    {
-                      
-                                 Cell celda=r.createCell(x);
-                                 if(x>2)
-                                     try{
-                                  celda.setCellValue(Double.parseDouble( ModelocorteM.getValueAt(i,x).toString()));
-                                     }
-                                     catch(NumberFormatException e ){
-                                     
-                                     }
-                                 else
-                                     celda.setCellValue( ModelocorteM.getValueAt(i,x).toString());
-                                    
-                    }
-            
+            hoja = libro.createSheet("CORTE MOCHIS");
+            Row r = hoja.createRow(3);
+            for (int c = 0; c < ModelocorteM.getColumnCount() + 1; c++) {
+                //hoja.setColumnWidth(i, Modelocorte.getColumnName(i).length()*450);
+                hoja.setColumnWidth(c, ModelocorteM.getColumnName(c).length() * 350);
+                Cell celda = r.createCell(c);
+                celda.setCellStyle(celdaStiloCabecera);
+                try {
+                    celda.setCellValue(ModelocorteM.getColumnName(c));
+                } catch (Exception e) {
+//                            celda.setCellValue( modelo.get(ho).getValueAt(x, i).toString());
+                }
             }
-            
- 
+            for (int i = 0; i < ModelocorteM.getRowCount(); i++) {
+
+                r = hoja.createRow(r.getRowNum() + 1);
+                for (int x = 0; x < ModelocorteM.getColumnCount(); x++) {
+
+                    Cell celda = r.createCell(x);
+                    if (x > 2)
+                                     try {
+                        celda.setCellValue(Double.parseDouble(ModelocorteM.getValueAt(i, x).toString()));
+                    } catch (NumberFormatException e) {
+
+                    } else {
+                        celda.setCellValue(ModelocorteM.getValueAt(i, x).toString());
+                    }
+
+                }
+
+            }
+
             /// PARTE DONDE SE FORMA LA PESTANA DE PLATAFORMAS CONCENTRADO TOTAL (T.Plataforma)////////////
-             hoja=libro.createSheet("T.Plataforma");
-           
-             // celdak.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-             r=hoja.createRow(1);
-            for(int c=0; c<plataformasT.getColumnCount(); c++)
-                    {
-                        //hoja.setColumnWidth(i, Modelocorte.getColumnName(i).length()*450);
-                        hoja.setColumnWidth(c, plataformasT.getColumnName(c).length()*550);
-                         Cell celda=r.createCell(c);
-                         celda.setCellStyle(celdaStiloCabecera);
-                        try{
-                            celda.setCellValue(plataformasT.getColumnName(c));
-                        }catch(Exception e)
-                        {
-                          //celda.setCellValue( modelo.get(ho).getValueAt(x, i).toString());
-                        }       
+            hoja = libro.createSheet("T.Plataforma");
+
+            // celdak.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+            r = hoja.createRow(1);
+            for (int c = 0; c < plataformasT.getColumnCount(); c++) {
+                //hoja.setColumnWidth(i, Modelocorte.getColumnName(i).length()*450);
+                hoja.setColumnWidth(c, plataformasT.getColumnName(c).length() * 550);
+                Cell celda = r.createCell(c);
+                celda.setCellStyle(celdaStiloCabecera);
+                try {
+                    celda.setCellValue(plataformasT.getColumnName(c));
+                } catch (Exception e) {
+                    //celda.setCellValue( modelo.get(ho).getValueAt(x, i).toString());
+                }
+            }
+
+            for (int i = 0; i < plataformasT.getRowCount() - 3; i++) {
+
+                r = hoja.createRow(r.getRowNum() + 1);
+                for (int x = 0; x < plataformasT.getColumnCount(); x++) {
+                    Cell celda = r.createCell(x);
+
+                    if (x > 0)
+                                     try {
+                        celda.setCellValue(Double.parseDouble(plataformasT.getValueAt(i, x).toString()));
+                    } catch (Exception e) {
+                    } else {
+                        celda.setCellValue(plataformasT.getValueAt(i, x).toString());
                     }
-            
-              for(int i=0; i<plataformasT.getRowCount()-3; i++)
+                }
+
+            }
+            /// tabla de corte srvicios y kachirules
+            r = hoja.createRow(10);
+            for (int i = 3; i < plataformasT.getRowCount(); i++) // aqui se le mueve cuando cambian las plataformas, -1 para abajo, +1 para arriba
             {
 
-                   r=hoja.createRow(r.getRowNum()+1);
-                    for(int x=0; x<plataformasT.getColumnCount(); x++)
-                    {                    
-                                 Cell celda=r.createCell(x);
-                                   
-                                 if(x>0)
-                                     try{
-                                  celda.setCellValue(Double.parseDouble( plataformasT.getValueAt(i,x).toString()));
-                                     }
-                                     catch(Exception e ){
-                                     }
-                                 else
-                                     celda.setCellValue(plataformasT.getValueAt(i,x).toString());
-                    }
-  
-            }
-              /// tabla de corte srvicios y kachirules
-               r=hoja.createRow(10);
-                 for(int i=3; i<plataformasT.getRowCount(); i++) // aqui se le mueve cuando cambian las plataformas, -1 para abajo, +1 para arriba
-            {
+                r = hoja.createRow(r.getRowNum() + 1);
+                for (int x = 0; x < plataformasT.getColumnCount(); x++) {
+                    Cell celdak = r.createCell(x);
 
-                   r=hoja.createRow(r.getRowNum()+1);
-                    for(int x=0; x<plataformasT.getColumnCount(); x++)
-                    {                    
-                                 Cell celdak=r.createCell(x);
-                                   
-                                 if(x>0)
-                                     try{
-                                  celdak.setCellValue(Double.parseDouble( plataformasT.getValueAt(i,x).toString()));
-                                     }
-                                     catch(Exception e ){
-                                     }
-                                 else
-                                     celdak.setCellValue(plataformasT.getValueAt(i,x).toString());
+                    if (x > 0)
+                                     try {
+                        celdak.setCellValue(Double.parseDouble(plataformasT.getValueAt(i, x).toString()));
+                    } catch (Exception e) {
+                    } else {
+                        celdak.setCellValue(plataformasT.getValueAt(i, x).toString());
                     }
-  
-            }
-                   //total de corte serv +kachiorules/////
-               Row renglonk=hoja.createRow((plataformasT.getRowCount()+9)); // aqui tambien se le mueve cuando cambian las plataformas +1 para abajo, -1 para arriba
-                     Cell celdak=null;
-                     celdak=renglonk.createCell(0);
-                     celdak.setCellValue("TOTAL");                    
-                     celdak.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-                     
-                    celdak=renglonk.createCell(1);
-                    celdak.setCellStyle(celdaDetalle);
-                    celdak.setCellFormula("SUM(B12:B15)");
-                            
-                    celdak=renglonk.createCell(2);
-                    celdak.setCellStyle(celdaDetalle);
-                    celdak.setCellFormula("SUM(C12:C15)");
-                            
-                    celdak=renglonk.createCell(3);
-                    celdak.setCellStyle(celdaDetalle);
-                    celdak.setCellFormula("SUM(D12:D15)");
-   
-               Row renglonT=hoja.createRow((plataformasT.getRowCount()));
-                     Cell celdaT=null;
-                     celdaT=renglonT.createCell(0);
-                     celdaT.setCellValue("TOTAL");
-                     celdaT.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-                     celdaT=renglonT.createCell(1);
-                            celdaT.setCellStyle(celdaDetalle);
-                            celdaT.setCellFormula("SUM(B3:B6)");
-                           
-                            
-                            celdaT=renglonT.createCell(2);
-                            celdaT.setCellStyle(celdaDetalle);
-                            celdaT.setCellFormula("SUM(C3:C6)");
-                            
-                            celdaT=renglonT.createCell(3);
-                            celdaT.setCellStyle(celdaDetalle);                        
-                            celdaT.setCellFormula("SUM(D3:D6)");
-                            
-                         celdaT=renglonT.createCell(4);
-                         celdaT.setCellStyle(celdaDetalle);
-                         celdaT.setCellStyle(getStyleDetallePorc());
-                         celdaT.setCellFormula("SUM(E3:E6)");
-                            
-                            celdaT=renglonT.createCell(5);
-                            celdaT.setCellStyle(celdaDetalle);
-                            celdaT.setCellFormula("SUM(F3:F6)");
-                            
-                            celdaT=renglonT.createCell(6);
-                            celdaT.setCellStyle(celdaDetalle);
-                            celdaT.setCellFormula("SUM(G3:G6)");
-                            
-                              celdaT=renglonT.createCell(7);
-                            celdaT.setCellStyle(celdaDetalle);
-                            celdaT.setCellFormula("SUM(H3:H6)");
+                }
 
-                            celdaT=renglonT.createCell(8);
-                           celdaT.setCellStyle(celdaDetalle);
-                            celdaT.setCellStyle(getStyleDetallePorc());
-                            celdaT.setCellFormula("G7/H7");
+            }
+            //total de corte serv +kachiorules/////
+            Row renglonk = hoja.createRow((plataformasT.getRowCount() + 9)); // aqui tambien se le mueve cuando cambian las plataformas +1 para abajo, -1 para arriba
+            Cell celdak = null;
+            celdak = renglonk.createCell(0);
+            celdak.setCellValue("TOTAL");
+            celdak.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+
+            celdak = renglonk.createCell(1);
+            celdak.setCellStyle(celdaDetalle);
+            celdak.setCellFormula("SUM(B12:B15)");
+
+            celdak = renglonk.createCell(2);
+            celdak.setCellStyle(celdaDetalle);
+            celdak.setCellFormula("SUM(C12:C15)");
+
+            celdak = renglonk.createCell(3);
+            celdak.setCellStyle(celdaDetalle);
+            celdak.setCellFormula("SUM(D12:D15)");
+
+            Row renglonT = hoja.createRow((plataformasT.getRowCount()));
+            Cell celdaT = null;
+            celdaT = renglonT.createCell(0);
+            celdaT.setCellValue("TOTAL");
+            celdaT.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+            celdaT = renglonT.createCell(1);
+            celdaT.setCellStyle(celdaDetalle);
+            celdaT.setCellFormula("SUM(B3:B6)");
+
+            celdaT = renglonT.createCell(2);
+            celdaT.setCellStyle(celdaDetalle);
+            celdaT.setCellFormula("SUM(C3:C6)");
+
+            celdaT = renglonT.createCell(3);
+            celdaT.setCellStyle(celdaDetalle);
+            celdaT.setCellFormula("SUM(D3:D6)");
+
+            celdaT = renglonT.createCell(4);
+            celdaT.setCellStyle(celdaDetalle);
+            celdaT.setCellStyle(getStyleDetallePorc());
+            celdaT.setCellFormula("SUM(E3:E6)");
+
+            celdaT = renglonT.createCell(5);
+            celdaT.setCellStyle(celdaDetalle);
+            celdaT.setCellFormula("SUM(F3:F6)");
+
+            celdaT = renglonT.createCell(6);
+            celdaT.setCellStyle(celdaDetalle);
+            celdaT.setCellFormula("SUM(G3:G6)");
+
+            celdaT = renglonT.createCell(7);
+            celdaT.setCellStyle(celdaDetalle);
+            celdaT.setCellFormula("SUM(H3:H6)");
+
+            celdaT = renglonT.createCell(8);
+            celdaT.setCellStyle(celdaDetalle);
+            celdaT.setCellStyle(getStyleDetallePorc());
+            celdaT.setCellFormula("G7/H7");
 //                            
 //                 ///Porcentage horas embarcadas////
-                        for (int i =0; i < plataformasT.getRowCount()-3; i++) {
-                          Row renglonpor=hoja.getRow(i+2);
-                          Cell celdapor=null;
-                          celdapor=renglonpor.createCell(4);
-                          celdapor.setCellStyle(celdaDetalle);
-                          celdapor.setCellStyle(getStyleDetallePorc());
-                          celdapor.setCellFormula("C"+(i+3)+"/$C$7");
-                          }
-                          
-                          for (int i =0; i < plataformasT.getRowCount()-3; i++) {
-                            Row renglonpor=hoja.getRow(i+2);
-                            Cell celdapor=null;
-                            celdapor=renglonpor.createCell(5);
-                            celdapor.setCellStyle(celdaDetalle);                        
-                            celdapor.setCellFormula("(E"+(i+3)+"*$B$16)+B"+(i+3)+"");
-                          }
-                          
-                          //Porcentage horas pagadas////
-                          for (int i = 0; i < plataformasT.getRowCount()-3; i++) {
-                          Row renglonpor=hoja.getRow(i+2);
-                          Cell celdapor=null;
-                          celdapor=renglonpor.createCell(6);
-                          celdapor.setCellStyle(celdaDetalle);
-                          //celdapor.setCellStyle(getStyleDetallePorc());
-                          celdapor.setCellFormula("(C16*E"+(i+3)+")+C"+(i+3)+"");
-                          }
-                          
-                           // HRS EMB EF+CORTE////
-                          for (int i = 0; i < plataformasT.getRowCount()-3; i++) {
-                          Row renglonpor=hoja.getRow(i+2);
-                          Cell celdapor=null;
-                               celdapor=renglonpor.createCell(7);
-                            celdapor.setCellStyle(celdaDetalle);
-                          //  celdapor.setCellStyle(getStyleDetallePorc());
-                         //  celdapor.setCellFormula("C"+(i+3)+"/C9");
-                           celdapor.setCellFormula("(D16*E"+(i+3)+")+D"+(i+3)+"");
-                          }
-                          
-                         
-                          
-                           ///EFIC////
-                          for (int i =0; i < plataformasT.getRowCount()-3; i++) {
-                          Row renglonpor=hoja.getRow(i+2);
-                          Cell celdapor=null;
-                               celdapor=renglonpor.createCell(8);
-                          //  celdapor.setCellStyle(celdaDetalle);
-                            celdapor.setCellStyle(getStyleDetallePorc());
-                           celdapor.setCellFormula("G"+(i+3)+"/H"+(i+3)+"");
-                          }
-           /////////////////// AQUI TERMINA PESTANA DE PLATAFORMAS TOTALES ///////////// 
-            
-                          
-                          
-             /// PARTE DONDE SE FORMA LA PESTANA DE CODIGOS CONCENTRADO TOTAL////////////
-             hoja=libro.createSheet("T.CODIGOS");
-             r=hoja.createRow(1);
-            for(int c=0; c<TCODIGOS.getColumnCount(); c++)
-                    {
-                        //hoja.setColumnWidth(i, Modelocorte.getColumnName(i).length()*450);
-                        hoja.setColumnWidth(c, TCODIGOS.getColumnName(c).length()*550);
-                         Cell celda=r.createCell(c);
-                         celda.setCellStyle(celdaStiloCabecera);
-                        try{
-                            celda.setCellValue(TCODIGOS.getColumnName(c));
-                        }catch(Exception e)
-                        {
-                          //celda.setCellValue( modelo.get(ho).getValueAt(x, i).toString());
-                        }       
+            for (int i = 0; i < plataformasT.getRowCount() - 3; i++) {
+                Row renglonpor = hoja.getRow(i + 2);
+                Cell celdapor = null;
+                celdapor = renglonpor.createCell(4);
+                celdapor.setCellStyle(celdaDetalle);
+                celdapor.setCellStyle(getStyleDetallePorc());
+                celdapor.setCellFormula("C" + (i + 3) + "/$C$7");
+            }
+
+            for (int i = 0; i < plataformasT.getRowCount() - 3; i++) {
+                Row renglonpor = hoja.getRow(i + 2);
+                Cell celdapor = null;
+                celdapor = renglonpor.createCell(5);
+                celdapor.setCellStyle(celdaDetalle);
+                celdapor.setCellFormula("(E" + (i + 3) + "*$B$16)+B" + (i + 3) + "");
+            }
+
+            //Porcentage horas pagadas////
+            for (int i = 0; i < plataformasT.getRowCount() - 3; i++) {
+                Row renglonpor = hoja.getRow(i + 2);
+                Cell celdapor = null;
+                celdapor = renglonpor.createCell(6);
+                celdapor.setCellStyle(celdaDetalle);
+                //celdapor.setCellStyle(getStyleDetallePorc());
+                celdapor.setCellFormula("(C16*E" + (i + 3) + ")+C" + (i + 3) + "");
+            }
+
+            // HRS EMB EF+CORTE////
+            for (int i = 0; i < plataformasT.getRowCount() - 3; i++) {
+                Row renglonpor = hoja.getRow(i + 2);
+                Cell celdapor = null;
+                celdapor = renglonpor.createCell(7);
+                celdapor.setCellStyle(celdaDetalle);
+                //  celdapor.setCellStyle(getStyleDetallePorc());
+                //  celdapor.setCellFormula("C"+(i+3)+"/C9");
+                celdapor.setCellFormula("(D16*E" + (i + 3) + ")+D" + (i + 3) + "");
+            }
+
+            ///EFIC////
+            for (int i = 0; i < plataformasT.getRowCount() - 3; i++) {
+                Row renglonpor = hoja.getRow(i + 2);
+                Cell celdapor = null;
+                celdapor = renglonpor.createCell(8);
+                //  celdapor.setCellStyle(celdaDetalle);
+                celdapor.setCellStyle(getStyleDetallePorc());
+                celdapor.setCellFormula("G" + (i + 3) + "/H" + (i + 3) + "");
+            }
+            /////////////////// AQUI TERMINA PESTANA DE PLATAFORMAS TOTALES ///////////// 
+
+            /// PARTE DONDE SE FORMA LA PESTANA DE CODIGOS CONCENTRADO TOTAL////////////
+            hoja = libro.createSheet("T.CODIGOS");
+            r = hoja.createRow(1);
+            for (int c = 0; c < TCODIGOS.getColumnCount(); c++) {
+                //hoja.setColumnWidth(i, Modelocorte.getColumnName(i).length()*450);
+                hoja.setColumnWidth(c, TCODIGOS.getColumnName(c).length() * 550);
+                Cell celda = r.createCell(c);
+                celda.setCellStyle(celdaStiloCabecera);
+                try {
+                    celda.setCellValue(TCODIGOS.getColumnName(c));
+                } catch (Exception e) {
+                    //celda.setCellValue( modelo.get(ho).getValueAt(x, i).toString());
+                }
+            }
+
+            for (int i = 0; i < TCODIGOS.getRowCount() - 3; i++) {
+
+                r = hoja.createRow(r.getRowNum() + 1);
+                for (int x = 0; x < TCODIGOS.getColumnCount(); x++) {
+                    Cell celda = r.createCell(x);
+
+                    if (x > 0)
+                                     try {
+                        celda.setCellValue(Double.parseDouble(TCODIGOS.getValueAt(i, x).toString()));
+                    } catch (Exception e) {
+                    } else {
+                        celda.setCellValue(TCODIGOS.getValueAt(i, x).toString());
                     }
-            
-              for(int i=0; i<TCODIGOS.getRowCount()-3; i++)
+                }
+
+            }
+            /// tabla de corte srvicios y kachirules
+            r = hoja.createRow(29);
+            for (int i = 12; i < TCODIGOS.getRowCount(); i++) // aqui tambien se le mueve cuando cambian las plataformas CUANDO DESACTIVAS ES -1 AGREGAS ES MAS +1
             {
 
-                   r=hoja.createRow(r.getRowNum()+1);
-                    for(int x=0; x<TCODIGOS.getColumnCount(); x++)
-                    {                    
-                                 Cell celda=r.createCell(x);
-                                   
-                                 if(x>0)
-                                     try{
-                                  celda.setCellValue(Double.parseDouble(TCODIGOS.getValueAt(i,x).toString()));
-                                     }
-                                     catch(Exception e ){
-                                     }
-                                 else
-                                     celda.setCellValue(TCODIGOS.getValueAt(i,x).toString());
-                    }
-  
-            }
-              /// tabla de corte srvicios y kachirules
-               r=hoja.createRow(29);
-                 for(int i=12; i<TCODIGOS.getRowCount(); i++) // aqui tambien se le mueve cuando cambian las plataformas CUANDO DESACTIVAS ES -1 AGREGAS ES MAS +1
-            {
+                r = hoja.createRow(r.getRowNum() + 1);
+                for (int x = 0; x < TCODIGOS.getColumnCount(); x++) {
+                    Cell celdatc = r.createCell(x);
 
-                   r=hoja.createRow(r.getRowNum()+1);
-                    for(int x=0; x<TCODIGOS.getColumnCount(); x++)
-                    {                    
-                                 Cell celdatc=r.createCell(x);
-                                   
-                                 if(x>0)
-                                     try{
-                                  celdatc.setCellValue(Double.parseDouble(TCODIGOS.getValueAt(i,x).toString()));
-                                     }
-                                     catch(Exception e ){
-                                     }
-                                 else
-                                     celdatc.setCellValue(TCODIGOS.getValueAt(i,x).toString());
+                    if (x > 0)
+                                     try {
+                        celdatc.setCellValue(Double.parseDouble(TCODIGOS.getValueAt(i, x).toString()));
+                    } catch (Exception e) {
+                    } else {
+                        celdatc.setCellValue(TCODIGOS.getValueAt(i, x).toString());
                     }
-  
-            }
-                   //totales de corte serv +kachiorules/////
-               Row renglontc=hoja.createRow((TCODIGOS.getRowCount()+20));
-                     Cell celdatc=null;
-                     celdatc=renglontc.createCell(0);
-                     celdatc.setCellValue("TOTAL");
-                     celdatc.setCellStyle(celdaStiloCabecera);
-                      celdatc=renglontc.createCell(1);
-                            celdatc.setCellStyle(celdaDetalle);
-                            celdatc.setCellFormula("SUM(B31:B34)");
-                            
-                    celdatc=renglontc.createCell(2);
-                            celdatc.setCellStyle(celdaDetalle);
-                            celdatc.setCellFormula("SUM(C31:C34)");
-              
-              
-              
-              
-               Row renglonTc=hoja.createRow((plataformasT.getRowCount()+21)); // aqui tambien se le mueve cuando cambian las plataformas
-                     Cell celdaTc=null;
-                     celdaTc=renglonTc.createCell(0);
-                     celdaTc.setCellValue("TOTAL2");
-                     celdaTc.setCellStyle(celdaStiloCabecera);
-                      celdaTc=renglonTc.createCell(1);
-                            celdaTc.setCellStyle(celdaDetalle);
-                            celdaTc.setCellFormula("SUM(B3:B26)");
-                            
-                             celdaTc=renglonTc.createCell(2);
-                            celdaTc.setCellStyle(celdaDetalle);
-                            celdaTc.setCellFormula("SUM(C3:C26)");
-                            
-                            celdaTc=renglonTc.createCell(3);
-                            celdaTc.setCellStyle(celdaDetalle);
-                            celdaTc.setCellStyle(getStyleDetallePorc());
-                            celdaTc.setCellFormula("SUM(D3:D26)");
-                            
-                         celdaTc=renglonTc.createCell(4);
-                            celdaTc.setCellStyle(celdaDetalle);
-                            celdaTc.setCellFormula("SUM(E3:E26)");
-                            
-                            celdaTc=renglonTc.createCell(5);
-                            celdaTc.setCellStyle(celdaDetalle);
-                            celdaTc.setCellFormula("SUM(F3:F26)");
-                            
+                }
 
-                            celdaTc=renglonTc.createCell(6);
-                           celdaTc.setCellStyle(celdaDetalle);
-                            celdaTc.setCellStyle(getStyleDetallePorc());
-                            celdaTc.setCellFormula("E28/F28");
+            }
+            //totales de corte serv +kachiorules/////
+            Row renglontc = hoja.createRow((TCODIGOS.getRowCount() + 20));
+            Cell celdatc = null;
+            celdatc = renglontc.createCell(0);
+            celdatc.setCellValue("TOTAL");
+            celdatc.setCellStyle(celdaStiloCabecera);
+            celdatc = renglontc.createCell(1);
+            celdatc.setCellStyle(celdaDetalle);
+            celdatc.setCellFormula("SUM(B31:B34)");
+
+            celdatc = renglontc.createCell(2);
+            celdatc.setCellStyle(celdaDetalle);
+            celdatc.setCellFormula("SUM(C31:C34)");
+
+            Row renglonTc = hoja.createRow((plataformasT.getRowCount() + 21)); // aqui tambien se le mueve cuando cambian las plataformas
+            Cell celdaTc = null;
+            celdaTc = renglonTc.createCell(0);
+            celdaTc.setCellValue("TOTAL2");
+            celdaTc.setCellStyle(celdaStiloCabecera);
+            celdaTc = renglonTc.createCell(1);
+            celdaTc.setCellStyle(celdaDetalle);
+            celdaTc.setCellFormula("SUM(B3:B26)");
+
+            celdaTc = renglonTc.createCell(2);
+            celdaTc.setCellStyle(celdaDetalle);
+            celdaTc.setCellFormula("SUM(C3:C26)");
+
+            celdaTc = renglonTc.createCell(3);
+            celdaTc.setCellStyle(celdaDetalle);
+            celdaTc.setCellStyle(getStyleDetallePorc());
+            celdaTc.setCellFormula("SUM(D3:D26)");
+
+            celdaTc = renglonTc.createCell(4);
+            celdaTc.setCellStyle(celdaDetalle);
+            celdaTc.setCellFormula("SUM(E3:E26)");
+
+            celdaTc = renglonTc.createCell(5);
+            celdaTc.setCellStyle(celdaDetalle);
+            celdaTc.setCellFormula("SUM(F3:F26)");
+
+            celdaTc = renglonTc.createCell(6);
+            celdaTc.setCellStyle(celdaDetalle);
+            celdaTc.setCellStyle(getStyleDetallePorc());
+            celdaTc.setCellFormula("E28/F28");
 //                            
 //                 ///Porcentage horas embarcadas////
-                          for (int i =0; i < TCODIGOS.getRowCount()-3; i++) {
-                          Row renglonpor=hoja.getRow(i+2);
-                          Cell celdapor=null;
-                               celdapor=renglonpor.createCell(3);
-                            celdapor.setCellStyle(celdaDetalle);
-                            celdapor.setCellStyle(getStyleDetallePorc());
-                           celdapor.setCellFormula("B"+(i+3)+"/$B$28");
-                          }
-                          
-                          //Porcentage horas pagadas////
-                          for (int i = 0; i < TCODIGOS.getRowCount()-3; i++) {
-                          Row renglonpor=hoja.getRow(i+2);
-                          Cell celdapor=null;
-                               celdapor=renglonpor.createCell(4);
-                            celdapor.setCellStyle(celdaDetalle);
-                            //celdapor.setCellStyle(getStyleDetallePorc());
-                           celdapor.setCellFormula("($B$37*D"+(i+3)+")+B"+(i+3)+"");
-                          }
-                          
-                           // HRS EMB EF+CORTE////
-                          for (int i = 0; i < TCODIGOS.getRowCount()-3; i++) {
-                          Row renglonpor=hoja.getRow(i+2);
-                          Cell celdapor=null;
-                               celdapor=renglonpor.createCell(5);
-                            celdapor.setCellStyle(celdaDetalle);
-                          //  celdapor.setCellStyle(getStyleDetallePorc());
-                         //  celdapor.setCellFormula("C"+(i+3)+"/C9");
-                           celdapor.setCellFormula("($C$37*D"+(i+3)+")+C"+(i+3)+"");
-                          }
-                          
-                          
-  
-                           ///EFIC////
-                          for (int i =0; i < TCODIGOS.getRowCount()-3; i++) {
-                          Row renglonpor=hoja.getRow(i+2);
-                          Cell celdapor;
-                          celdapor = null;
-                          celdapor=renglonpor.createCell(6);
-                          celdapor.setCellStyle(celdaDetalle);
-                          celdapor.setCellStyle(getStyleDetallePorc());
-                          celdapor.setCellFormula("E"+(i+3)+"/F"+(i+3)+"");
-                          }
-                          
-                          
-                          
-           /////////////////// AQUI TERMINA PESTANA DE CODIGOS TOTALES ///////////// 
-                          
- ////// EMPIEZA PESTAÑA PLATAFORMAS/////////////
-             hoja=libro.createSheet("PLATAFORMAS");
-             r=hoja.createRow(1);
-            for(int c=0; c<plataformas.getColumnCount(); c++)
-                    {
-                        //hoja.setColumnWidth(i, Modelocorte.getColumnName(i).length()*450);
-                        hoja.setColumnWidth(c, plataformas.getColumnName(c).length()*550);
-                         Cell celda=r.createCell(c);
-                         celda.setCellStyle(celdaStiloCabecera);
-                        try{
-                            celda.setCellValue(plataformas.getColumnName(c));
-                        }catch(Exception e)
-                        {
+            for (int i = 0; i < TCODIGOS.getRowCount() - 3; i++) {
+                Row renglonpor = hoja.getRow(i + 2);
+                Cell celdapor = null;
+                celdapor = renglonpor.createCell(3);
+                celdapor.setCellStyle(celdaDetalle);
+                celdapor.setCellStyle(getStyleDetallePorc());
+                celdapor.setCellFormula("B" + (i + 3) + "/$B$28");
+            }
+
+            //Porcentage horas pagadas////
+            for (int i = 0; i < TCODIGOS.getRowCount() - 3; i++) {
+                Row renglonpor = hoja.getRow(i + 2);
+                Cell celdapor = null;
+                celdapor = renglonpor.createCell(4);
+                celdapor.setCellStyle(celdaDetalle);
+                //celdapor.setCellStyle(getStyleDetallePorc());
+                celdapor.setCellFormula("($B$37*D" + (i + 3) + ")+B" + (i + 3) + "");
+            }
+
+            // HRS EMB EF+CORTE////
+            for (int i = 0; i < TCODIGOS.getRowCount() - 3; i++) {
+                Row renglonpor = hoja.getRow(i + 2);
+                Cell celdapor = null;
+                celdapor = renglonpor.createCell(5);
+                celdapor.setCellStyle(celdaDetalle);
+                //  celdapor.setCellStyle(getStyleDetallePorc());
+                //  celdapor.setCellFormula("C"+(i+3)+"/C9");
+                celdapor.setCellFormula("($C$37*D" + (i + 3) + ")+C" + (i + 3) + "");
+            }
+
+            ///EFIC////
+            for (int i = 0; i < TCODIGOS.getRowCount() - 3; i++) {
+                Row renglonpor = hoja.getRow(i + 2);
+                Cell celdapor;
+                celdapor = null;
+                celdapor = renglonpor.createCell(6);
+                celdapor.setCellStyle(celdaDetalle);
+                celdapor.setCellStyle(getStyleDetallePorc());
+                celdapor.setCellFormula("E" + (i + 3) + "/F" + (i + 3) + "");
+            }
+
+            /////////////////// AQUI TERMINA PESTANA DE CODIGOS TOTALES ///////////// 
+            ////// EMPIEZA PESTAÑA PLATAFORMAS/////////////
+            hoja = libro.createSheet("PLATAFORMAS");
+            r = hoja.createRow(1);
+            for (int c = 0; c < plataformas.getColumnCount(); c++) {
+                //hoja.setColumnWidth(i, Modelocorte.getColumnName(i).length()*450);
+                hoja.setColumnWidth(c, plataformas.getColumnName(c).length() * 550);
+                Cell celda = r.createCell(c);
+                celda.setCellStyle(celdaStiloCabecera);
+                try {
+                    celda.setCellValue(plataformas.getColumnName(c));
+                } catch (Exception e) {
 //                            celda.setCellValue( modelo.get(ho).getValueAt(x, i).toString());
-                        }       
-                    }
-            for(int i=0; i<plataformas.getRowCount(); i++)
-            {
-
-                   r=hoja.createRow(r.getRowNum()+1);
-                    for(int x=0; x<plataformas.getColumnCount(); x++)
-                    {
-                      
-                                 Cell celda=r.createCell(x);
-                                  
-                                 if(x>4)
-                                     try{
-                                  celda.setCellValue(Double.parseDouble( plataformas.getValueAt(i,x).toString()));
-                                     }
-                                  
-                                     catch(Exception e ){
-                                     
-                                     }
-                                 else
-                                     celda.setCellValue(plataformas.getValueAt(i,x).toString());
-                    }
-  
+                }
             }
-             Row renglonN=hoja.createRow((plataformas.getRowCount()+6));
-                     Cell celdaA=null;
-                     Cell celdaPOR=null;
-                     celdaA=renglonN.createCell(0);
-                     celdaA.setCellValue("TOTAL");
-                     celdaA.setCellStyle(celdaDetalle);
+            for (int i = 0; i < plataformas.getRowCount(); i++) {
+
+                r = hoja.createRow(r.getRowNum() + 1);
+                for (int x = 0; x < plataformas.getColumnCount(); x++) {
+
+                    Cell celda = r.createCell(x);
+
+                    if (x > 4)
+                                     try {
+                        celda.setCellValue(Double.parseDouble(plataformas.getValueAt(i, x).toString()));
+                    } catch (Exception e) {
+
+                    } else {
+                        celda.setCellValue(plataformas.getValueAt(i, x).toString());
+                    }
+                }
+
+            }
+            Row renglonN = hoja.createRow((plataformas.getRowCount() + 6));
+            Cell celdaA = null;
+            Cell celdaPOR = null;
+            celdaA = renglonN.createCell(0);
+            celdaA.setCellValue("TOTAL");
+            celdaA.setCellStyle(celdaDetalle);
 //                     celda=renglon.createCell(4);
 //                     celda.setCellStyle(celdaDetalle);
 //                     celda.setCellFormula("SUM(E4:E"+(modelo.getRowCount()+3)+")");
 //                     celda=renglon.createCell(5);
 //                     celda.setCellStyle(celdaDetalle);
 //                     celda.setCellFormula("SUM(F4:F"+(modelo.getRowCount()+3)+")");
-                     celdaA=renglonN.createCell(5);
-                            celdaA.setCellStyle(celdaDetalle);
-                            celdaA.setCellFormula("SUBTOTAL(9,F3:F69)");
-                             celdaA.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));       
-                     
-                     
-                     celdaA=renglonN.createCell(7);
-                            celdaA.setCellStyle(celdaDetalle);
-                            celdaA.setCellFormula("SUBTOTAL(9,H3:H69)");
-                             celdaA.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-                            
-                            celdaA=renglonN.createCell(8);
-                            celdaA.setCellStyle(celdaDetalle);
-                            celdaA.setCellFormula("SUBTOTAL(9,I3:I69)");
-                            celdaA.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-            
-                            celdaPOR=renglonN.createCell(9);
-                            celdaPOR.setCellStyle(celdaDetalle);
-                            celdaPOR.setCellFormula("H73/I73");
-                            celdaPOR.setCellStyle(getStyleDetallePorc(HSSFColor.GREEN.index));
-                         
+            celdaA = renglonN.createCell(5);
+            celdaA.setCellStyle(celdaDetalle);
+            celdaA.setCellFormula("SUBTOTAL(9,F3:F69)");
+            celdaA.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
 
-       /////////////////// AQUI TERMINA PESTANA DE PLATAFORMAS /////////////      
-                            
-   ////// EMPIEZA PESTAÑA MSD/////////////
-             hoja=libro.createSheet("MSD");
-             
-             r=hoja.createRow(1);
-            for(int c=0; c<plataformasMSD.getColumnCount(); c++)
-                    {
-                        //hoja.setColumnWidth(i, Modelocorte.getColumnName(i).length()*450);
-                        hoja.setColumnWidth(c, plataformasMSD.getColumnName(c).length()*550);
-                         Cell celda=r.createCell(c);
-                         celda.setCellStyle(celdaStiloCabecera);
-                        try{
-                            celda.setCellValue(plataformasMSD.getColumnName(c));
-                        }catch(Exception e)
-                        {
+            celdaA = renglonN.createCell(7);
+            celdaA.setCellStyle(celdaDetalle);
+            celdaA.setCellFormula("SUBTOTAL(9,H3:H69)");
+            celdaA.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+
+            celdaA = renglonN.createCell(8);
+            celdaA.setCellStyle(celdaDetalle);
+            celdaA.setCellFormula("SUBTOTAL(9,I3:I69)");
+            celdaA.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+
+            celdaPOR = renglonN.createCell(9);
+            celdaPOR.setCellStyle(celdaDetalle);
+            celdaPOR.setCellFormula("H73/I73");
+            celdaPOR.setCellStyle(getStyleDetallePorc(HSSFColor.GREEN.index));
+
+            /////////////////// AQUI TERMINA PESTANA DE PLATAFORMAS /////////////      
+            ////// EMPIEZA PESTAÑA MSD/////////////
+            hoja = libro.createSheet("MSD");
+
+            r = hoja.createRow(1);
+            for (int c = 0; c < plataformasMSD.getColumnCount(); c++) {
+                //hoja.setColumnWidth(i, Modelocorte.getColumnName(i).length()*450);
+                hoja.setColumnWidth(c, plataformasMSD.getColumnName(c).length() * 550);
+                Cell celda = r.createCell(c);
+                celda.setCellStyle(celdaStiloCabecera);
+                try {
+                    celda.setCellValue(plataformasMSD.getColumnName(c));
+                } catch (Exception e) {
 //                            celda.setCellValue( modelo.get(ho).getValueAt(x, i).toString());
-                        }       
-                    }
-            for(int i=0; i<plataformasMSD.getRowCount(); i++)
-            {
-                   r=hoja.createRow(r.getRowNum()+1);
-                    for(int x=0; x<plataformasMSD.getColumnCount(); x++)
-                    {
-                                 Cell celda=r.createCell(x);
-                                 if(x>5)
-                                     try{
-                                  celda.setCellValue(Double.parseDouble( plataformasMSD.getValueAt(i,x).toString()));
-                                         // celda.setCellValue(plataformasMSD.getValueAt(i,x).toString());
-                                     }
-                                     catch(Exception e ){                                    
-                                     }
-                                 else
-                                     celda.setCellValue(plataformasMSD.getValueAt(i,x).toString());
-                    }
-  
+                }
             }
-             Row renglonMSD=hoja.createRow((plataformasMSD.getRowCount()+4));
-                     Cell celdab=null;
-                     Cell celdaPORc=null;
-                     celdab=renglonMSD.createCell(0);
-                     celdab.setCellValue("TOTAL");
-                     celdab.setCellStyle(celdaDetalle);
-                     celdab.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-                    
-                            celdab=renglonMSD.createCell(6);
-                            celdab.setCellStyle(celdaDetalle);
-                            celdab.setCellFormula("SUBTOTAL(9,G3:G73)");
-                             celdab.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-                            
-                            celdab=renglonMSD.createCell(7);
-                            celdab.setCellStyle(celdaDetalle);
-                            celdab.setCellFormula("SUBTOTAL(9,H3:H73)");
-                             celdab.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-                            
-                            celdab=renglonMSD.createCell(8);
-                            celdab.setCellStyle(celdaDetalle);
-                            celdab.setCellFormula("SUBTOTAL(9,I3:I73)");
-                             celdab.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-
-                            celdaPORc=renglonMSD.createCell(9);
-                            celdaPORc.setCellStyle(celdaDetalle);                          
-                            celdaPORc.setCellStyle(getStyleDetallePorc(HSSFColor.GREEN.index));
-                            celdaPORc.setCellFormula("H76/I76");
-                            
-                            celdab=renglonMSD.createCell(10);
-                            celdab.setCellStyle(celdaDetalle);
-                            celdab.setCellFormula("SUBTOTAL(9,K3:K73)");
-                             celdab.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-                            
-                            celdab=renglonMSD.createCell(11);
-                            celdab.setCellStyle(celdaDetalle);
-                            celdab.setCellFormula("SUBTOTAL(9,L3:L73)");
-                             celdab.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-                            
-                            celdab=renglonMSD.createCell(12);
-                            celdab.setCellStyle(celdaDetalle);
-                            celdab.setCellFormula("SUBTOTAL(9,M3:M73)");
-                             celdab.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-                            
-                            celdab=renglonMSD.createCell(13);
-                            celdab.setCellStyle(celdaDetalle);
-                            celdab.setCellFormula("SUBTOTAL(9,N3:N73)");
-                             celdab.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-                            
-                            celdaPORc=renglonMSD.createCell(14);
-                            celdaPORc.setCellStyle(celdaDetalle);
-                            celdaPORc.setCellStyle(getStyleDetallePorc(HSSFColor.GREEN.index));                 
-                            celdaPORc.setCellFormula("H76/N76");
-
-       /////////////////// AQUI TERMINA PESTANA DE MSD /////////////                              
-                            
- 
-                   ////// EMPIEZA PESTAÑA TABLA CATIA/////////////
-             hoja=libro.createSheet("HC EF+LPS");
-             r=hoja.createRow(1);
-            for(int c=0; c<TBLCATIA.getColumnCount(); c++)
-                    {
-                        //hoja.setColumnWidth(i, Modelocorte.getColumnName(i).length()*450);
-                        hoja.setColumnWidth(c, TBLCATIA.getColumnName(c).length()*550);
-                         Cell celda=r.createCell(c);
-                         celda.setCellStyle(celdaStiloCabecera);
-                        try{
-                            celda.setCellValue(TBLCATIA.getColumnName(c));
-                        }catch(Exception e)
-                        {
-//                            celda.setCellValue( modelo.get(ho).getValueAt(x, i).toString());
-                        }       
+            for (int i = 0; i < plataformasMSD.getRowCount(); i++) {
+                r = hoja.createRow(r.getRowNum() + 1);
+                for (int x = 0; x < plataformasMSD.getColumnCount(); x++) {
+                    Cell celda = r.createCell(x);
+                    if (x > 5)
+                                     try {
+                        celda.setCellValue(Double.parseDouble(plataformasMSD.getValueAt(i, x).toString()));
+                        // celda.setCellValue(plataformasMSD.getValueAt(i,x).toString());
+                    } catch (Exception e) {
+                    } else {
+                        celda.setCellValue(plataformasMSD.getValueAt(i, x).toString());
                     }
-            for(int i=0; i<TBLCATIA.getRowCount(); i++)
-            {
-                   r=hoja.createRow(r.getRowNum()+1);
-                    for(int x=0; x<TBLCATIA.getColumnCount(); x++)
-                    {
-                                 Cell celda=r.createCell(x);
-                                 if(x>3)
-                                     try{
-                                  celda.setCellValue(Double.parseDouble( TBLCATIA.getValueAt(i,x).toString()));
-                                          //celda.setCellValue(TBLCATIA.getValueAt(i,x).toString());
-                                     }
-                                     catch(Exception e ){                                    
-                                     }
-                                 else
-                                     celda.setCellValue(TBLCATIA.getValueAt(i,x).toString());
-                    }
-  
+                }
+
             }
-            
-             Row renglonCa=hoja.createRow((TBLCATIA.getRowCount()+4));
-                     Cell celdac=null;
-                     celdac=renglonCa.createCell(0);
-                     celdac.setCellValue("TOTAL");
-                     celdac.setCellStyle(celdaDetalle);
-                     celdac.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-                    
-                            celdac=renglonCa.createCell(4);
-                            celdac.setCellStyle(celdaDetalle);
-                            celdac.setCellFormula("SUBTOTAL(9,E3:E39)");
-                             celdac.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-                            
+            Row renglonMSD = hoja.createRow((plataformasMSD.getRowCount() + 4));
+            Cell celdab = null;
+            Cell celdaPORc = null;
+            celdab = renglonMSD.createCell(0);
+            celdab.setCellValue("TOTAL");
+            celdab.setCellStyle(celdaDetalle);
+            celdab.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
 
-                                                  
-       /////////////////// AQUI TERMINA PESTANA TABLA CATIA /////////////                
-                            
-                   
-                        ////// EMPIEZA PESTAÑA TABLA PUNTOS PIEZA CORTE/////////////
-             hoja=libro.createSheet("PP_CORTE");
-             r=hoja.createRow(1);
-            for(int c=0; c<PPCORTE.getColumnCount(); c++)
-                    {
-                        //hoja.setColumnWidth(i, Modelocorte.getColumnName(i).length()*450);
-                        hoja.setColumnWidth(c, PPCORTE.getColumnName(c).length()*405);
-                          hoja.setColumnWidth(1, 6000);
-                         Cell celda=r.createCell(c);
-                         celda.setCellStyle(celdaStiloCabecera);
-                        try{
-                            celda.setCellValue(PPCORTE.getColumnName(c));
-                        }catch(Exception e)
-                        {
+            celdab = renglonMSD.createCell(6);
+            celdab.setCellStyle(celdaDetalle);
+            celdab.setCellFormula("SUBTOTAL(9,G3:G73)");
+            celdab.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+
+            celdab = renglonMSD.createCell(7);
+            celdab.setCellStyle(celdaDetalle);
+            celdab.setCellFormula("SUBTOTAL(9,H3:H73)");
+            celdab.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+
+            celdab = renglonMSD.createCell(8);
+            celdab.setCellStyle(celdaDetalle);
+            celdab.setCellFormula("SUBTOTAL(9,I3:I73)");
+            celdab.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+
+            celdaPORc = renglonMSD.createCell(9);
+            celdaPORc.setCellStyle(celdaDetalle);
+            celdaPORc.setCellStyle(getStyleDetallePorc(HSSFColor.GREEN.index));
+            celdaPORc.setCellFormula("H76/I76");
+
+            celdab = renglonMSD.createCell(10);
+            celdab.setCellStyle(celdaDetalle);
+            celdab.setCellFormula("SUBTOTAL(9,K3:K73)");
+            celdab.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+
+            celdab = renglonMSD.createCell(11);
+            celdab.setCellStyle(celdaDetalle);
+            celdab.setCellFormula("SUBTOTAL(9,L3:L73)");
+            celdab.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+
+            celdab = renglonMSD.createCell(12);
+            celdab.setCellStyle(celdaDetalle);
+            celdab.setCellFormula("SUBTOTAL(9,M3:M73)");
+            celdab.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+
+            celdab = renglonMSD.createCell(13);
+            celdab.setCellStyle(celdaDetalle);
+            celdab.setCellFormula("SUBTOTAL(9,N3:N73)");
+            celdab.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+
+            celdaPORc = renglonMSD.createCell(14);
+            celdaPORc.setCellStyle(celdaDetalle);
+            celdaPORc.setCellStyle(getStyleDetallePorc(HSSFColor.GREEN.index));
+            celdaPORc.setCellFormula("H76/N76");
+
+            /////////////////// AQUI TERMINA PESTANA DE MSD /////////////                              
+            ////// EMPIEZA PESTAÑA TABLA CATIA/////////////
+            hoja = libro.createSheet("HC EF+LPS");
+            r = hoja.createRow(1);
+            for (int c = 0; c < TBLCATIA.getColumnCount(); c++) {
+                //hoja.setColumnWidth(i, Modelocorte.getColumnName(i).length()*450);
+                hoja.setColumnWidth(c, TBLCATIA.getColumnName(c).length() * 550);
+                Cell celda = r.createCell(c);
+                celda.setCellStyle(celdaStiloCabecera);
+                try {
+                    celda.setCellValue(TBLCATIA.getColumnName(c));
+                } catch (Exception e) {
 //                            celda.setCellValue( modelo.get(ho).getValueAt(x, i).toString());
-                        }       
+                }
+            }
+            for (int i = 0; i < TBLCATIA.getRowCount(); i++) {
+                r = hoja.createRow(r.getRowNum() + 1);
+                for (int x = 0; x < TBLCATIA.getColumnCount(); x++) {
+                    Cell celda = r.createCell(x);
+                    if (x > 3)
+                                     try {
+                        celda.setCellValue(Double.parseDouble(TBLCATIA.getValueAt(i, x).toString()));
+                        //celda.setCellValue(TBLCATIA.getValueAt(i,x).toString());
+                    } catch (Exception e) {
+                    } else {
+                        celda.setCellValue(TBLCATIA.getValueAt(i, x).toString());
                     }
-            for(int i=0; i<PPCORTE.getRowCount(); i++)
-            {
-                   r=hoja.createRow(r.getRowNum()+1);
-                    for(int x=0; x<PPCORTE.getColumnCount(); x++)
-                    {
-                                 Cell celda=r.createCell(x);
-                                 if(x>5)
-                                     try{
-                                  celda.setCellValue(Double.parseDouble(PPCORTE.getValueAt(i,x).toString()));
-                                          //celda.setCellValue(TBLCATIA.getValueAt(i,x).toString());
-                                     }
-                                     catch(Exception e ){                                    
-                                     }
-                                 else
-                                     celda.setCellValue(PPCORTE.getValueAt(i,x).toString());
+                }
+
+            }
+
+            Row renglonCa = hoja.createRow((TBLCATIA.getRowCount() + 4));
+            Cell celdac = null;
+            celdac = renglonCa.createCell(0);
+            celdac.setCellValue("TOTAL");
+            celdac.setCellStyle(celdaDetalle);
+            celdac.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+
+            celdac = renglonCa.createCell(4);
+            celdac.setCellStyle(celdaDetalle);
+            celdac.setCellFormula("SUBTOTAL(9,E3:E39)");
+            celdac.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+
+            /////////////////// AQUI TERMINA PESTANA TABLA CATIA /////////////                
+            ////// EMPIEZA PESTAÑA TABLA PUNTOS PIEZA CORTE/////////////
+            hoja = libro.createSheet("PP_CORTE");
+            r = hoja.createRow(1);
+            for (int c = 0; c < PPCORTE.getColumnCount(); c++) {
+                //hoja.setColumnWidth(i, Modelocorte.getColumnName(i).length()*450);
+                hoja.setColumnWidth(c, PPCORTE.getColumnName(c).length() * 405);
+                hoja.setColumnWidth(1, 6000);
+                Cell celda = r.createCell(c);
+                celda.setCellStyle(celdaStiloCabecera);
+                try {
+                    celda.setCellValue(PPCORTE.getColumnName(c));
+                } catch (Exception e) {
+//                            celda.setCellValue( modelo.get(ho).getValueAt(x, i).toString());
+                }
+            }
+            for (int i = 0; i < PPCORTE.getRowCount(); i++) {
+                r = hoja.createRow(r.getRowNum() + 1);
+                for (int x = 0; x < PPCORTE.getColumnCount(); x++) {
+                    Cell celda = r.createCell(x);
+                    if (x > 5)
+                                     try {
+                        celda.setCellValue(Double.parseDouble(PPCORTE.getValueAt(i, x).toString()));
+                        //celda.setCellValue(TBLCATIA.getValueAt(i,x).toString());
+                    } catch (Exception e) {
+                    } else {
+                        celda.setCellValue(PPCORTE.getValueAt(i, x).toString());
                     }
-  
-            }   
-            
-            Row renglonPP=hoja.createRow((PPCORTE.getRowCount()+4));
-                     Cell celdaPP=null;
-                     Cell celdaPORcP=null;
-                     celdaPP=renglonPP.createCell(0);
-                     celdaPP.setCellValue("TOTAL");
-                     celdaPP.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-            
-                            celdaPP=renglonPP.createCell(17);
-                            celdaPP.setCellStyle(celdaDetalle);
-                            celdaPP.setCellFormula("SUBTOTAL(9,R3:R37)");
-                            celdaPP.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-                            
-                            celdaPP=renglonPP.createCell(18);
-                            celdaPP.setCellStyle(celdaDetalle);
-                            celdaPP.setCellFormula("SUBTOTAL(9,S3:S37)");
-                            celdaPP.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-                            
-                            celdaPORcP=renglonPP.createCell(19);
-                            celdaPORcP.setCellStyle(celdaDetalle);
-                           //celdaPORcP.setCellStyle(getStyleDetallePorc());
-                            celdaPORcP.setCellStyle(getStyleDetallePorc(HSSFColor.GREEN.index));
-                            celdaPORcP.setCellFormula("R40/S40");
-                            
-                            celdaPP=renglonPP.createCell(21);
-                            celdaPP.setCellStyle(celdaDetalle);
-                            celdaPP.setCellFormula("SUBTOTAL(9,V3:V37)");
-                            celdaPP.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-                            
-                            celdaPP=renglonPP.createCell(22);
-                            celdaPP.setCellStyle(celdaDetalle);
-                            celdaPP.setCellFormula("SUBTOTAL(9,W3:W37)");
-                            celdaPP.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
-                            
-                             ///Porcentage horas embarcadas////
-                        for (int i =0; i < PPCORTE.getRowCount(); i++) {
-                          Row renglonpor=hoja.getRow(i+2);
-                          Cell celdapor=null;
-                          celdapor=renglonpor.createCell(22);
-                          celdapor.setCellStyle(celdaDetalle);                      
-                          celdapor.setCellFormula("ROUND(V"+(i+3)+"/$V$40*135,2)");
-                          }
-                           
-       ///////////////////  EMPIEZA PESTAÑA TABLA PUNTOS PIEZA CORTE /////////////            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
+                }
+
+            }
+
+            Row renglonPP = hoja.createRow((PPCORTE.getRowCount() + 4));
+            Cell celdaPP = null;
+            Cell celdaPORcP = null;
+            celdaPP = renglonPP.createCell(0);
+            celdaPP.setCellValue("TOTAL");
+            celdaPP.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+
+            celdaPP = renglonPP.createCell(17);
+            celdaPP.setCellStyle(celdaDetalle);
+            celdaPP.setCellFormula("SUBTOTAL(9,R3:R37)");
+            celdaPP.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+
+            celdaPP = renglonPP.createCell(18);
+            celdaPP.setCellStyle(celdaDetalle);
+            celdaPP.setCellFormula("SUBTOTAL(9,S3:S37)");
+            celdaPP.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+
+            celdaPORcP = renglonPP.createCell(19);
+            celdaPORcP.setCellStyle(celdaDetalle);
+            //celdaPORcP.setCellStyle(getStyleDetallePorc());
+            celdaPORcP.setCellStyle(getStyleDetallePorc(HSSFColor.GREEN.index));
+            celdaPORcP.setCellFormula("R40/S40");
+
+            celdaPP = renglonPP.createCell(21);
+            celdaPP.setCellStyle(celdaDetalle);
+            celdaPP.setCellFormula("SUBTOTAL(9,V3:V37)");
+            celdaPP.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+
+            celdaPP = renglonPP.createCell(22);
+            celdaPP.setCellStyle(celdaDetalle);
+            celdaPP.setCellFormula("SUBTOTAL(9,W3:W37)");
+            celdaPP.setCellStyle(getTituloStyleTotales(HSSFColor.GREEN.index));
+
+            ///Porcentage horas embarcadas////
+            for (int i = 0; i < PPCORTE.getRowCount(); i++) {
+                Row renglonpor = hoja.getRow(i + 2);
+                Cell celdapor = null;
+                celdapor = renglonpor.createCell(22);
+                celdapor.setCellStyle(celdaDetalle);
+                celdapor.setCellFormula("ROUND(V" + (i + 3) + "/$V$40*135,2)");
+            }
+
+            ///////////////////  EMPIEZA PESTAÑA TABLA PUNTOS PIEZA CORTE /////////////            
 //                  hoja=libro.createSheet("PLAT.Concentrado");
 //             r=hoja.createRow(1);
 //             
@@ -1128,15 +1045,6 @@ public final class ExcelEficiencia {
 //                            
 //                            
 //                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
 //                            
 //                            
 //                            
@@ -1580,9 +1488,7 @@ public final class ExcelEficiencia {
 //                            celdaTOTALLM.setCellStyle(getStyleDetallePorc());
 //                            celdaTOTALLM.setCellFormula("G111/H111");                
 //                            
-                            
-                            
-           // PESTAñA PLATAFORMA GMT 610 GML
+            // PESTAñA PLATAFORMA GMT 610 GML
 //         hoja=libro.createSheet("PLATAFORMAS GML");
 //             r=hoja.createRow(1);
 //             
@@ -1856,67 +1762,55 @@ public final class ExcelEficiencia {
 //                    }
 //  
 //            }
-
-
-                           
-                           
-                           
-                           
             /////suma total turno
             //HOJA DE TOTALES AL FINAL
-             hoja = libro.createSheet("Eficiencia Total");
+            hoja = libro.createSheet("Eficiencia Total");
 
-            if(modeloTotal.getRowCount()>0)
-            {
-                Row renglon=hoja.createRow(1);
-                hoja.addMergedRegion(new CellRangeAddress(1,1, 1,6));
-                 Cell celda=renglon.createCell(1);
-                    celda.setCellValue("REPORTE DE EFICIENCIA");
-                    celda.setCellStyle(celdaStiloCabecera);
-                renglon=hoja.createRow(0);
-                celda=renglon.createCell(modeloTotal.getColumnCount());
+            if (modeloTotal.getRowCount() > 0) {
+                Row renglon = hoja.createRow(1);
+                hoja.addMergedRegion(new CellRangeAddress(1, 1, 1, 6));
+                Cell celda = renglon.createCell(1);
+                celda.setCellValue("REPORTE DE EFICIENCIA");
+                celda.setCellStyle(celdaStiloCabecera);
+                renglon = hoja.createRow(0);
+                celda = renglon.createCell(modeloTotal.getColumnCount());
                 celda.setCellValue("Fecha: ");
-                celda=renglon.createCell(modeloTotal.getColumnCount()+1);
+                celda = renglon.createCell(modeloTotal.getColumnCount() + 1);
                 celda.setCellValue(GetFecha(new Date()));
-                                        
-                 renglon=hoja.createRow(2);
-                for(int i=2; i<modeloTotal.getColumnCount()+2; i++)
-                {
-                   hoja.setColumnWidth(i, modeloTotal.getColumnName(i-2).length()*500);
-                   hoja.setColumnWidth(2, 8850);
-                   // hoja.autoSizeColumn(i);
-                    celda=renglon.createCell(i);
-                    celda.setCellValue(modeloTotal.getColumnName(i-2));
+
+                renglon = hoja.createRow(2);
+                for (int i = 2; i < modeloTotal.getColumnCount() + 2; i++) {
+                    hoja.setColumnWidth(i, modeloTotal.getColumnName(i - 2).length() * 500);
+                    hoja.setColumnWidth(2, 8850);
+                    // hoja.autoSizeColumn(i);
+                    celda = renglon.createCell(i);
+                    celda.setCellValue(modeloTotal.getColumnName(i - 2));
                     celda.setCellStyle(celdaStiloCabecera);
-                    
-                     celda=renglon.createCell(modeloTotal.getColumnCount()+2);
-                     celda.setCellStyle(celdaStiloCabecera);
-                     celda.setCellValue("HC TOTAL ");
-                }                   
+
+                    celda = renglon.createCell(modeloTotal.getColumnCount() + 2);
+                    celda.setCellStyle(celdaStiloCabecera);
+                    celda.setCellValue("HC TOTAL ");
+                }
             }
-                      
-            for(int x=0; x<modeloTotal.getRowCount(); x++)
-            {
-                     Row renglon=hoja.createRow((x+3));
-                     Cell celda=null;
-                   for(int i=2; i<modeloTotal.getColumnCount()+2; i++)
-                    {
-                        celda =renglon.createCell(i);
-                        try{
-                            celda.setCellValue(Double.parseDouble( modeloTotal.getValueAt(x, i-2).toString()));
-                        }catch(Exception e)
-                        {
-                            celda.setCellValue( modeloTotal.getValueAt(x, i-2).toString());
-                        }
-                       celda.setCellStyle(celdaDetalle);
+
+            for (int x = 0; x < modeloTotal.getRowCount(); x++) {
+                Row renglon = hoja.createRow((x + 3));
+                Cell celda = null;
+                for (int i = 2; i < modeloTotal.getColumnCount() + 2; i++) {
+                    celda = renglon.createCell(i);
+                    try {
+                        celda.setCellValue(Double.parseDouble(modeloTotal.getValueAt(x, i - 2).toString()));
+                    } catch (Exception e) {
+                        celda.setCellValue(modeloTotal.getValueAt(x, i - 2).toString());
                     }
+                    celda.setCellStyle(celdaDetalle);
+                }
             }
-            
-                     //AGREGAMOS AL FINAL DE LA LINEA UN SUM CON LOS TOTALES HRS EMB. HRS. PAGADAS,hc
-            
-                      Row renglon=hoja.createRow((modeloTotal.getRowCount()+9));
-                      Cell celda=null;
-                      
+
+            //AGREGAMOS AL FINAL DE LA LINEA UN SUM CON LOS TOTALES HRS EMB. HRS. PAGADAS,hc
+            Row renglon = hoja.createRow((modeloTotal.getRowCount() + 9));
+            Cell celda = null;
+
 //                       celda=renglon.createCell(2);
 //                       celda.setCellValue("TOTAL PLANTA");
 //                       celda.setCellStyle(celdaDetalle);
@@ -1930,146 +1824,141 @@ public final class ExcelEficiencia {
 //                            celda.setCellFormula("sum("+getColumnName(i+2)+4+":"+getColumnName(i+2)+18+")");
 //                            
 //                                                    }
-                        //eficiencia columna H ///
-                    for (int i = 0; i < modeloTotal.getRowCount(); i++) {
-                    renglon=hoja.getRow(i+3);
-                     celda=renglon.createCell(7);
-                      celda.setCellStyle(getStyleDetallePorc());
-                      celda.setCellFormula("sum(F"+(i+4)+"/G"+(i+4)+")");
-                       
-                    }
-                    
-                         //HC TOTAL COLUMNA J
-                    for (int i = 0; i < modeloTotal.getRowCount(); i++) {
-                    renglon=hoja.getRow(i+3);
-                    // celda=renglon.createCell(9);
-                      celda=renglon.createCell(modeloTotal.getColumnCount()+2);
-                       celda.setCellStyle(celdaDetalle);
-                      celda.setCellFormula("sum(E"+(i+4)+"+I"+(i+4)+")");
-                       
-                    }
+            //eficiencia columna H ///
+            for (int i = 0; i < modeloTotal.getRowCount(); i++) {
+                renglon = hoja.getRow(i + 3);
+                celda = renglon.createCell(7);
+                celda.setCellStyle(getStyleDetallePorc());
+                celda.setCellFormula("sum(F" + (i + 4) + "/G" + (i + 4) + ")");
 
-                      Row renglon3=hoja.createRow((modeloTotal.getRowCount()+5));
-                      Cell celda3=null;
-                       celda3=renglon3.createCell(2);
-                       celda3.setCellValue("TOTAL PLANTA MOCHIS");
-                       celda3.setCellStyle(celdaDetalle);
-                       celda3=renglon.createCell(3);
-                       celda3.setCellStyle(celdaDetalle);
-                                 
-                   //    for (int i = 2; i < modeloTotal.getColumnCount(); i++) {
-                        celda3=renglon3.createCell(4);
-                            celda3.setCellStyle(celdaDetalle);
-                     
-                            celda3.setCellFormula("SUM(E14:E15)");
-                       
-                       celda3=renglon3.createCell(5);
-                            celda3.setCellStyle(celdaDetalle);
-                     
-                            celda3.setCellFormula("SUM(F14:F15)");
+            }
 
-                             celda3=renglon3.createCell(6);
-                            celda3.setCellStyle(celdaDetalle);
-                     
-                            celda3.setCellFormula("SUM(G14:G15)");
-                            
-                             celda3=renglon3.createCell(8);
-                            celda3.setCellStyle(celdaDetalle);
-                     
-                            celda3.setCellFormula("SUM(I14:I15)");
-                     //  }
-                     
-                             celda3=renglon3.createCell(7);
-                            celda3.setCellStyle(getStyleDetallePorc());
-                            celda3.setCellFormula("SUM(F16/G16)");
-                       
-                             celda3=renglon3.createCell(9);
-                            celda3.setCellStyle(celdaDetalle);
-                     
-                            celda3.setCellFormula("SUM(E16+I16)");
-                   
-                      Row renglon5=hoja.createRow((modeloTotal.getRowCount()+3));
-                      Cell celda5=null;
-                       celda5=renglon5.createCell(2);
-                       celda5.setCellStyle(celdaDetalle);
-                       celda5.setCellValue("TOTAL PLANTA MOCHIS TURNO A");
-                       celda5=renglon5.createCell(3);
-                       celda5.setCellStyle(celdaDetalle);
-                       
-                   //    for (int i = 2; i < modeloTotal.getColumnCount(); i++) {
-                        celda5=renglon5.createCell(4);
-                            celda5.setCellStyle(celdaDetalle);
-                     
-                            celda5.setCellFormula("SUM(E4,E5,E6,E7,E12)");
-                                                  
-                       celda5=renglon5.createCell(5);
-                            celda5.setCellStyle(celdaDetalle);
-                     
-                            celda5.setCellFormula("SUM(F4,F5,F6,F7,F12)");
-                             
-                            
-                             celda5=renglon5.createCell(6);
-                            celda5.setCellStyle(celdaDetalle);
-                     
-                            celda5.setCellFormula("SUM(G4,G5,G6,G7,G12)");
-                            
-                             celda5=renglon5.createCell(8);
-                            celda5.setCellStyle(celdaDetalle);
-                     
-                            celda5.setCellFormula("SUM(I4,I5,I6,I7,I12)");
-                     //  }
-                     
-                             celda5=renglon5.createCell(7);
-                            celda5.setCellStyle(getStyleDetallePorc());
-                            celda5.setCellFormula("SUM(F14/G14)");
-                            //////
-                              celda5=renglon5.createCell(9);
-                            celda5.setCellStyle(celdaDetalle);
-                     
-                            celda5.setCellFormula("SUM(E14+I14)");
-                            
-                            Row renglon6=hoja.createRow((modeloTotal.getRowCount()+4));
-                      Cell celda6=null;
-                       celda6=renglon6.createCell(2);
-                       celda6.setCellValue("TOTAL PLANTA MOCHIS TURNO B");
-                       celda6.setCellStyle(celdaDetalle);
-                       celda6=renglon6.createCell(3);
-                       celda6.setCellStyle(celdaDetalle);
-                       
-                       
-                   //    for (int i = 2; i < modeloTotal.getColumnCount(); i++) {
-                        celda6=renglon6.createCell(4);
-                            celda6.setCellStyle(celdaDetalle);
-                     
-                            celda6.setCellFormula("SUM(E8,E9,E10,E11,E13)");
-                       
-                       celda6=renglon6.createCell(5);
-                            celda6.setCellStyle(celdaDetalle);
-                     
-                            celda6.setCellFormula("SUM(F8,F9,F10,F11,F13)");
-                             
-                            
-                             celda6=renglon6.createCell(6);
-                            celda6.setCellStyle(celdaDetalle);
-                     
-                            celda6.setCellFormula("SUM(G8,G9,G10,G11,G13)");
-                            
-                             celda6=renglon6.createCell(8);
-                            celda6.setCellStyle(celdaDetalle);
-                     
-                            celda6.setCellFormula("SUM(I8,I9,I10,I11,I13)");
-                 
-                     
-                             celda6=renglon6.createCell(7);
-                            celda6.setCellStyle(getStyleDetallePorc());
-                            celda6.setCellFormula("SUM(F15/G15)");
-                            
-                            celda6=renglon6.createCell(9);
-                            celda6.setCellStyle(celdaDetalle);                    
-                            celda6.setCellFormula("SUM(E15+I15)");
-                  
-                            //////
+            //HC TOTAL COLUMNA J
+            for (int i = 0; i < modeloTotal.getRowCount(); i++) {
+                renglon = hoja.getRow(i + 3);
+                // celda=renglon.createCell(9);
+                celda = renglon.createCell(modeloTotal.getColumnCount() + 2);
+                celda.setCellStyle(celdaDetalle);
+                celda.setCellFormula("sum(E" + (i + 4) + "+I" + (i + 4) + ")");
 
+            }
+
+            Row renglon3 = hoja.createRow((modeloTotal.getRowCount() + 5));
+            Cell celda3 = null;
+            celda3 = renglon3.createCell(2);
+            celda3.setCellValue("TOTAL PLANTA MOCHIS");
+            celda3.setCellStyle(celdaDetalle);
+            celda3 = renglon.createCell(3);
+            celda3.setCellStyle(celdaDetalle);
+
+            //    for (int i = 2; i < modeloTotal.getColumnCount(); i++) {
+            celda3 = renglon3.createCell(4);
+            celda3.setCellStyle(celdaDetalle);
+
+            celda3.setCellFormula("SUM(E14:E15)");
+
+            celda3 = renglon3.createCell(5);
+            celda3.setCellStyle(celdaDetalle);
+
+            celda3.setCellFormula("SUM(F14:F15)");
+
+            celda3 = renglon3.createCell(6);
+            celda3.setCellStyle(celdaDetalle);
+
+            celda3.setCellFormula("SUM(G14:G15)");
+
+            celda3 = renglon3.createCell(8);
+            celda3.setCellStyle(celdaDetalle);
+
+            celda3.setCellFormula("SUM(I14:I15)");
+            //  }
+
+            celda3 = renglon3.createCell(7);
+            celda3.setCellStyle(getStyleDetallePorc());
+            celda3.setCellFormula("SUM(F16/G16)");
+
+            celda3 = renglon3.createCell(9);
+            celda3.setCellStyle(celdaDetalle);
+
+            celda3.setCellFormula("SUM(E16+I16)");
+
+            Row renglon5 = hoja.createRow((modeloTotal.getRowCount() + 3));
+            Cell celda5 = null;
+            celda5 = renglon5.createCell(2);
+            celda5.setCellStyle(celdaDetalle);
+            celda5.setCellValue("TOTAL PLANTA MOCHIS TURNO A");
+            celda5 = renglon5.createCell(3);
+            celda5.setCellStyle(celdaDetalle);
+
+            //    for (int i = 2; i < modeloTotal.getColumnCount(); i++) {
+            celda5 = renglon5.createCell(4);
+            celda5.setCellStyle(celdaDetalle);
+
+            celda5.setCellFormula("SUM(E4,E5,E6,E7,E12)");
+
+            celda5 = renglon5.createCell(5);
+            celda5.setCellStyle(celdaDetalle);
+
+            celda5.setCellFormula("SUM(F4,F5,F6,F7,F12)");
+
+            celda5 = renglon5.createCell(6);
+            celda5.setCellStyle(celdaDetalle);
+
+            celda5.setCellFormula("SUM(G4,G5,G6,G7,G12)");
+
+            celda5 = renglon5.createCell(8);
+            celda5.setCellStyle(celdaDetalle);
+
+            celda5.setCellFormula("SUM(I4,I5,I6,I7,I12)");
+            //  }
+
+            celda5 = renglon5.createCell(7);
+            celda5.setCellStyle(getStyleDetallePorc());
+            celda5.setCellFormula("SUM(F14/G14)");
+            //////
+            celda5 = renglon5.createCell(9);
+            celda5.setCellStyle(celdaDetalle);
+
+            celda5.setCellFormula("SUM(E14+I14)");
+
+            Row renglon6 = hoja.createRow((modeloTotal.getRowCount() + 4));
+            Cell celda6 = null;
+            celda6 = renglon6.createCell(2);
+            celda6.setCellValue("TOTAL PLANTA MOCHIS TURNO B");
+            celda6.setCellStyle(celdaDetalle);
+            celda6 = renglon6.createCell(3);
+            celda6.setCellStyle(celdaDetalle);
+
+            //    for (int i = 2; i < modeloTotal.getColumnCount(); i++) {
+            celda6 = renglon6.createCell(4);
+            celda6.setCellStyle(celdaDetalle);
+
+            celda6.setCellFormula("SUM(E8,E9,E10,E11,E13)");
+
+            celda6 = renglon6.createCell(5);
+            celda6.setCellStyle(celdaDetalle);
+
+            celda6.setCellFormula("SUM(F8,F9,F10,F11,F13)");
+
+            celda6 = renglon6.createCell(6);
+            celda6.setCellStyle(celdaDetalle);
+
+            celda6.setCellFormula("SUM(G8,G9,G10,G11,G13)");
+
+            celda6 = renglon6.createCell(8);
+            celda6.setCellStyle(celdaDetalle);
+
+            celda6.setCellFormula("SUM(I8,I9,I10,I11,I13)");
+
+            celda6 = renglon6.createCell(7);
+            celda6.setCellStyle(getStyleDetallePorc());
+            celda6.setCellFormula("SUM(F15/G15)");
+
+            celda6 = renglon6.createCell(9);
+            celda6.setCellStyle(celdaDetalle);
+            celda6.setCellFormula("SUM(E15+I15)");
+
+            //////
 //                            Row renglon7=hoja.createRow((modeloTotal.getRowCount()+6));
 //                      Cell celda7=null;
 //                       celda7=renglon7.createCell(2);
@@ -2233,10 +2122,7 @@ public final class ExcelEficiencia {
 //                             celdaP=renglonP.createCell(9);
 //                            celdaP.setCellStyle(celdaDetalle);
 //                            celdaP.setCellFormula("SUM(E23+I23)");
-                            
-                       //}
-                            
-
+            //}
 //                    hoja = libro.createSheet("CADENA_TURNO");
 //                     if(modeloTotal2.getRowCount()>0)
 //            {
@@ -2320,20 +2206,17 @@ public final class ExcelEficiencia {
 //                     r=hoja.getRow(7);
 //                    c=r.getCell(15);
 //                    c.setCellStyle(getStyleDetallePorc());
-                    
-                         
-              
-        libro.write(archivo);
-        /*Cerramos el flujo de datos*/
-        archivo.close();
-        /*Y abrimos el archivo con la clase Desktop*/
-        Desktop.getDesktop().open(archivoXLS);
-        //aqui cahcar el mensaje que da el pedo este
+            libro.write(archivo);
+            /*Cerramos el flujo de datos*/
+            archivo.close();
+            /*Y abrimos el archivo con la clase Desktop*/
+            Desktop.getDesktop().open(archivoXLS);
+            //aqui cahcar el mensaje que da el pedo este
         } catch (FormulaParseException | NumberFormatException | IOException ex) {
-            JOptionPane.showMessageDialog(null,"YA ESTA ABIERTO EL REPORTE CON EL MISMO NOMBRE");
-            JOptionPane.showMessageDialog(null,"CREA CARPETA C:\\REPORTES HC");
-          System.out.println(ex.toString()+String.valueOf(ho)+"aqui fue el pedo2");
-           
+            JOptionPane.showMessageDialog(null, "YA ESTA ABIERTO EL REPORTE CON EL MISMO NOMBRE");
+            JOptionPane.showMessageDialog(null, "CREA CARPETA C:\\REPORTES HC");
+            System.out.println(ex.toString() + String.valueOf(ho) + "aqui fue el pedo2");
+
         } finally {
             try {
                 archivo.close();
@@ -2342,7 +2225,7 @@ public final class ExcelEficiencia {
             }
         }
     }
-       //METODO QUE REGRESA LA FECHA EN FORMATO MYSQL 
+    //METODO QUE REGRESA LA FECHA EN FORMATO MYSQL 
 //       public void GetExceltotalPlanta(DefaultTableModel modelo, String Nombre) throws IOException{
 //       FileOutputStream archivo = null;
 //        try {
@@ -2446,12 +2329,12 @@ public final class ExcelEficiencia {
 //            }
 //        }
 //    }
-       
-       public void GetExceltotalPlantaJorge(DefaultTableModel modelo, String Nombre) throws IOException{
-       FileOutputStream archivo = null;
+
+    public void GetExceltotalPlantaJorge(DefaultTableModel modelo, String Nombre) throws IOException {
+        FileOutputStream archivo = null;
         try {
             /*La ruta donde se creará el archivo*/
-            String rutaArchivo = System.getProperty("user.home")+"/desktop/Reporte Eficiencia "+Nombre+".xls";
+            String rutaArchivo = System.getProperty("user.home") + "/desktop/Reporte Eficiencia " + Nombre + ".xls";
             /*Se crea el objeto de tipo File con la ruta del archivo*/
             File archivoXLS = new File(rutaArchivo);
             libro = new HSSFWorkbook();
@@ -2459,200 +2342,193 @@ public final class ExcelEficiencia {
             hoja = libro.createSheet("Reporte");
             getTituloStyle();
             getStyleDetalle();
-            if(modelo.getRowCount()>0)
-            {
-                Row renglon=hoja.createRow(1);
-                hoja.addMergedRegion(new CellRangeAddress(1,1, 1,6));
-                 Cell celda=renglon.createCell(1);
-                    celda.setCellValue("REPORTE DE EFICIENCIA");
-                    celda.setCellStyle(celdaStiloCabecera);
-                renglon=hoja.createRow(0);
-                celda=renglon.createCell(modelo.getColumnCount());
+            if (modelo.getRowCount() > 0) {
+                Row renglon = hoja.createRow(1);
+                hoja.addMergedRegion(new CellRangeAddress(1, 1, 1, 6));
+                Cell celda = renglon.createCell(1);
+                celda.setCellValue("REPORTE DE EFICIENCIA");
+                celda.setCellStyle(celdaStiloCabecera);
+                renglon = hoja.createRow(0);
+                celda = renglon.createCell(modelo.getColumnCount());
                 celda.setCellValue("Fecha: ");
-                celda=renglon.createCell(modelo.getColumnCount()+1);
+                celda = renglon.createCell(modelo.getColumnCount() + 1);
                 celda.setCellValue(GetFecha(new Date()));
-                                        
-                 renglon=hoja.createRow(2);
-                for(int i=2; i<modelo.getColumnCount()+2; i++)
-                {
-                   hoja.setColumnWidth(i, modelo.getColumnName(i-2).length()*500);
-                   // hoja.autoSizeColumn(i);
-                    celda=renglon.createCell(i);
-                    celda.setCellValue(modelo.getColumnName(i-2));
+
+                renglon = hoja.createRow(2);
+                for (int i = 2; i < modelo.getColumnCount() + 2; i++) {
+                    hoja.setColumnWidth(i, modelo.getColumnName(i - 2).length() * 500);
+                    // hoja.autoSizeColumn(i);
+                    celda = renglon.createCell(i);
+                    celda.setCellValue(modelo.getColumnName(i - 2));
                     celda.setCellStyle(celdaStiloCabecera);
                 }
             }
-            for(int x=0; x<modelo.getRowCount(); x++)
-            {
-                     Row renglon=hoja.createRow((x+3));
-                     Cell celda=null;
-                   for(int i=2; i<modelo.getColumnCount()+2; i++)
-                    {
-                        celda =renglon.createCell(i);
-                        try{
-                            celda.setCellValue(Double.parseDouble( modelo.getValueAt(x, i-2).toString()));
-                        }catch(NumberFormatException e)
-                        {
-                            celda.setCellValue( modelo.getValueAt(x, i-2).toString());
-                        }
-
-                       celda.setCellStyle(celdaDetalle);
+            for (int x = 0; x < modelo.getRowCount(); x++) {
+                Row renglon = hoja.createRow((x + 3));
+                Cell celda = null;
+                for (int i = 2; i < modelo.getColumnCount() + 2; i++) {
+                    celda = renglon.createCell(i);
+                    try {
+                        celda.setCellValue(Double.parseDouble(modelo.getValueAt(x, i - 2).toString()));
+                    } catch (NumberFormatException e) {
+                        celda.setCellValue(modelo.getValueAt(x, i - 2).toString());
                     }
-            }
-            
-           
-                     //AGREGAMOS AL FINAL DE LA LINEA UN SUM CON LOS TOTALES HRS EMB. HRS. PAGADAS
-            
-                      Row renglon=hoja.createRow((modelo.getRowCount()+3));
-                      Cell celda=null;
-                       celda=renglon.createCell(2);
-                       celda.setCellValue("TOTAL PLANTAa");
-                       celda.setCellStyle(celdaDetalle);
-                       celda=renglon.createCell(3);
-                       celda.setCellStyle(celdaDetalle);
 
-                       for (int i = 3; i < modelo.getColumnCount(); i++) {
-                            celda=renglon.createCell(i+2);
-                            celda.setCellStyle(celdaDetalle);
-                     
-                            celda.setCellFormula("sum("+getColumnName(i+2)+4+":"+getColumnName(i+2)+14+")");
-                       }
+                    celda.setCellStyle(celdaDetalle);
+                }
+            }
+
+            //AGREGAMOS AL FINAL DE LA LINEA UN SUM CON LOS TOTALES HRS EMB. HRS. PAGADAS
+            Row renglon = hoja.createRow((modelo.getRowCount() + 3));
+            Cell celda = null;
+            celda = renglon.createCell(2);
+            celda.setCellValue("TOTAL PLANTAa");
+            celda.setCellStyle(celdaDetalle);
+            celda = renglon.createCell(3);
+            celda.setCellStyle(celdaDetalle);
+
+            for (int i = 3; i < modelo.getColumnCount(); i++) {
+                celda = renglon.createCell(i + 2);
+                celda.setCellStyle(celdaDetalle);
+
+                celda.setCellFormula("sum(" + getColumnName(i + 2) + 4 + ":" + getColumnName(i + 2) + 14 + ")");
+            }
 //                      
-                    for (int i = 0; i < modelo.getRowCount()+1; i++) {
-                      renglon=hoja.getRow(i+3);
-                     // celda=renglon.createCell(9);
+            for (int i = 0; i < modelo.getRowCount() + 1; i++) {
+                renglon = hoja.getRow(i + 3);
+                // celda=renglon.createCell(9);
 //                      celda.setCellStyle(getStyleDetallePorc());
 //                      celda.setCellFormula("+F"+(i+4)+"/H"+(i+4));
 //                      
 //                      celda=renglon.createCell(10);
 //                      celda.setCellStyle(getStyleDetallePorc());
 //                      celda.setCellFormula("+G"+(i+4)+"/I"+(i+4));
-                        
-                      celda=renglon.createCell(7);
-                      celda.setCellStyle(getStyleDetallePorc());
-                      celda.setCellFormula("sum(F"+(i+4)+"/G"+(i+4)+")");
-                    }
+
+                celda = renglon.createCell(7);
+                celda.setCellStyle(getStyleDetallePorc());
+                celda.setCellFormula("sum(F" + (i + 4) + "/G" + (i + 4) + ")");
+            }
 // 
-               //
-            
-        libro.write(archivo);
-        /*Cerramos el flujo de datos*/
-        archivo.close();
-        /*Y abrimos el archivo con la clase Desktop*/
-        Desktop.getDesktop().open(archivoXLS);
+            //
+
+            libro.write(archivo);
+            /*Cerramos el flujo de datos*/
+            archivo.close();
+            /*Y abrimos el archivo con la clase Desktop*/
+            Desktop.getDesktop().open(archivoXLS);
         } catch (FormulaParseException | IOException ex) {
-           System.out.println(ex.toString()+"aqui fue el pedo 5");
+            System.out.println(ex.toString() + "aqui fue el pedo 5");
         } finally {
             try {
                 archivo.close();
             } catch (IOException ex) {
-                System.out.println(ex.toString()+"aqui fue el pedo 6");
+                System.out.println(ex.toString() + "aqui fue el pedo 6");
             }
         }
     }
-       
-       String GetFecha(java.util.Date fecha) {
+
+    String GetFecha(java.util.Date fecha) {
         return new SimpleDateFormat("dd-MM-yyyy").format(fecha);
-       }
-       //METODO QUE REGRESA LA LETRA DE LA COLUMNA
-       private String getColumnName(int columnNumber) {     
+    }
+    //METODO QUE REGRESA LA LETRA DE LA COLUMNA
+
+    private String getColumnName(int columnNumber) {
         String columnName = "";
         int dividend = columnNumber + 1;
         int modulus;
- 
-        while (dividend > 0){
+
+        while (dividend > 0) {
             modulus = (dividend - 1) % 26;
-            columnName = (char)(65 + modulus) + columnName;
-            dividend = (int)((dividend - modulus) / 26);
-        } 
- 
+            columnName = (char) (65 + modulus) + columnName;
+            dividend = (int) ((dividend - modulus) / 26);
+        }
+
         return columnName;
     }
-       //CREAMOS CABECERAS DE LAS FECHAS
-       public void getTituloStyle(){
-                 //CREAMOS CABECERAS DEL REPORTE 
-            celdaStiloCabecera=libro.createCellStyle();
-            celdaStiloCabecera.setAlignment((short)2);
-            Font cellF=libro.createFont();
-            cellF.setFontName(HSSFFont.FONT_ARIAL);
-            cellF.setFontHeightInPoints((short)9);
-            cellF.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-            celdaStiloCabecera.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
-            celdaStiloCabecera.setBorderLeft(HSSFCellStyle.BORDER_MEDIUM);
-            celdaStiloCabecera.setBorderRight(HSSFCellStyle.BORDER_MEDIUM);
-            celdaStiloCabecera.setBorderTop(HSSFCellStyle.BORDER_MEDIUM);
-            celdaStiloCabecera.setFont(cellF);
-      }
-    
-       public void getStyleDetalle(){
-            celdaDetalle=libro.createCellStyle();
-            Font cellFCF=libro.createFont();
-            cellFCF.setBoldweight(HSSFFont.BOLDWEIGHT_NORMAL);
-                cellFCF.setFontHeightInPoints((short)8);
-            cellFCF.setFontName(HSSFFont.FONT_ARIAL);
-            celdaDetalle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-            celdaDetalle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-            celdaDetalle.setBorderRight(HSSFCellStyle.BORDER_THIN);
-            celdaDetalle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-            celdaDetalle.setFillBackgroundColor(HSSFColor.GREY_50_PERCENT.index);
+    //CREAMOS CABECERAS DE LAS FECHAS
+
+    public void getTituloStyle() {
+        //CREAMOS CABECERAS DEL REPORTE 
+        celdaStiloCabecera = libro.createCellStyle();
+        celdaStiloCabecera.setAlignment((short) 2);
+        Font cellF = libro.createFont();
+        cellF.setFontName(HSSFFont.FONT_ARIAL);
+        cellF.setFontHeightInPoints((short) 9);
+        cellF.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        celdaStiloCabecera.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
+        celdaStiloCabecera.setBorderLeft(HSSFCellStyle.BORDER_MEDIUM);
+        celdaStiloCabecera.setBorderRight(HSSFCellStyle.BORDER_MEDIUM);
+        celdaStiloCabecera.setBorderTop(HSSFCellStyle.BORDER_MEDIUM);
+        celdaStiloCabecera.setFont(cellF);
     }
-        
-       public CellStyle getStyleDetallePorc() {
-            CellStyle celdaDetalle=libro.createCellStyle();
-            Font cellFCF=libro.createFont();
-            cellFCF.setBoldweight(HSSFFont.BOLDWEIGHT_NORMAL);
-            cellFCF.setFontHeightInPoints((short)8);
-            cellFCF.setFontName(HSSFFont.FONT_ARIAL);
-            celdaDetalle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-            celdaDetalle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-            celdaDetalle.setBorderRight(HSSFCellStyle.BORDER_THIN);
-            celdaDetalle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-            celdaDetalle.setDataFormat(libro.createDataFormat().getFormat("0.00%"));
-            celdaDetalle.setFillBackgroundColor(HSSFColor.GREY_50_PERCENT.index);
-  
-            return celdaDetalle;
-    } 
 
-       
-       public CellStyle getStyleDetallePorc(short  color) {
-            CellStyle celdaDetalleS=libro.createCellStyle();
-             Font cellSF=libro.createFont();
-            cellSF.setFontName(HSSFFont.FONT_ARIAL);
-            cellSF.setFontHeightInPoints((short)12);
-            cellSF.setColor(HSSFColor.BLACK.index);
-            cellSF.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-            celdaDetalleS.setFont(cellSF);
-            celdaDetalleS.setBorderBottom(HSSFCellStyle.BORDER_DOUBLE);
-            celdaDetalleS.setBorderLeft(HSSFCellStyle.BORDER_DOUBLE);
-            celdaDetalleS.setBorderRight(HSSFCellStyle.BORDER_DOUBLE);
-            celdaDetalleS.setBorderTop(HSSFCellStyle.BORDER_DOUBLE);
-            celdaDetalleS.setFillForegroundColor(color);
-            celdaDetalleS.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-            celdaDetalleS.setDataFormat(libro.createDataFormat().getFormat("0.00%"));
-            celdaDetalleS.setFillBackgroundColor(HSSFColor.GREY_50_PERCENT.index);
-            return celdaDetalleS;
-    } 
-    
-       public CellStyle getTituloStyleTotales(short color){
-            //CREAMOS CABECERAS DEL REPORTE 
-            celdaTotales=libro.createCellStyle();
-            celdaTotales.setAlignment((short)2);
-            Font cellSF=libro.createFont();
-            cellSF.setFontName(HSSFFont.FONT_ARIAL);
-            cellSF.setFontHeightInPoints((short)12);
-            cellSF.setColor(HSSFColor.BLACK.index);
-            cellSF.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-            celdaTotales.setFillForegroundColor(color);
-            celdaTotales.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+    public void getStyleDetalle() {
+        celdaDetalle = libro.createCellStyle();
+        Font cellFCF = libro.createFont();
+        cellFCF.setBoldweight(HSSFFont.BOLDWEIGHT_NORMAL);
+        cellFCF.setFontHeightInPoints((short) 8);
+        cellFCF.setFontName(HSSFFont.FONT_ARIAL);
+        celdaDetalle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+        celdaDetalle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+        celdaDetalle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+        celdaDetalle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        celdaDetalle.setFillBackgroundColor(HSSFColor.GREY_50_PERCENT.index);
+    }
 
-            celdaTotales.setBorderBottom(HSSFCellStyle.BORDER_DOUBLE);
-            celdaTotales.setBorderLeft(HSSFCellStyle.BORDER_DOUBLE);
-            celdaTotales.setBorderRight(HSSFCellStyle.BORDER_DOUBLE);
-            celdaTotales.setBorderTop(HSSFCellStyle.BORDER_DOUBLE);
-            celdaTotales.setFont(cellSF);
-            return celdaTotales;
-      } 
+    public CellStyle getStyleDetallePorc() {
+        CellStyle celdaDetalle = libro.createCellStyle();
+        Font cellFCF = libro.createFont();
+        cellFCF.setBoldweight(HSSFFont.BOLDWEIGHT_NORMAL);
+        cellFCF.setFontHeightInPoints((short) 8);
+        cellFCF.setFontName(HSSFFont.FONT_ARIAL);
+        celdaDetalle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+        celdaDetalle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+        celdaDetalle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+        celdaDetalle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        celdaDetalle.setDataFormat(libro.createDataFormat().getFormat("0.00%"));
+        celdaDetalle.setFillBackgroundColor(HSSFColor.GREY_50_PERCENT.index);
+
+        return celdaDetalle;
+    }
+
+    public CellStyle getStyleDetallePorc(short color) {
+        CellStyle celdaDetalleS = libro.createCellStyle();
+        Font cellSF = libro.createFont();
+        cellSF.setFontName(HSSFFont.FONT_ARIAL);
+        cellSF.setFontHeightInPoints((short) 12);
+        cellSF.setColor(HSSFColor.BLACK.index);
+        cellSF.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        celdaDetalleS.setFont(cellSF);
+        celdaDetalleS.setBorderBottom(HSSFCellStyle.BORDER_DOUBLE);
+        celdaDetalleS.setBorderLeft(HSSFCellStyle.BORDER_DOUBLE);
+        celdaDetalleS.setBorderRight(HSSFCellStyle.BORDER_DOUBLE);
+        celdaDetalleS.setBorderTop(HSSFCellStyle.BORDER_DOUBLE);
+        celdaDetalleS.setFillForegroundColor(color);
+        celdaDetalleS.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        celdaDetalleS.setDataFormat(libro.createDataFormat().getFormat("0.00%"));
+        celdaDetalleS.setFillBackgroundColor(HSSFColor.GREY_50_PERCENT.index);
+        return celdaDetalleS;
+    }
+
+    public CellStyle getTituloStyleTotales(short color) {
+        //CREAMOS CABECERAS DEL REPORTE 
+        celdaTotales = libro.createCellStyle();
+        celdaTotales.setAlignment((short) 2);
+        Font cellSF = libro.createFont();
+        cellSF.setFontName(HSSFFont.FONT_ARIAL);
+        cellSF.setFontHeightInPoints((short) 12);
+        cellSF.setColor(HSSFColor.BLACK.index);
+        cellSF.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        celdaTotales.setFillForegroundColor(color);
+        celdaTotales.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+        celdaTotales.setBorderBottom(HSSFCellStyle.BORDER_DOUBLE);
+        celdaTotales.setBorderLeft(HSSFCellStyle.BORDER_DOUBLE);
+        celdaTotales.setBorderRight(HSSFCellStyle.BORDER_DOUBLE);
+        celdaTotales.setBorderTop(HSSFCellStyle.BORDER_DOUBLE);
+        celdaTotales.setFont(cellSF);
+        return celdaTotales;
+    }
     //CREAMOS CELLSTYLE CON LA CONFIGURACION DELOS TITULOS
-  
-     
+
 }

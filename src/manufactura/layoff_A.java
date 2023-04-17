@@ -1,36 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package manufactura;
 
-/**
- *
- */
-import Clases.Cadena;
 import Clases.Conection;
-import Clases.DatosGSD;
-import Reportes.ExcelDistribuccion;
-import java.awt.Desktop;
-import java.awt.List;
 import static java.awt.image.ImageObserver.WIDTH;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
+
 public class layoff_A extends javax.swing.JDialog {
 
     /**
@@ -38,492 +17,455 @@ public class layoff_A extends javax.swing.JDialog {
      */
     private database db = new database();
     private Object[][] dtPersona;
-    
-    
-   
 
-    
     public layoff_A(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-        
-       
+
         try {
             initComponents();
-           
-            Principal.cn=new Conection();
-           
-            
-            } catch (Exception ex) {
-            System.out.println(ex.toString()+" no ahi conection");
-          
-            }
-      
-       this.setTitle("LAY OFF TURNO A");
-       
-       
 
+            Principal.cn = new Conection();
+
+        } catch (Exception ex) {
+            System.out.println(ex.toString() + " no ahi conection");
+
+        }
+
+        this.setTitle("LAY OFF TURNO A");
 
         Actualizar_Tabla();
-        
+
         //oculta columna ID
         jTable1.getColumnModel().getColumn(0).setMaxWidth(0);
         jTable1.getColumnModel().getColumn(0).setMinWidth(0);
         jTable1.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
         jTable1.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
-        
-         jTable1.getColumnModel().getColumn(1).setMaxWidth(110);
-          jTable1.getColumnModel().getColumn(1).setMinWidth(110);
-          jTable1.getColumnModel().getColumn(1).setPreferredWidth(110);
-          jTable1.getColumnModel().getColumn(2).setMaxWidth(50);
-          jTable1.getColumnModel().getColumn(2).setMinWidth(50);
-          jTable1.getColumnModel().getColumn(2).setPreferredWidth(50);
+
+        jTable1.getColumnModel().getColumn(1).setMaxWidth(110);
+        jTable1.getColumnModel().getColumn(1).setMinWidth(110);
+        jTable1.getColumnModel().getColumn(1).setPreferredWidth(110);
+        jTable1.getColumnModel().getColumn(2).setMaxWidth(50);
+        jTable1.getColumnModel().getColumn(2).setMinWidth(50);
+        jTable1.getColumnModel().getColumn(2).setPreferredWidth(50);
         //editor de celdas
-        jTable1.getColumnModel().getColumn( 1 ).setCellEditor(new MyTableCellEditor(db,"CODIGO"));
-        jTable1.getColumnModel().getColumn( 2 ).setCellEditor(new MyTableCellEditor(db,"LINEA"));
-        jTable1.getColumnModel().getColumn( 3 ).setCellEditor(new MyTableCellEditor(db,"T_A_MOD"));
-        jTable1.getColumnModel().getColumn( 4 ).setCellEditor(new MyTableCellEditor(db,"LUNES"));
-        jTable1.getColumnModel().getColumn( 5 ).setCellEditor(new MyTableCellEditor(db,"MARTES"));
-        jTable1.getColumnModel().getColumn( 6 ).setCellEditor(new MyTableCellEditor(db,"MIERCOLES"));
-        jTable1.getColumnModel().getColumn( 7 ).setCellEditor(new MyTableCellEditor(db,"JUEVES"));
-        jTable1.getColumnModel().getColumn( 8 ).setCellEditor(new MyTableCellEditor(db,"VIERNES"));
-        jTable1.getColumnModel().getColumn( 9 ).setCellEditor(new MyTableCellEditor(db,"LUNES2"));
-        jTable1.getColumnModel().getColumn( 10 ).setCellEditor(new MyTableCellEditor(db,"MARTES2"));
-        jTable1.getColumnModel().getColumn( 11 ).setCellEditor(new MyTableCellEditor(db,"MIERCOLES2"));
-        jTable1.getColumnModel().getColumn( 12 ).setCellEditor(new MyTableCellEditor(db,"JUEVES2"));
-        jTable1.getColumnModel().getColumn( 13 ).setCellEditor(new MyTableCellEditor(db,"VIERNES2"));
+        jTable1.getColumnModel().getColumn(1).setCellEditor(new MyTableCellEditor(db, "CODIGO"));
+        jTable1.getColumnModel().getColumn(2).setCellEditor(new MyTableCellEditor(db, "LINEA"));
+        jTable1.getColumnModel().getColumn(3).setCellEditor(new MyTableCellEditor(db, "T_A_MOD"));
+        jTable1.getColumnModel().getColumn(4).setCellEditor(new MyTableCellEditor(db, "LUNES"));
+        jTable1.getColumnModel().getColumn(5).setCellEditor(new MyTableCellEditor(db, "MARTES"));
+        jTable1.getColumnModel().getColumn(6).setCellEditor(new MyTableCellEditor(db, "MIERCOLES"));
+        jTable1.getColumnModel().getColumn(7).setCellEditor(new MyTableCellEditor(db, "JUEVES"));
+        jTable1.getColumnModel().getColumn(8).setCellEditor(new MyTableCellEditor(db, "VIERNES"));
+        jTable1.getColumnModel().getColumn(9).setCellEditor(new MyTableCellEditor(db, "LUNES2"));
+        jTable1.getColumnModel().getColumn(10).setCellEditor(new MyTableCellEditor(db, "MARTES2"));
+        jTable1.getColumnModel().getColumn(11).setCellEditor(new MyTableCellEditor(db, "MIERCOLES2"));
+        jTable1.getColumnModel().getColumn(12).setCellEditor(new MyTableCellEditor(db, "JUEVES2"));
+        jTable1.getColumnModel().getColumn(13).setCellEditor(new MyTableCellEditor(db, "VIERNES2"));
     }
-    
 
-       
-    
-
-     public void exportarjTable(JTable tabla, String ficheroXLS) throws IOException {
+    public void exportarjTable(JTable tabla, String ficheroXLS) throws IOException {
         TableModel modelo = tabla.getModel();
         FileWriter fichero = new FileWriter(ficheroXLS);
-        
-        for(int i=0; i < modelo.getColumnCount(); i++) {
+
+        for (int i = 0; i < modelo.getColumnCount(); i++) {
             fichero.write(modelo.getColumnName(i) + "\t");
         }
         fichero.write("\n");
-        for(int i=0; i< modelo.getRowCount(); i++) {
-            for(int j=0; j < modelo.getColumnCount(); j++) {
-                fichero.write(modelo.getValueAt(i,j).toString()+"\t");
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            for (int j = 0; j < modelo.getColumnCount(); j++) {
+                fichero.write(modelo.getValueAt(i, j).toString() + "\t");
             }
             fichero.write("\n");
         }
         fichero.close();
-        
-     }
-    
 
+    }
 
-    
-         private void Actualizar_Tabla(){
-             
+    private void Actualizar_Tabla() {
+
         //actualiza los datos de la tabla realizando una consulta a la base de datos
-        String[] columNames = {"IDCODIGO" ,"CODIGO","LINEA","T_A_MOD","LUNES","MARTES","MIERCOLES","JUEVES","VIERNES","LUNES","MARTES","MIERCOLES","JUEVES","VIERNES"};
+        String[] columNames = {"IDCODIGO", "CODIGO", "LINEA", "T_A_MOD", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES"};
         dtPersona = db.Select_Persona();
         // se colocan los datos en la tabla
-        DefaultTableModel datos = new DefaultTableModel(dtPersona,columNames);
+        DefaultTableModel datos = new DefaultTableModel(dtPersona, columNames);
         jTable1.setModel(datos);
-         } 
-         
-     
-         
-         public void TOTAL_TA()
-         {
-                if((JOptionPane.showConfirmDialog(null, "Esta seguro que desea actualizar?", "Confirmar", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION))
-        {
-              try{
-                 //HC NECESARIO
-            ResultSet rs=Principal.cn.GetConsulta("SELECT sum(T_A_MOD) from manufactura.lay_off_a");
-            ResultSet rs2=Principal.cn.GetConsulta("SELECT  sum(T_A_MOD)AS TOTAL from manufactura.lay_off_a where IDCODIGO between '0' and '57' ");
-           ResultSet rs3=Principal.cn.GetConsulta("SELECT  sum(T_A_MOD)AS TOTAL from manufactura.lay_off_a where IDCODIGO between '59' and '89' ");
-    
-           //LUNES
-           ResultSet rs4=Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*LUNES)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'");
-           ResultSet rs5=Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*LUNES)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'");
-           ResultSet rs6=Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*LUNES)AS TOTAL from manufactura.lay_off_a");
-           //MARTES
-          ResultSet rs7=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*MARTES)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'"); 
-          ResultSet rs8=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*MARTES)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'"); 
-          ResultSet rs9=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*MARTES)AS TOTAL from manufactura.lay_off_a"); 
-              
-          //MIERCOLES
-          ResultSet rs10=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*MIERCOLES)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'"); 
-          ResultSet rs11=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*MIERCOLES)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'"); 
-          ResultSet rs12=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*MIERCOLES)AS TOTAL from manufactura.lay_off_a"); 
-          
-          ////JUEVES
-          ResultSet rs13=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*JUEVES)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'"); 
-          ResultSet rs14=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*JUEVES)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'"); 
-          ResultSet rs15=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*JUEVES)AS TOTAL from manufactura.lay_off_a");
-          
-           ////VIERNES
-          ResultSet rs16=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*VIERNES)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'"); 
-          ResultSet rs17=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*VIERNES)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'"); 
-          ResultSet rs18=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*VIERNES)AS TOTAL from manufactura.lay_off_a");
-           
-          //LUNES2
-           ResultSet rs19=Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*LUNES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'");
-           ResultSet rs20=Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*LUNES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'");
-           ResultSet rs21=Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*LUNES2)AS TOTAL from manufactura.lay_off_a");
-      
-            //MARTES2
-          ResultSet rs22=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*MARTES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'"); 
-          ResultSet rs23=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*MARTES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'"); 
-          ResultSet rs24=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*MARTES2)AS TOTAL from manufactura.lay_off_a"); 
-          
-          //MIERCOLES2
-          ResultSet rs25=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*MIERCOLES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'"); 
-          ResultSet rs26=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*MIERCOLES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'"); 
-          ResultSet rs27=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*MIERCOLES2)AS TOTAL from manufactura.lay_off_a"); 
-          
-           ////JUEVES2
-          ResultSet rs28=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*JUEVES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'"); 
-          ResultSet rs29=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*JUEVES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'"); 
-          ResultSet rs30=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*JUEVES2)AS TOTAL from manufactura.lay_off_a");
-          
-           ////VIERNES2
-          ResultSet rs31=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*VIERNES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'"); 
-          ResultSet rs32=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*VIERNES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'"); 
-          ResultSet rs33=Principal.cn.GetConsulta  ("SELECT  sum(T_A_MOD*VIERNES2)AS TOTAL from manufactura.lay_off_a");
-           
-         
-          if(rs.next() && rs2.next() && rs3.next() && rs4.next()&& rs5.next()&& rs6.next()&& rs7.next() && rs8.next() && rs9.next()&& rs10.next()&& rs11.next()&& rs12.next()&& rs13.next()&& rs14.next()&& rs15.next()&& rs16.next()&& rs17.next()&&
-                  rs18.next() && rs19.next()&& rs20.next()&& rs21.next()&& rs22.next() && rs23.next() && rs24.next()&& rs25.next()&& rs26.next()&& rs27.next()&& rs28.next()&& rs29.next()&& rs30.next()&& rs31.next()&& rs32.next()&& rs33.next())
-          
-          {
-           //HC NECESARIO   
-                 lbl_totalTurno.setText(rs.getString(WIDTH));
-                dpo_25962.setText(rs2.getString(WIDTH));
-                dpto_25963.setText(rs3.getString(WIDTH));
-                
-                
-                   //LUNES
-                dpo_62.setText(rs4.getString(WIDTH));
-                dpto_63.setText(rs5.getString(WIDTH));
-                total_tur.setText(rs6.getString(WIDTH));
-                
+    }
+
+    public void TOTAL_TA() {
+        if ((JOptionPane.showConfirmDialog(null, "Esta seguro que desea actualizar?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)) {
+            try {
+                //HC NECESARIO
+                ResultSet rs = Principal.cn.GetConsulta("SELECT sum(T_A_MOD) from manufactura.lay_off_a");
+                ResultSet rs2 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD)AS TOTAL from manufactura.lay_off_a where IDCODIGO between '0' and '57' ");
+                ResultSet rs3 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD)AS TOTAL from manufactura.lay_off_a where IDCODIGO between '59' and '89' ");
+
+                //LUNES
+                ResultSet rs4 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*LUNES)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'");
+                ResultSet rs5 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*LUNES)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'");
+                ResultSet rs6 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*LUNES)AS TOTAL from manufactura.lay_off_a");
                 //MARTES
-                dep62ma_loff.setText(rs7.getString(WIDTH));
-                dep63ma_loff.setText(rs8.getString(WIDTH));
-                Tdep_ma.setText(rs9.getString(WIDTH));
-                
+                ResultSet rs7 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*MARTES)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'");
+                ResultSet rs8 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*MARTES)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'");
+                ResultSet rs9 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*MARTES)AS TOTAL from manufactura.lay_off_a");
+
                 //MIERCOLES
-                dep62mi_loff.setText(rs10.getString(WIDTH));
-                dep63mi_loff.setText(rs11.getString(WIDTH));
-                Tdep_mi.setText(rs12.getString(WIDTH));
-                
-                //JUEVES
-                dep62jue_loff.setText(rs13.getString(WIDTH));
-                dep63jue_loff.setText(rs14.getString(WIDTH));
-                Tdep_jue.setText(rs15.getString(WIDTH));
-                
-                 //VIERNES
-                dep62vie_loff.setText(rs16.getString(WIDTH));
-                dep63vie_loff.setText(rs17.getString(WIDTH));
-                Tdep_vie.setText(rs18.getString(WIDTH));
-                
-                  //LUNES2
-                dpo_62_2.setText(rs19.getString(WIDTH));
-                dpto_63_2.setText(rs20.getString(WIDTH));
-                total_tur_2.setText(rs21.getString(WIDTH));
-                
-                 //MARTES2
-                dep62ma_loff2.setText(rs22.getString(WIDTH));
-                dep63ma_loff2.setText(rs23.getString(WIDTH));
-                Tdep_ma2.setText(rs24.getString(WIDTH));
-                
-                 //MIERCOLES
-                dep62mi_loff2.setText(rs25.getString(WIDTH));
-                dep63mi_loff2.setText(rs26.getString(WIDTH));
-                Tdep_mi2.setText(rs27.getString(WIDTH));
-                
-                //JUEVES
-                dep62jue_loff2.setText(rs28.getString(WIDTH));
-                dep63jue_loff2.setText(rs29.getString(WIDTH));
-                Tdep_jue2.setText(rs30.getString(WIDTH));
-                
-                 //VIERNES
-                dep62vie_loff2.setText(rs31.getString(WIDTH));
-                dep63vie_loff2.setText(rs32.getString(WIDTH));
-                Tdep_vie2.setText(rs33.getString(WIDTH));
-                
-           //   
-           //saca valor de HC laborando en depa_25962    lunes 
-           String val1=dpo_25962.getText();
-           String val2=dpo_62.getText();
-           int x = Integer.parseInt(val1);
-           int y = Integer.parseInt(val2);
-           int resta= x-y;
-           String resultado=String.valueOf(resta);
-           depa_62.setText(resultado);
-           
-           //saca valor de HC laborando en depa_25963 lunes
-            String val3=dpto_25963.getText();
-           String val4=dpto_63.getText();
-           int a = Integer.parseInt(val3);
-           int b = Integer.parseInt(val4);
-           int resta2= a-b;
-           String resultado2=String.valueOf(resta2);
-           depa_63.setText(resultado2);
-           
-           
-            //saca TOTAL de HC laborando lunes
-           String val5=depa_62.getText();
-           String val6=depa_63.getText();
-           int dep62 = Integer.parseInt(val5);
-           int dep63 = Integer.parseInt(val6);
-           int suma= dep62+dep63;
-           String resultado3=String.valueOf(suma);
-           total_turno.setText(resultado3);
-           
-           //saca valor de HC laborando en depa_25962    martes
-           String val7=dpo_25962.getText();
-            String val8=dep62ma_loff.getText();
-           int x1 = Integer.parseInt(val7);
-           int y1 = Integer.parseInt(val8);
-           int resta3= x1-y1;
-           String resultado4=String.valueOf(resta3);
-           depa62_marts.setText(resultado4);
-               
-           String val9=dpto_25963.getText();
-           String val10=dep63ma_loff.getText();
-           int x2 = Integer.parseInt(val9);
-           int y2 = Integer.parseInt(val10);
-           int resta4= x2-y2;
-           String resultado5=String.valueOf(resta4);
-           depa63_marts.setText(resultado5);
-           
-           String val11=depa62_marts.getText();
-           String val12=depa63_marts.getText();
-           int x3 = Integer.parseInt(val11);
-           int y3 = Integer.parseInt(val12);
-           int suma2= x3+y3;
-           String resultado6=String.valueOf(suma2);
-           total_turnoMarts.setText(resultado6);
-           
-           
-            //saca valor de HC laborando en depa_25962    miercoles
-           String val13=dpo_25962.getText();
-            String val14=dep62mi_loff.getText();
-           int x4 = Integer.parseInt(val13);
-           int y4 = Integer.parseInt(val14);
-           int resta5= x4-y4;
-           String resultado7=String.valueOf(resta5);
-           depa62_mierc.setText(resultado7);
-               
-           String val16=dpto_25963.getText();
-           String val17=dep63mi_loff.getText();
-           int x5 = Integer.parseInt(val16);
-           int y5 = Integer.parseInt(val17);
-           int resta6= x5-y5;
-           String resultado8=String.valueOf(resta6);
-           depa63_mierc.setText(resultado8);
-           
-           String val18=depa62_mierc.getText();
-           String val19=depa63_mierc.getText();
-           int x6 = Integer.parseInt(val18);
-           int y6 = Integer.parseInt(val19);
-           int suma3= x6+y6;
-           String resultado9=String.valueOf(suma3);
-           total_turnoMierc.setText(resultado9);
-           
-           
-             //saca valor de HC laborando en depa_25962    jueves
-           String val20=dpo_25962.getText();
-            String val21=dep62jue_loff.getText();
-           int x7 = Integer.parseInt(val20);
-           int y7 = Integer.parseInt(val21);
-           int resta7= x7-y7;
-           String resultado10=String.valueOf(resta7);
-           depa62_jue.setText(resultado10);
-               
-           String val22=dpto_25963.getText();
-           String val23=dep63jue_loff.getText();
-           int x8 = Integer.parseInt(val22);
-           int y8 = Integer.parseInt(val23);
-           int resta8= x8-y8;
-           String resultado11=String.valueOf(resta8);
-           depa63_jue.setText(resultado11);
-           
-           String val24=depa62_jue.getText();
-           String val25=depa63_jue.getText();
-           int x9 = Integer.parseInt(val24);
-           int y9 = Integer.parseInt(val25);
-           int suma4= x9+y9;
-           String resultado12=String.valueOf(suma4);
-           total_turnojue.setText(resultado12);
-           
-           
-           
-             //saca valor de HC laborando en depa_25962   viernes
-           String val26=dpo_25962.getText();
-            String val27=dep62vie_loff.getText();
-           int x10 = Integer.parseInt(val26);
-           int y10 = Integer.parseInt(val27);
-           int resta9= x10-y10;
-           String resultado13=String.valueOf(resta9);
-           depa62_vie.setText(resultado13);
-               
-           String val28=dpto_25963.getText();
-           String val29=dep63vie_loff.getText();
-           int x11 = Integer.parseInt(val28);
-           int y11 = Integer.parseInt(val29);
-           int resta10= x11-y11;
-           String resultado14=String.valueOf(resta10);
-           depa63_vie.setText(resultado14);
-           
-           String val30=depa62_vie.getText();
-           String val31=depa63_vie.getText();
-           int x12 = Integer.parseInt(val30);
-           int y12 = Integer.parseInt(val31);
-           int suma5= x12+y12;
-           String resultado15=String.valueOf(suma5);
-           total_turnovie.setText(resultado15);
-           
-            //saca valor de HC laborando en depa_25962    lunes2
-           String val32=dpo_25962.getText();
-           String val33=dpo_62_2.getText();
-           int x13 = Integer.parseInt(val32);
-           int y13 = Integer.parseInt(val33);
-           int resta11= x13-y13;
-           String resultado16=String.valueOf(resta11);
-           depa_62_2.setText(resultado16);
-           
-           //saca valor de HC laborando en depa_25963 lunes2
-            String val34=dpto_25963.getText();
-           String val35=dpto_63_2.getText();
-           int x14 = Integer.parseInt(val34);
-           int y14 = Integer.parseInt(val35);
-           int resta12= x14-y14;
-           String resultado17=String.valueOf(resta12);
-           depa_63_2.setText(resultado17);
-           
-           
-            //saca TOTAL de HC laborando lunes2
-           String val36=depa_62_2.getText();
-           String val37=depa_63_2.getText();
-           int x15 = Integer.parseInt(val36);
-           int y15= Integer.parseInt(val37);
-           int suma6= x15+y15;
-           String resultado18=String.valueOf(suma6);
-           total_turno_2.setText(resultado18);
-           
-           
-              //saca valor de HC laborando en depa_25962    martes
-           String val38=dpo_25962.getText();
-            String val39=dep62ma_loff2.getText();
-           int x16 = Integer.parseInt(val38);
-           int y16 = Integer.parseInt(val39);
-           int resta13= x16-y16;
-           String resultado19=String.valueOf(resta13);
-           depa62_marts2.setText(resultado19);
-               
-           String val40=dpto_25963.getText();
-           String val41=dep63ma_loff2.getText();
-           int x17 = Integer.parseInt(val40);
-           int y17 = Integer.parseInt(val41);
-           int resta14= x17-y17;
-           String resultado20=String.valueOf(resta14);
-           depa63_marts2.setText(resultado20);
-           
-           String val42=depa62_marts2.getText();
-           String val43=depa63_marts2.getText();
-           int x18 = Integer.parseInt(val42);
-           int y18 = Integer.parseInt(val43);
-           int suma7= x18+y18;
-           String resultado21=String.valueOf(suma7);
-           total_turnoMarts2.setText(resultado21);
-           
-           
-            //saca valor de HC laborando en depa_25962    miercoles
-           String val144=dpo_25962.getText();
-            String val145=dep62mi_loff2.getText();
-           int x19 = Integer.parseInt(val144);
-           int y19 = Integer.parseInt(val145);
-           int resta15= x19-y19;
-           String resultado22=String.valueOf(resta15);
-           depa62_mierc2.setText(resultado22);
-               
-           String val46=dpto_25963.getText();
-           String val47=dep63mi_loff2.getText();
-           int x20 = Integer.parseInt(val46);
-           int y20 = Integer.parseInt(val47);
-           int resta16= x20-y20;
-           String resultado23=String.valueOf(resta16);
-           depa63_mierc2.setText(resultado23);
-           
-           String val48=depa62_mierc2.getText();
-           String val49=depa63_mierc2.getText();
-           int x21 = Integer.parseInt(val48);
-           int y21 = Integer.parseInt(val49);
-           int suma8= x21+y21;
-           String resultado24=String.valueOf(suma8);
-           total_turnoMierc2.setText(resultado24);
-           
-           
-             //saca valor de HC laborando en depa_25962    jueves
-           String val50=dpo_25962.getText();
-            String val51=dep62jue_loff2.getText();
-           int x22 = Integer.parseInt(val50);
-           int y22 = Integer.parseInt(val51);
-           int resta17= x22-y22;
-           String resultado25=String.valueOf(resta17);
-           depa62_jue2.setText(resultado25);
-               
-           String val52=dpto_25963.getText();
-           String val53=dep63jue_loff2.getText();
-           int x23 = Integer.parseInt(val52);
-           int y23 = Integer.parseInt(val53);
-           int resta18= x23-y23;
-           String resultado26=String.valueOf(resta18);
-           depa63_jue2.setText(resultado26);
-           
-           String val54=depa62_jue2.getText();
-           String val55=depa63_jue2.getText();
-           int x24 = Integer.parseInt(val54);
-           int y24 = Integer.parseInt(val55);
-           int suma18= x24+y24;
-           String resultado27=String.valueOf(suma18);
-           total_turnojue2.setText(resultado27);
-           
-           
-           
-             //saca valor de HC laborando en depa_25962   viernes
-           String val56=dpo_25962.getText();
-            String val57=dep62vie_loff2.getText();
-           int x25 = Integer.parseInt(val56);
-           int y25 = Integer.parseInt(val57);
-           int resta19= x25-y25;
-           String resultado28=String.valueOf(resta19);
-           depa62_vie2.setText(resultado28);
-               
-           String val58=dpto_25963.getText();
-           String val59=dep63vie_loff2.getText();
-           int x26 = Integer.parseInt(val58);
-           int y26 = Integer.parseInt(val59);
-           int resta20= x26-y26;
-           String resultado29=String.valueOf(resta20);
-           depa63_vie2.setText(resultado29);
-           
-           String val60=depa62_vie2.getText();
-           String val61=depa63_vie2.getText();
-           int x27 = Integer.parseInt(val60);
-           int y27 = Integer.parseInt(val61);
-           int suma19= x27+y27;
-           String resultado30=String.valueOf(suma19);
-           total_turnovie2.setText(resultado30);    
+                ResultSet rs10 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*MIERCOLES)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'");
+                ResultSet rs11 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*MIERCOLES)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'");
+                ResultSet rs12 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*MIERCOLES)AS TOTAL from manufactura.lay_off_a");
+
+                ////JUEVES
+                ResultSet rs13 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*JUEVES)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'");
+                ResultSet rs14 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*JUEVES)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'");
+                ResultSet rs15 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*JUEVES)AS TOTAL from manufactura.lay_off_a");
+
+                ////VIERNES
+                ResultSet rs16 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*VIERNES)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'");
+                ResultSet rs17 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*VIERNES)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'");
+                ResultSet rs18 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*VIERNES)AS TOTAL from manufactura.lay_off_a");
+
+                //LUNES2
+                ResultSet rs19 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*LUNES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'");
+                ResultSet rs20 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*LUNES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'");
+                ResultSet rs21 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*LUNES2)AS TOTAL from manufactura.lay_off_a");
+
+                //MARTES2
+                ResultSet rs22 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*MARTES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'");
+                ResultSet rs23 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*MARTES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'");
+                ResultSet rs24 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*MARTES2)AS TOTAL from manufactura.lay_off_a");
+
+                //MIERCOLES2
+                ResultSet rs25 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*MIERCOLES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'");
+                ResultSet rs26 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*MIERCOLES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'");
+                ResultSet rs27 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*MIERCOLES2)AS TOTAL from manufactura.lay_off_a");
+
+                ////JUEVES2
+                ResultSet rs28 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*JUEVES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'");
+                ResultSet rs29 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*JUEVES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'");
+                ResultSet rs30 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*JUEVES2)AS TOTAL from manufactura.lay_off_a");
+
+                ////VIERNES2
+                ResultSet rs31 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*VIERNES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '0' and '57'");
+                ResultSet rs32 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*VIERNES2)AS TOTAL from manufactura.lay_off_a where idcodigo between '59' and '89'");
+                ResultSet rs33 = Principal.cn.GetConsulta("SELECT  sum(T_A_MOD*VIERNES2)AS TOTAL from manufactura.lay_off_a");
+
+                if (rs.next() && rs2.next() && rs3.next() && rs4.next() && rs5.next() && rs6.next() && rs7.next() && rs8.next() && rs9.next() && rs10.next() && rs11.next() && rs12.next() && rs13.next() && rs14.next() && rs15.next() && rs16.next() && rs17.next()
+                        && rs18.next() && rs19.next() && rs20.next() && rs21.next() && rs22.next() && rs23.next() && rs24.next() && rs25.next() && rs26.next() && rs27.next() && rs28.next() && rs29.next() && rs30.next() && rs31.next() && rs32.next() && rs33.next()) {
+                    //HC NECESARIO   
+                    lbl_totalTurno.setText(rs.getString(WIDTH));
+                    dpo_25962.setText(rs2.getString(WIDTH));
+                    dpto_25963.setText(rs3.getString(WIDTH));
+
+                    //LUNES
+                    dpo_62.setText(rs4.getString(WIDTH));
+                    dpto_63.setText(rs5.getString(WIDTH));
+                    total_tur.setText(rs6.getString(WIDTH));
+
+                    //MARTES
+                    dep62ma_loff.setText(rs7.getString(WIDTH));
+                    dep63ma_loff.setText(rs8.getString(WIDTH));
+                    Tdep_ma.setText(rs9.getString(WIDTH));
+
+                    //MIERCOLES
+                    dep62mi_loff.setText(rs10.getString(WIDTH));
+                    dep63mi_loff.setText(rs11.getString(WIDTH));
+                    Tdep_mi.setText(rs12.getString(WIDTH));
+
+                    //JUEVES
+                    dep62jue_loff.setText(rs13.getString(WIDTH));
+                    dep63jue_loff.setText(rs14.getString(WIDTH));
+                    Tdep_jue.setText(rs15.getString(WIDTH));
+
+                    //VIERNES
+                    dep62vie_loff.setText(rs16.getString(WIDTH));
+                    dep63vie_loff.setText(rs17.getString(WIDTH));
+                    Tdep_vie.setText(rs18.getString(WIDTH));
+
+                    //LUNES2
+                    dpo_62_2.setText(rs19.getString(WIDTH));
+                    dpto_63_2.setText(rs20.getString(WIDTH));
+                    total_tur_2.setText(rs21.getString(WIDTH));
+
+                    //MARTES2
+                    dep62ma_loff2.setText(rs22.getString(WIDTH));
+                    dep63ma_loff2.setText(rs23.getString(WIDTH));
+                    Tdep_ma2.setText(rs24.getString(WIDTH));
+
+                    //MIERCOLES
+                    dep62mi_loff2.setText(rs25.getString(WIDTH));
+                    dep63mi_loff2.setText(rs26.getString(WIDTH));
+                    Tdep_mi2.setText(rs27.getString(WIDTH));
+
+                    //JUEVES
+                    dep62jue_loff2.setText(rs28.getString(WIDTH));
+                    dep63jue_loff2.setText(rs29.getString(WIDTH));
+                    Tdep_jue2.setText(rs30.getString(WIDTH));
+
+                    //VIERNES
+                    dep62vie_loff2.setText(rs31.getString(WIDTH));
+                    dep63vie_loff2.setText(rs32.getString(WIDTH));
+                    Tdep_vie2.setText(rs33.getString(WIDTH));
+
+                    //   
+                    //saca valor de HC laborando en depa_25962    lunes 
+                    String val1 = dpo_25962.getText();
+                    String val2 = dpo_62.getText();
+                    int x = Integer.parseInt(val1);
+                    int y = Integer.parseInt(val2);
+                    int resta = x - y;
+                    String resultado = String.valueOf(resta);
+                    depa_62.setText(resultado);
+
+                    //saca valor de HC laborando en depa_25963 lunes
+                    String val3 = dpto_25963.getText();
+                    String val4 = dpto_63.getText();
+                    int a = Integer.parseInt(val3);
+                    int b = Integer.parseInt(val4);
+                    int resta2 = a - b;
+                    String resultado2 = String.valueOf(resta2);
+                    depa_63.setText(resultado2);
+
+                    //saca TOTAL de HC laborando lunes
+                    String val5 = depa_62.getText();
+                    String val6 = depa_63.getText();
+                    int dep62 = Integer.parseInt(val5);
+                    int dep63 = Integer.parseInt(val6);
+                    int suma = dep62 + dep63;
+                    String resultado3 = String.valueOf(suma);
+                    total_turno.setText(resultado3);
+
+                    //saca valor de HC laborando en depa_25962    martes
+                    String val7 = dpo_25962.getText();
+                    String val8 = dep62ma_loff.getText();
+                    int x1 = Integer.parseInt(val7);
+                    int y1 = Integer.parseInt(val8);
+                    int resta3 = x1 - y1;
+                    String resultado4 = String.valueOf(resta3);
+                    depa62_marts.setText(resultado4);
+
+                    String val9 = dpto_25963.getText();
+                    String val10 = dep63ma_loff.getText();
+                    int x2 = Integer.parseInt(val9);
+                    int y2 = Integer.parseInt(val10);
+                    int resta4 = x2 - y2;
+                    String resultado5 = String.valueOf(resta4);
+                    depa63_marts.setText(resultado5);
+
+                    String val11 = depa62_marts.getText();
+                    String val12 = depa63_marts.getText();
+                    int x3 = Integer.parseInt(val11);
+                    int y3 = Integer.parseInt(val12);
+                    int suma2 = x3 + y3;
+                    String resultado6 = String.valueOf(suma2);
+                    total_turnoMarts.setText(resultado6);
+
+                    //saca valor de HC laborando en depa_25962    miercoles
+                    String val13 = dpo_25962.getText();
+                    String val14 = dep62mi_loff.getText();
+                    int x4 = Integer.parseInt(val13);
+                    int y4 = Integer.parseInt(val14);
+                    int resta5 = x4 - y4;
+                    String resultado7 = String.valueOf(resta5);
+                    depa62_mierc.setText(resultado7);
+
+                    String val16 = dpto_25963.getText();
+                    String val17 = dep63mi_loff.getText();
+                    int x5 = Integer.parseInt(val16);
+                    int y5 = Integer.parseInt(val17);
+                    int resta6 = x5 - y5;
+                    String resultado8 = String.valueOf(resta6);
+                    depa63_mierc.setText(resultado8);
+
+                    String val18 = depa62_mierc.getText();
+                    String val19 = depa63_mierc.getText();
+                    int x6 = Integer.parseInt(val18);
+                    int y6 = Integer.parseInt(val19);
+                    int suma3 = x6 + y6;
+                    String resultado9 = String.valueOf(suma3);
+                    total_turnoMierc.setText(resultado9);
+
+                    //saca valor de HC laborando en depa_25962    jueves
+                    String val20 = dpo_25962.getText();
+                    String val21 = dep62jue_loff.getText();
+                    int x7 = Integer.parseInt(val20);
+                    int y7 = Integer.parseInt(val21);
+                    int resta7 = x7 - y7;
+                    String resultado10 = String.valueOf(resta7);
+                    depa62_jue.setText(resultado10);
+
+                    String val22 = dpto_25963.getText();
+                    String val23 = dep63jue_loff.getText();
+                    int x8 = Integer.parseInt(val22);
+                    int y8 = Integer.parseInt(val23);
+                    int resta8 = x8 - y8;
+                    String resultado11 = String.valueOf(resta8);
+                    depa63_jue.setText(resultado11);
+
+                    String val24 = depa62_jue.getText();
+                    String val25 = depa63_jue.getText();
+                    int x9 = Integer.parseInt(val24);
+                    int y9 = Integer.parseInt(val25);
+                    int suma4 = x9 + y9;
+                    String resultado12 = String.valueOf(suma4);
+                    total_turnojue.setText(resultado12);
+
+                    //saca valor de HC laborando en depa_25962   viernes
+                    String val26 = dpo_25962.getText();
+                    String val27 = dep62vie_loff.getText();
+                    int x10 = Integer.parseInt(val26);
+                    int y10 = Integer.parseInt(val27);
+                    int resta9 = x10 - y10;
+                    String resultado13 = String.valueOf(resta9);
+                    depa62_vie.setText(resultado13);
+
+                    String val28 = dpto_25963.getText();
+                    String val29 = dep63vie_loff.getText();
+                    int x11 = Integer.parseInt(val28);
+                    int y11 = Integer.parseInt(val29);
+                    int resta10 = x11 - y11;
+                    String resultado14 = String.valueOf(resta10);
+                    depa63_vie.setText(resultado14);
+
+                    String val30 = depa62_vie.getText();
+                    String val31 = depa63_vie.getText();
+                    int x12 = Integer.parseInt(val30);
+                    int y12 = Integer.parseInt(val31);
+                    int suma5 = x12 + y12;
+                    String resultado15 = String.valueOf(suma5);
+                    total_turnovie.setText(resultado15);
+
+                    //saca valor de HC laborando en depa_25962    lunes2
+                    String val32 = dpo_25962.getText();
+                    String val33 = dpo_62_2.getText();
+                    int x13 = Integer.parseInt(val32);
+                    int y13 = Integer.parseInt(val33);
+                    int resta11 = x13 - y13;
+                    String resultado16 = String.valueOf(resta11);
+                    depa_62_2.setText(resultado16);
+
+                    //saca valor de HC laborando en depa_25963 lunes2
+                    String val34 = dpto_25963.getText();
+                    String val35 = dpto_63_2.getText();
+                    int x14 = Integer.parseInt(val34);
+                    int y14 = Integer.parseInt(val35);
+                    int resta12 = x14 - y14;
+                    String resultado17 = String.valueOf(resta12);
+                    depa_63_2.setText(resultado17);
+
+                    //saca TOTAL de HC laborando lunes2
+                    String val36 = depa_62_2.getText();
+                    String val37 = depa_63_2.getText();
+                    int x15 = Integer.parseInt(val36);
+                    int y15 = Integer.parseInt(val37);
+                    int suma6 = x15 + y15;
+                    String resultado18 = String.valueOf(suma6);
+                    total_turno_2.setText(resultado18);
+
+                    //saca valor de HC laborando en depa_25962    martes
+                    String val38 = dpo_25962.getText();
+                    String val39 = dep62ma_loff2.getText();
+                    int x16 = Integer.parseInt(val38);
+                    int y16 = Integer.parseInt(val39);
+                    int resta13 = x16 - y16;
+                    String resultado19 = String.valueOf(resta13);
+                    depa62_marts2.setText(resultado19);
+
+                    String val40 = dpto_25963.getText();
+                    String val41 = dep63ma_loff2.getText();
+                    int x17 = Integer.parseInt(val40);
+                    int y17 = Integer.parseInt(val41);
+                    int resta14 = x17 - y17;
+                    String resultado20 = String.valueOf(resta14);
+                    depa63_marts2.setText(resultado20);
+
+                    String val42 = depa62_marts2.getText();
+                    String val43 = depa63_marts2.getText();
+                    int x18 = Integer.parseInt(val42);
+                    int y18 = Integer.parseInt(val43);
+                    int suma7 = x18 + y18;
+                    String resultado21 = String.valueOf(suma7);
+                    total_turnoMarts2.setText(resultado21);
+
+                    //saca valor de HC laborando en depa_25962    miercoles
+                    String val144 = dpo_25962.getText();
+                    String val145 = dep62mi_loff2.getText();
+                    int x19 = Integer.parseInt(val144);
+                    int y19 = Integer.parseInt(val145);
+                    int resta15 = x19 - y19;
+                    String resultado22 = String.valueOf(resta15);
+                    depa62_mierc2.setText(resultado22);
+
+                    String val46 = dpto_25963.getText();
+                    String val47 = dep63mi_loff2.getText();
+                    int x20 = Integer.parseInt(val46);
+                    int y20 = Integer.parseInt(val47);
+                    int resta16 = x20 - y20;
+                    String resultado23 = String.valueOf(resta16);
+                    depa63_mierc2.setText(resultado23);
+
+                    String val48 = depa62_mierc2.getText();
+                    String val49 = depa63_mierc2.getText();
+                    int x21 = Integer.parseInt(val48);
+                    int y21 = Integer.parseInt(val49);
+                    int suma8 = x21 + y21;
+                    String resultado24 = String.valueOf(suma8);
+                    total_turnoMierc2.setText(resultado24);
+
+                    //saca valor de HC laborando en depa_25962    jueves
+                    String val50 = dpo_25962.getText();
+                    String val51 = dep62jue_loff2.getText();
+                    int x22 = Integer.parseInt(val50);
+                    int y22 = Integer.parseInt(val51);
+                    int resta17 = x22 - y22;
+                    String resultado25 = String.valueOf(resta17);
+                    depa62_jue2.setText(resultado25);
+
+                    String val52 = dpto_25963.getText();
+                    String val53 = dep63jue_loff2.getText();
+                    int x23 = Integer.parseInt(val52);
+                    int y23 = Integer.parseInt(val53);
+                    int resta18 = x23 - y23;
+                    String resultado26 = String.valueOf(resta18);
+                    depa63_jue2.setText(resultado26);
+
+                    String val54 = depa62_jue2.getText();
+                    String val55 = depa63_jue2.getText();
+                    int x24 = Integer.parseInt(val54);
+                    int y24 = Integer.parseInt(val55);
+                    int suma18 = x24 + y24;
+                    String resultado27 = String.valueOf(suma18);
+                    total_turnojue2.setText(resultado27);
+
+                    //saca valor de HC laborando en depa_25962   viernes
+                    String val56 = dpo_25962.getText();
+                    String val57 = dep62vie_loff2.getText();
+                    int x25 = Integer.parseInt(val56);
+                    int y25 = Integer.parseInt(val57);
+                    int resta19 = x25 - y25;
+                    String resultado28 = String.valueOf(resta19);
+                    depa62_vie2.setText(resultado28);
+
+                    String val58 = dpto_25963.getText();
+                    String val59 = dep63vie_loff2.getText();
+                    int x26 = Integer.parseInt(val58);
+                    int y26 = Integer.parseInt(val59);
+                    int resta20 = x26 - y26;
+                    String resultado29 = String.valueOf(resta20);
+                    depa63_vie2.setText(resultado29);
+
+                    String val60 = depa62_vie2.getText();
+                    String val61 = depa63_vie2.getText();
+                    int x27 = Integer.parseInt(val60);
+                    int y27 = Integer.parseInt(val61);
+                    int suma19 = x27 + y27;
+                    String resultado30 = String.valueOf(suma19);
+                    total_turnovie2.setText(resultado30);
+                }
+            } catch (Exception e) {
+                System.out.println(e.toString());
             }
-        }catch(Exception e)
-       {
-            System.out.println(e.toString());
-        }      
-              }      
-         }
-         
-        
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -4003,27 +3945,24 @@ public class layoff_A extends javax.swing.JDialog {
 
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
         // TODO add your handling code here:
-       
-        try{
-            TOTAL_TA();
-        } catch(Exception e)
-        {
 
-        } 
+        try {
+            TOTAL_TA();
+        } catch (Exception e) {
+
+        }
     }//GEN-LAST:event_btnActualizarActionPerformed
 
     private void btnExportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportarActionPerformed
- 
-        
-       try{
-               exportarjTable( jTable1," calculo1000" );
+
+        try {
+            exportarjTable(jTable1, " calculo1000");
 //                 excel_layoff exportar=new excel_layoff((DefaultTableModel)jTable1.getModel(), "CALCULO DE LAYOFF2");
-         System.out.println(" archivo exportado");
-       }catch(Exception e )
-      {
-          System.out.println(e.toString()+" archivo no exportado");
-      }
-      
+            System.out.println(" archivo exportado");
+        } catch (Exception e) {
+            System.out.println(e.toString() + " archivo no exportado");
+        }
+
     }//GEN-LAST:event_btnExportarActionPerformed
 
     /**

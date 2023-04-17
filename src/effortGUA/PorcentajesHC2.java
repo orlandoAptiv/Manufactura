@@ -5,7 +5,6 @@
  */
 package effortGUA;
 
-import CapturasEffort.*;
 import Clases.Depto;
 import Clases.Modulos;
 import java.sql.ResultSet;
@@ -16,10 +15,7 @@ import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import manufactura.Principal;
 
-/**
- *
- * @author Felipe M
- */
+
 public class PorcentajesHC2 extends javax.swing.JFrame {
 
     /**

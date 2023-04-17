@@ -16,10 +16,7 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author Felipe
- */
+
 public class CapturaDetalladaConv extends javax.swing.JFrame {
 
     /**

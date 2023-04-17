@@ -1,87 +1,75 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package manufactura;
 
 import java.awt.Image;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author gzld6k
- */
 public class DetalleEficiencia extends javax.swing.JFrame {
 
     /**
      * Creates new form DetalleEficiencia
      */
     DefaultTableModel modelo;
+
     public DetalleEficiencia(String Cadena) {
         initComponents();
-        lblCadena.setText(lblCadena.getText()+ Cadena);
+        lblCadena.setText(lblCadena.getText() + Cadena);
         Image icon = new ImageIcon(getClass().getResource("/Images/competitors-icon.png")).getImage();
-            setIconImage(icon);
+        setIconImage(icon);
         EnlazarDgvA(Cadena);
         EnlazarDgvB(Cadena);
     }
-    
-    public void EnlazarDgvA(String Cadena)
-    {
-        try {
-          modelo =new DefaultTableModel(){
-          @Override
-           public boolean isCellEditable(int row, int column) {
-                     //all cells false
-                return false;
-              }
-          };
-         modelo.setColumnIdentifiers(new Object[]{"IDENT", "LINEA", "CODIGO", "SALIDA", "HCDIR", "PUNTOS.PZA",  "HRSEMB", "HRSPAGADAS", "EFIC.MANUF."});
-         String query="select manu.idcodigo, manu.CADENA, manu.CODIGO, manu.LINEA, manu.turno, manu.SALIDAENPIEZA AS 'SALIDA', manu.hc as 'HCDIR',  Manu.PUNTOSPZAPOND AS 'PUNTOSPIEZA', ROUND(manu.horasemb) as 'HRSEMB', ROUND(manu.hrsPagadas) AS 'HRSPAG', TRUNCATE((manu.horasemb/manu.hrsPagadas*100),2) AS EFIC  FROM"+
-                 "(select c.IDCODIGO, c.LINEA,   c.CADENA, c.turno, c.codigo, m.HCDIRLINEA as hc, m.SALIDAENPIEZA, m.PUNTOSPZAPOND,  (m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100) as horasemb,  IF(c.TURNO='A',(m.HCDIRLINEA*9),(m.HCDIRLINEA*7.9)) as hrsPagadas  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO ) as manu, codigos as c "+
-                   "where manu.IDCODIGO=c.IDCODIGO AND MANU.CADENA='"+Cadena+"' AND manu.TURNO='A'";
-         tblTurnoA.setModel(modelo);  
-         tblTurnoA.setModel(modelo); 
-         ResultSet  rs=Principal.cn.GetConsulta(query);
-            while(rs.next())
-            {
-               modelo.addRow(new Object[]{rs.getString("idcodigo"), rs.getString("linea"), rs.getString("codigo"), rs.getString("SALIDA"),  rs.getString("hcdir"), rs.getString("puntospieza"), rs.getString("hrsemb"), rs.getString("hrspag"), rs.getString("EFIC")});
-            }
-          
-        }catch(Exception e)
-        {
-            System.out.println(e.toString());
-        }
-    }
-    public void EnlazarDgvB(String Cadena)
-    {
-        try {
-             modelo =new DefaultTableModel(){ 
-          @Override
-           public boolean isCellEditable(int row, int column) {
-                     //all cells false
-                return true;
-              }
-            };
-         modelo.setColumnIdentifiers(new Object[]{"IDENT", "LINEA", "CODIGO", "SALIDA", "HCDIR", "PUNTOS.PZA",  "HRSEMB", "HRSPAGADAS", "EFIC.MANUF."});
-         String query="select manu.idcodigo,  manu.CADENA, manu.CODIGO, manu.LINEA, manu.turno, Manu.SALIDAENPIEZA AS 'SALIDA', manu.hc as 'HCDIR',  Manu.PUNTOSPZAPOND AS 'PUNTOSPIEZA', ROUND(manu.horasemb) as 'HRSEMB', ROUND(manu.hrsPagadas) AS 'HRSPAG', TRUNCATE((manu.horasemb/manu.hrsPagadas*100),2) AS EFIC  FROM"+
-                 "(select c.IDCODIGO, c.LINEA,   c.CADENA, c.turno, c.codigo, m.HCDIRLINEA as hc, m.SALIDAENPIEZA, m.PUNTOSPZAPOND,  (m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100) as horasemb,  IF(c.TURNO='A',(m.HCDIRLINEA*9),(m.HCDIRLINEA*7.9)) as hrsPagadas  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO ) as manu, codigos as c " +
-                   "where manu.IDCODIGO=c.IDCODIGO AND MANU.CADENA='"+Cadena+"' and manu.turno='B'";
 
-            ResultSet  rs=Principal.cn.GetConsulta(query);
-          while(rs.next())
-            {
-               modelo.addRow(new Object[]{rs.getString("idcodigo"), rs.getString("linea"), rs.getString("codigo"), rs.getString("SALIDA"),  rs.getString("hcdir"), rs.getString("puntospieza"), rs.getString("hrsemb"), rs.getString("hrspag"), rs.getString("EFIC")});
+    public void EnlazarDgvA(String Cadena) {
+        try {
+            modelo = new DefaultTableModel() {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    //all cells false
+                    return false;
+                }
+            };
+            modelo.setColumnIdentifiers(new Object[]{"IDENT", "LINEA", "CODIGO", "SALIDA", "HCDIR", "PUNTOS.PZA", "HRSEMB", "HRSPAGADAS", "EFIC.MANUF."});
+            String query = "select manu.idcodigo, manu.CADENA, manu.CODIGO, manu.LINEA, manu.turno, manu.SALIDAENPIEZA AS 'SALIDA', manu.hc as 'HCDIR',  Manu.PUNTOSPZAPOND AS 'PUNTOSPIEZA', ROUND(manu.horasemb) as 'HRSEMB', ROUND(manu.hrsPagadas) AS 'HRSPAG', TRUNCATE((manu.horasemb/manu.hrsPagadas*100),2) AS EFIC  FROM"
+                    + "(select c.IDCODIGO, c.LINEA,   c.CADENA, c.turno, c.codigo, m.HCDIRLINEA as hc, m.SALIDAENPIEZA, m.PUNTOSPZAPOND,  (m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100) as horasemb,  IF(c.TURNO='A',(m.HCDIRLINEA*9),(m.HCDIRLINEA*7.9)) as hrsPagadas  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO ) as manu, codigos as c "
+                    + "where manu.IDCODIGO=c.IDCODIGO AND MANU.CADENA='" + Cadena + "' AND manu.TURNO='A'";
+            tblTurnoA.setModel(modelo);
+            tblTurnoA.setModel(modelo);
+            ResultSet rs = Principal.cn.GetConsulta(query);
+            while (rs.next()) {
+                modelo.addRow(new Object[]{rs.getString("idcodigo"), rs.getString("linea"), rs.getString("codigo"), rs.getString("SALIDA"), rs.getString("hcdir"), rs.getString("puntospieza"), rs.getString("hrsemb"), rs.getString("hrspag"), rs.getString("EFIC")});
             }
-           tblTurnoB.setModel(modelo);
-        }catch(Exception e)
-        {
+
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }
+
+    public void EnlazarDgvB(String Cadena) {
+        try {
+            modelo = new DefaultTableModel() {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    //all cells false
+                    return true;
+                }
+            };
+            modelo.setColumnIdentifiers(new Object[]{"IDENT", "LINEA", "CODIGO", "SALIDA", "HCDIR", "PUNTOS.PZA", "HRSEMB", "HRSPAGADAS", "EFIC.MANUF."});
+            String query = "select manu.idcodigo,  manu.CADENA, manu.CODIGO, manu.LINEA, manu.turno, Manu.SALIDAENPIEZA AS 'SALIDA', manu.hc as 'HCDIR',  Manu.PUNTOSPZAPOND AS 'PUNTOSPIEZA', ROUND(manu.horasemb) as 'HRSEMB', ROUND(manu.hrsPagadas) AS 'HRSPAG', TRUNCATE((manu.horasemb/manu.hrsPagadas*100),2) AS EFIC  FROM"
+                    + "(select c.IDCODIGO, c.LINEA,   c.CADENA, c.turno, c.codigo, m.HCDIRLINEA as hc, m.SALIDAENPIEZA, m.PUNTOSPZAPOND,  (m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100) as horasemb,  IF(c.TURNO='A',(m.HCDIRLINEA*9),(m.HCDIRLINEA*7.9)) as hrsPagadas  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO ) as manu, codigos as c "
+                    + "where manu.IDCODIGO=c.IDCODIGO AND MANU.CADENA='" + Cadena + "' and manu.turno='B'";
+
+            ResultSet rs = Principal.cn.GetConsulta(query);
+            while (rs.next()) {
+                modelo.addRow(new Object[]{rs.getString("idcodigo"), rs.getString("linea"), rs.getString("codigo"), rs.getString("SALIDA"), rs.getString("hcdir"), rs.getString("puntospieza"), rs.getString("hrsemb"), rs.getString("hrspag"), rs.getString("EFIC")});
+            }
+            tblTurnoB.setModel(modelo);
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

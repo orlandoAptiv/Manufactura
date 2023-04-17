@@ -1,24 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package CapturasEffort;
 
-import Clases.Conection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import manufactura.Principal;
 
-/**
- *
- * @author Felipe M
- */
 public class CapturaHCR extends javax.swing.JFrame {
 
     /**
@@ -28,37 +15,33 @@ public class CapturaHCR extends javax.swing.JFrame {
         try {
             initComponents();
             setLocationRelativeTo(null);
-           // Principal.cn=new Conection();
+            // Principal.cn=new Conection();
             cargarValoresMes();
         } catch (Exception ex) {
-           System.out.println(ex.toString());
+            System.out.println(ex.toString());
         }
     }
-    
-    public void cargarValoresMes(){
-        try{
-            ResultSet rs= Principal.cn.GetConsulta("SELECT  recursoshc.depto25962, recursoshc.depto25963, recursoshc.depto25928,\n" +
-                        "recursoshc.fecha,  MONTHNAME(now()), MONTHNAME(fecha), DATE(fecha)\n" +
-                        "FROM recursoshc where MONTHNAME(now()) =MONTHNAME(fecha)");
-          if((rs.next()) &&  (!rs.isBeforeFirst()))
-          {
-              txtGente62.setValue(rs.getDouble(1));
-              txtGente63.setValue(rs.getDouble(2));
-              txtGente28.setValue(rs.getDouble(3));
-              lblFecha.setText(rs.getString(7));
-              lblMes.setText(rs.getString(6));
-          }
-          else
-          {
-              ArrayList<Object> lista=new ArrayList<Object>();
-              lista.add(0);
-              lista.add(0);
-              lista.add(0);
-              Principal.cn.EjecutarInsertOb("INSERT INTO RECURSOSHC (DEPTO25962, DEPTO25963, DEPTO25928) VALUES (?,?,?)", lista);
-              cargarValoresMes();
-          }
-        }catch(Exception e)
-        {
+
+    public void cargarValoresMes() {
+        try {
+            ResultSet rs = Principal.cn.GetConsulta("SELECT  recursoshc.depto25962, recursoshc.depto25963, recursoshc.depto25928,\n"
+                    + "recursoshc.fecha,  MONTHNAME(now()), MONTHNAME(fecha), DATE(fecha)\n"
+                    + "FROM recursoshc where MONTHNAME(now()) =MONTHNAME(fecha)");
+            if ((rs.next()) && (!rs.isBeforeFirst())) {
+                txtGente62.setValue(rs.getDouble(1));
+                txtGente63.setValue(rs.getDouble(2));
+                txtGente28.setValue(rs.getDouble(3));
+                lblFecha.setText(rs.getString(7));
+                lblMes.setText(rs.getString(6));
+            } else {
+                ArrayList<Object> lista = new ArrayList<Object>();
+                lista.add(0);
+                lista.add(0);
+                lista.add(0);
+                Principal.cn.EjecutarInsertOb("INSERT INTO RECURSOSHC (DEPTO25962, DEPTO25963, DEPTO25928) VALUES (?,?,?)", lista);
+                cargarValoresMes();
+            }
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }
@@ -222,16 +205,14 @@ public class CapturaHCR extends javax.swing.JFrame {
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
         // TODO add your handling code here:
         //      if((cbxModuloAlta.getSelectedItem()!=null) || )
-        if(((double)txtGente62.getValue()!=0) && ((double)txtGente63.getValue()!=0))
-        {
-         ArrayList<Object> lista=new ArrayList<Object>();
-         lista.add(txtGente62.getValue());
-         lista.add(txtGente63.getValue());
-         lista.add(txtGente28.getValue());
-         Principal.cn.EjecutarInsertOb("UPDATE RECURSOSHC SET DEPTO25962=?, DEPTO25963=?, DEPTO25928=? WHERE MONTHNAME(now()) =MONTHNAME(fecha)", lista);
+        if (((double) txtGente62.getValue() != 0) && ((double) txtGente63.getValue() != 0)) {
+            ArrayList<Object> lista = new ArrayList<Object>();
+            lista.add(txtGente62.getValue());
+            lista.add(txtGente63.getValue());
+            lista.add(txtGente28.getValue());
+            Principal.cn.EjecutarInsertOb("UPDATE RECURSOSHC SET DEPTO25962=?, DEPTO25963=?, DEPTO25928=? WHERE MONTHNAME(now()) =MONTHNAME(fecha)", lista);
             JOptionPane.showMessageDialog(null, "DATOS ACTUALIZADOS...", "", JOptionPane.INFORMATION_MESSAGE);
-        }
-        else{
+        } else {
             JOptionPane.showMessageDialog(null, "ERROR AL GUARDAR VALOR  0...", "", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_btnEntrarActionPerformed

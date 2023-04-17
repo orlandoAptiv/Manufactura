@@ -1,15 +1,8 @@
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package manufactura;
 
 import Clases.Conection;
 import Clases.DatosManufactura;
-
 import Reportes.ExcelEficiencia;
-
 import java.awt.Image;
 import java.io.IOException;
 import java.sql.Date;
@@ -23,10 +16,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author gzld6k
- */
 public class MenuManufactura extends javax.swing.JFrame {
 
     /**
@@ -35,598 +24,527 @@ public class MenuManufactura extends javax.swing.JFrame {
     public MenuManufactura() {
         try {
             initComponents();
-            Principal.cn=new Conection();
+            Principal.cn = new Conection();
             enlazarPorc();
             EFIC_ONLY_MOCHIS();
-          // EFIC_ONLY_GUA();
+            // EFIC_ONLY_GUA();
             setLocationRelativeTo(null);
-             Image icon = new ImageIcon(getClass().getResource("/Images/competitors-icon.png")).getImage();
+            Image icon = new ImageIcon(getClass().getResource("/Images/competitors-icon.png")).getImage();
             setIconImage(icon);
         } catch (Exception ex) {
             Logger.getLogger(MenuManufactura.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-         Date now = new Date(System.currentTimeMillis());
-SimpleDateFormat date = new SimpleDateFormat("yyyy");
-SimpleDateFormat date2 = new SimpleDateFormat("yyyy-MM-dd");
-SimpleDateFormat hour = new SimpleDateFormat("HH:mm:ss");
+        }
+        Date now = new Date(System.currentTimeMillis());
+        SimpleDateFormat date = new SimpleDateFormat("yyyy");
+        SimpleDateFormat date2 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat hour = new SimpleDateFormat("HH:mm:ss");
 
-System.out.println(date.format(now));
-System.out.println(hour.format(now));
+        System.out.println(date.format(now));
+        System.out.println(hour.format(now));
 //LBL_ANIO.setText(date.format(now));
-txt_captura.setText(date2.format(now));
+        txt_captura.setText(date2.format(now));
     }
-    
-    public Double Regresa2Decimales(Double Valor){
-        try{
-         int aux = (int)(Valor*100);//1243
-            Valor = aux/100d;// 
-        }catch(Exception e)
-        {
+
+    public Double Regresa2Decimales(Double Valor) {
+        try {
+            int aux = (int) (Valor * 100);//1243
+            Valor = aux / 100d;// 
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
         return Valor;
-      }
-    
-    public void enlazarPorc(){
-          try  {
-              Double HrsPagIA=0.0, HrsPagIIA=0.0, HrsPagIIIA=0.0, HrsPagIB=0.0, HrsPagIIB=0.0, HrsPagIIIB=0.0,HrsPagVIA=0.0,HrsPagVIB=0.0,HrsPagVIIIB=0.0,HrsPagVIIIA=0.0;
-              Double HrsEMBIA=0.0, HrsEMBIIA=0.0, HrsEMBIIIA=0.0, HrsEMBIB=0.0, HrsEMBIIB=0.0, HrsEMBIIIB=0.0,HrsEMBVIA=0.0,HrsEMBVIB=0.0,HrsEMBVIIIB=0.0,HrsEMBVIIIA=0.0;
-              Double EficIA=0.0, EficIIA=0.0, EficIIIA=0.0, EficIB=0.0, EficIIB=0.0, EficIIIB=0.0,EficVIA=0.0,EficVIB=0.0,EficVIIIB=0.0,EficVIIIA=0.0;
-              Double HrsPagCorteA=0.0, HrsEmbCorteA=0.0, EficCorteA=0.0
-                      , HrsPagCorteB=0.0, HrsEmbCorteB=0.0, EficCorteB=0.0,HrsPagCorteC=0.0, HrsEmbCorteC=0.0, EficCorteC=0.0;
-              ResultSet rs= Principal.cn.GetConsulta("select DISTINCT manu.IDCODIGO,manu.CADENA,manu.LINEA, manu.turno, manu.hc, manu.activo,IF(manu.LINEA='CORTE' AND manu.CADENA=6,cortehrsemb.hrsEMBC,manu.horasemb)as horasemb, (manu.hrsPagadas) as hrsPagadas,ROUND(IF(manu.LINEA='CORTE' AND manu.CADENA=6,(cortehrsemb.hrsEMBC/manu.hrsPagadas)*100,(manu.horasemb/manu.hrsPagadas)*100),2)as efic   from \n" +
-"              (select c.IDCODIGO,c.arnes,c.LINEA, c.CADENA, c.turno, sum(m.HCDIRLINEA) as hc,round( sum((m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100)),2) as horasemb,  IF(c.TURNO='A', sum(((elinea+estaciones+ kits+HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*9)),\n" +
-"               sum(((elinea+estaciones+ kits+ HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*7.9))) as hrsPagadas, m.activo  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO and c.CADENA<>4  and c.TURNO='A' GROUP BY c.idcodigo) as manu,\n" +
-"               (SELECT SUM(TRUNCATE((((g.HCDIRCORTE*m.SALIDAENPIEZA)/100)),2)) as hrsEMBC FROM gsd as g, manufactura as m, codigos as c where c.IDCODIGO=m.IDCODIGO and c.IDCODIGO=g.IDCODIGO and m.activo=1  and c.TURNO='A' GROUP BY c.TURNO) as cortehrsemb\n" +
-"                where manu.CADENA<>4 and manu.activo<>0  UNION select DISTINCT manu.IDCODIGO,manu.CADENA,manu.LINEA, manu.turno, manu.hc, manu.activo,IF(manu.LINEA='CORTE',cortehrsemb.hrsEMBC,manu.horasemb)as horasemb, (manu.hrsPagadas) as hrsPagadas,ROUND(IF(manu.LINEA='CORTE' ,(cortehrsemb.hrsEMBC/manu.hrsPagadas)*100,(manu.horasemb/manu.hrsPagadas)*100),2)as efic   from \n" +
-"              (select c.IDCODIGO,c.arnes,c.LINEA, c.CADENA, c.turno, sum(m.HCDIRLINEA) as hc,round( sum((m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100)),2) as horasemb,  IF(c.TURNO='A', sum(((elinea+estaciones+ kits+HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*9)),\n" +
-"               sum(((elinea+estaciones+ kits+ HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*7.9))) as hrsPagadas, m.activo  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO and c.CADENA<>4 and c.TURNO='B' GROUP BY c.idcodigo) as manu,\n" +
-"               (SELECT SUM(TRUNCATE((((g.HCDIRCORTE*m.SALIDAENPIEZA)/100)),2)) as hrsEMBC FROM gsd as g, manufactura as m, codigos as c where c.IDCODIGO=m.IDCODIGO and c.IDCODIGO=g.IDCODIGO and m.activo=1   and c.TURNO='B'  GROUP BY c.TURNO) as cortehrsemb\n" +
-"                where manu.CADENA<>4 and manu.activo<>0 and manu.LINEA<>'29A'");
-                     // + "select  manu.CADENA, manu.turno, manu.hc, manu.activo,ROUND( (manu.horasemb)*1,2) as horasemb, (manu.hrsPagadas) as hrsPagadas,  ROUND( ( manu.horasemb/manu.hrsPagadas)*100,2) as efic  from \n" +
-              //  "(select c.LINEA, c.CADENA, c.turno, sum(m.HCDIRLINEA) as hc,round( sum((m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100))) as horasemb,  IF(c.TURNO='A', sum(((elinea+estaciones+ kits+HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*9)),"+
-               //       "sum(((elinea+estaciones+ kits+ HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*7.9))) as hrsPagadas, m.activo  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO  GROUP BY c.idcodigo) as manu\n" +
-              //  "where manu.CADENA<>4 and manu.activo<>0");
-              while(rs.next())
-              {
-                  switch(rs.getString("CADENA"))
-                  {
-                      case "1":
-                          if(rs.getString("turno").equals("A"))
-                          {
-                          HrsPagIA+=rs.getDouble("hrsPagadas");
-                          HrsEMBIA+=rs.getDouble("horasemb");
-                          }else if(rs.getString("turno").equals("B"))
-                          {
-                          HrsPagIB+=rs.getDouble("hrsPagadas");
-                          HrsEMBIB+=rs.getDouble("horasemb");
-                          }
-                          break;
-                      case "2":
-                         if(rs.getString("turno").equals("A"))
-                          {
-                          HrsPagIIA+=rs.getDouble("hrsPagadas");
-                          HrsEMBIIA+=rs.getDouble("horasemb");
-                          }else if(rs.getString("turno").equals("B"))
-                          {
-                          HrsPagIIB+=rs.getDouble("hrsPagadas");
-                          HrsEMBIIB+=rs.getDouble("horasemb");
-                          }
-                          break;
-                      case "3":
-               if(rs.getString("turno").equals("A"))
-                          {
-                          HrsPagIIIA+=rs.getDouble("hrsPagadas");
-                          HrsEMBIIIA+=rs.getDouble("horasemb");
-                          }else if(rs.getString("turno").equals("B"))
-                          {
-                          HrsPagIIIB+=rs.getDouble("hrsPagadas");
-                          HrsEMBIIIB+=rs.getDouble("horasemb");
-                          }
-                          break;
-                          case "6":
-               if(rs.getString("turno").equals("A"))
-                          {
-                          HrsPagVIA+=rs.getDouble("hrsPagadas");
-                          HrsEMBVIA+=rs.getDouble("horasemb");
-                          }else if(rs.getString("turno").equals("B"))
-                          {
-                          HrsPagVIB+=rs.getDouble("hrsPagadas");
-                          HrsEMBVIB+=rs.getDouble("horasemb");
-                          }
-                          break;
-                              
-                         
-                              case "5":
-               if(rs.getString("turno").equals("A"))
-                          {
-                          HrsPagVIIIA+=rs.getDouble("hrsPagadas");
-                          HrsEMBVIIIB+=rs.getDouble("horasemb");
-                          }else if(rs.getString("turno").equals("B"))
-                          {
-                          HrsPagVIIIB+=rs.getDouble("hrsPagadas");
-                          HrsEMBVIIIB+=rs.getDouble("horasemb");
-                          }
-                          break;
-                              
-                  }
-              }
+    }
+
+    public void enlazarPorc() {
+        try {
+            Double HrsPagIA = 0.0, HrsPagIIA = 0.0, HrsPagIIIA = 0.0, HrsPagIB = 0.0, HrsPagIIB = 0.0, HrsPagIIIB = 0.0, HrsPagVIA = 0.0, HrsPagVIB = 0.0, HrsPagVIIIB = 0.0, HrsPagVIIIA = 0.0;
+            Double HrsEMBIA = 0.0, HrsEMBIIA = 0.0, HrsEMBIIIA = 0.0, HrsEMBIB = 0.0, HrsEMBIIB = 0.0, HrsEMBIIIB = 0.0, HrsEMBVIA = 0.0, HrsEMBVIB = 0.0, HrsEMBVIIIB = 0.0, HrsEMBVIIIA = 0.0;
+            Double EficIA = 0.0, EficIIA = 0.0, EficIIIA = 0.0, EficIB = 0.0, EficIIB = 0.0, EficIIIB = 0.0, EficVIA = 0.0, EficVIB = 0.0, EficVIIIB = 0.0, EficVIIIA = 0.0;
+            Double HrsPagCorteA = 0.0, HrsEmbCorteA = 0.0, EficCorteA = 0.0, HrsPagCorteB = 0.0, HrsEmbCorteB = 0.0, EficCorteB = 0.0, HrsPagCorteC = 0.0, HrsEmbCorteC = 0.0, EficCorteC = 0.0;
+            ResultSet rs = Principal.cn.GetConsulta("select DISTINCT manu.IDCODIGO,manu.CADENA,manu.LINEA, manu.turno, manu.hc, manu.activo,IF(manu.LINEA='CORTE' AND manu.CADENA=6,cortehrsemb.hrsEMBC,manu.horasemb)as horasemb, (manu.hrsPagadas) as hrsPagadas,ROUND(IF(manu.LINEA='CORTE' AND manu.CADENA=6,(cortehrsemb.hrsEMBC/manu.hrsPagadas)*100,(manu.horasemb/manu.hrsPagadas)*100),2)as efic   from \n"
+                    + "              (select c.IDCODIGO,c.arnes,c.LINEA, c.CADENA, c.turno, sum(m.HCDIRLINEA) as hc,round( sum((m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100)),2) as horasemb,  IF(c.TURNO='A', sum(((elinea+estaciones+ kits+HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*9)),\n"
+                    + "               sum(((elinea+estaciones+ kits+ HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*7.9))) as hrsPagadas, m.activo  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO and c.CADENA<>4  and c.TURNO='A' GROUP BY c.idcodigo) as manu,\n"
+                    + "               (SELECT SUM(TRUNCATE((((g.HCDIRCORTE*m.SALIDAENPIEZA)/100)),2)) as hrsEMBC FROM gsd as g, manufactura as m, codigos as c where c.IDCODIGO=m.IDCODIGO and c.IDCODIGO=g.IDCODIGO and m.activo=1  and c.TURNO='A' GROUP BY c.TURNO) as cortehrsemb\n"
+                    + "                where manu.CADENA<>4 and manu.activo<>0  UNION select DISTINCT manu.IDCODIGO,manu.CADENA,manu.LINEA, manu.turno, manu.hc, manu.activo,IF(manu.LINEA='CORTE',cortehrsemb.hrsEMBC,manu.horasemb)as horasemb, (manu.hrsPagadas) as hrsPagadas,ROUND(IF(manu.LINEA='CORTE' ,(cortehrsemb.hrsEMBC/manu.hrsPagadas)*100,(manu.horasemb/manu.hrsPagadas)*100),2)as efic   from \n"
+                    + "              (select c.IDCODIGO,c.arnes,c.LINEA, c.CADENA, c.turno, sum(m.HCDIRLINEA) as hc,round( sum((m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100)),2) as horasemb,  IF(c.TURNO='A', sum(((elinea+estaciones+ kits+HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*9)),\n"
+                    + "               sum(((elinea+estaciones+ kits+ HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*7.9))) as hrsPagadas, m.activo  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO and c.CADENA<>4 and c.TURNO='B' GROUP BY c.idcodigo) as manu,\n"
+                    + "               (SELECT SUM(TRUNCATE((((g.HCDIRCORTE*m.SALIDAENPIEZA)/100)),2)) as hrsEMBC FROM gsd as g, manufactura as m, codigos as c where c.IDCODIGO=m.IDCODIGO and c.IDCODIGO=g.IDCODIGO and m.activo=1   and c.TURNO='B'  GROUP BY c.TURNO) as cortehrsemb\n"
+                    + "                where manu.CADENA<>4 and manu.activo<>0 and manu.LINEA<>'29A'");
+            // + "select  manu.CADENA, manu.turno, manu.hc, manu.activo,ROUND( (manu.horasemb)*1,2) as horasemb, (manu.hrsPagadas) as hrsPagadas,  ROUND( ( manu.horasemb/manu.hrsPagadas)*100,2) as efic  from \n" +
+            //  "(select c.LINEA, c.CADENA, c.turno, sum(m.HCDIRLINEA) as hc,round( sum((m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100))) as horasemb,  IF(c.TURNO='A', sum(((elinea+estaciones+ kits+HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*9)),"+
+            //       "sum(((elinea+estaciones+ kits+ HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*7.9))) as hrsPagadas, m.activo  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO  GROUP BY c.idcodigo) as manu\n" +
+            //  "where manu.CADENA<>4 and manu.activo<>0");
+            while (rs.next()) {
+                switch (rs.getString("CADENA")) {
+                    case "1":
+                        if (rs.getString("turno").equals("A")) {
+                            HrsPagIA += rs.getDouble("hrsPagadas");
+                            HrsEMBIA += rs.getDouble("horasemb");
+                        } else if (rs.getString("turno").equals("B")) {
+                            HrsPagIB += rs.getDouble("hrsPagadas");
+                            HrsEMBIB += rs.getDouble("horasemb");
+                        }
+                        break;
+                    case "2":
+                        if (rs.getString("turno").equals("A")) {
+                            HrsPagIIA += rs.getDouble("hrsPagadas");
+                            HrsEMBIIA += rs.getDouble("horasemb");
+                        } else if (rs.getString("turno").equals("B")) {
+                            HrsPagIIB += rs.getDouble("hrsPagadas");
+                            HrsEMBIIB += rs.getDouble("horasemb");
+                        }
+                        break;
+                    case "3":
+                        if (rs.getString("turno").equals("A")) {
+                            HrsPagIIIA += rs.getDouble("hrsPagadas");
+                            HrsEMBIIIA += rs.getDouble("horasemb");
+                        } else if (rs.getString("turno").equals("B")) {
+                            HrsPagIIIB += rs.getDouble("hrsPagadas");
+                            HrsEMBIIIB += rs.getDouble("horasemb");
+                        }
+                        break;
+                    case "6":
+                        if (rs.getString("turno").equals("A")) {
+                            HrsPagVIA += rs.getDouble("hrsPagadas");
+                            HrsEMBVIA += rs.getDouble("horasemb");
+                        } else if (rs.getString("turno").equals("B")) {
+                            HrsPagVIB += rs.getDouble("hrsPagadas");
+                            HrsEMBVIB += rs.getDouble("horasemb");
+                        }
+                        break;
+
+                    case "5":
+                        if (rs.getString("turno").equals("A")) {
+                            HrsPagVIIIA += rs.getDouble("hrsPagadas");
+                            HrsEMBVIIIB += rs.getDouble("horasemb");
+                        } else if (rs.getString("turno").equals("B")) {
+                            HrsPagVIIIB += rs.getDouble("hrsPagadas");
+                            HrsEMBVIIIB += rs.getDouble("horasemb");
+                        }
+                        break;
+
+                }
+            }
 //                rs=Principal.cn.GetConsulta("SELECT DISTINCT\n" +
 //                "corte.idcodigo,\n" +
 //                "hcpag.IDCODIGO, hcpag.HCDIRLINEA, corte.hrsEMBC, hcpag.horaspagadas, hcpag.TURNO, truncate((corte.hrsEMBC/hcpag.horaspagadas)*100,2) as eficiencia \n" +
 //                "from \n" +
 //                "(select c.IDCODIGO, c.LINEA, c.CODIGO, c.TURNO, m.SALIDAENPIEZA, g.HCDIRCORTE as cortee, round( SUM(TRUNCATE((((g.HCDIRCORTE*m.SALIDAENPIEZA)/100)),2))) as hrsEMBC,   g.HCDIRLPS as 'POND.LPS', TRUNCATE( if(c.TURNO='A', ((g.HCDIRLPS *m.SALIDAENPIEZA)/9/100), ((g.HCDIRLPS*m.SALIDAENPIEZA)/7.9/100)),2) as LPS, g.HCDIRENSFINAL as 'PUNTOS.EF', TRUNCATE( if(c.TURNO='A', ((g.HCDIRENSFINAL *m.SALIDAENPIEZA)/9/100),  ((g.HCDIRENSFINAL*m.SALIDAENPIEZA)/7.9/100)),2) as ENSFINAL  FROM codigos as c, manufactura as m, gsd  as g where c.IDCODIGO=m.IDCODIGO and c.IDCODIGO=g.IDCODIGO and m.activo=1   GROUP BY c.TURNO) as corte,\n" +
 //                "(select c.IDCODIGO, HCDIRLINEA, C.TURNO, if(c.TURNO='A', sum((M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*9), SUM((M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*7.9)) as horaspagadas from manufactura as m, codigos as c where m.IDCODIGO=c.IDCODIGO and c.CADENA=4 GROUP BY c.TURNO) as hcpag");
-               rs=Principal.cn.GetConsulta("SELECT DISTINCT\n" +
-"                corte.idcodigo,\n" +
-"                hcpag.IDCODIGO, hcpag.HCDIRLINEA, corte.hrsEMBC, hcpag.horaspagadas, hcpag.TURNO, truncate((corte.hrsEMBC/hcpag.horaspagadas)*100,2) as eficiencia \n" +
-"                from \n" +
-"                (select c.IDCODIGO, c.LINEA, c.CODIGO, c.TURNO, m.SALIDAENPIEZA, g.HCDIRCORTE as cortee,  SUM(TRUNCATE((((g.HCDIRCORTE*m.SALIDAENPIEZA)/100)),2)) as hrsEMBC,   g.HCDIRLPS as 'POND.LPS', TRUNCATE( if(c.TURNO='B' or c.TURNO='C', ((g.HCDIRLPS*m.SALIDAENPIEZA)/7.9/100),((g.HCDIRLPS *m.SALIDAENPIEZA)/9/100)) ,2) as LPS, g.HCDIRENSFINAL as 'PUNTOS.EF', TRUNCATE( if(c.TURNO='B' or c.TURNO='C',((g.HCDIRENSFINAL*m.SALIDAENPIEZA)/7.9/100), ((g.HCDIRENSFINAL *m.SALIDAENPIEZA)/9/100)),2) as ENSFINAL  FROM codigos as c, manufactura as m, gsd  as g where c.IDCODIGO=m.IDCODIGO and c.IDCODIGO=g.IDCODIGO and m.activo=1 and CADENA<>6  GROUP BY c.TURNO) as corte,\n" +
-"                (select c.IDCODIGO, HCDIRLINEA, C.TURNO, "+
-                     "case c.TURNO when'B' THEN SUM((M.elinea+M.estaciones+ M.kits+M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*7.9) "
-                     + " WHEN 'A' THEN sum((M.elinea+M.estaciones+ M.kits+M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*9) "+
-                      " WHEN 'C' THEN sum((M.elinea+M.estaciones+ M.kits+M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*7.32)  END "+
-                     "as horaspagadas from manufactura as m, codigos as c where m.IDCODIGO=c.IDCODIGO and c.CADENA=4   GROUP BY c.TURNO) as hcpag ");
-          
-              
-              int cont=1;
-                while(rs.next())
-               {
-                if(cont==1)
-                { 
-                    HrsEmbCorteA=Regresa2Decimales( rs.getDouble("hrsEMBC"));
-                    HrsPagCorteA=Regresa2Decimales(rs.getDouble("horaspagadas"));
-                    EficCorteA=Regresa2Decimales(rs.getDouble("eficiencia"));
-                }
-                if(cont==13)
-                {
-                    HrsEmbCorteB=Regresa2Decimales(rs.getDouble("hrsEMBC"));
-                    HrsPagCorteB=Regresa2Decimales(rs.getDouble("horaspagadas"));
-                    EficCorteB=Regresa2Decimales(rs.getDouble("eficiencia"));
-                }
-                //turno c
-                if(cont==24)
-                {
-                    HrsEmbCorteC=Regresa2Decimales(rs.getDouble("hrsEMBC"));
-                    HrsPagCorteC=Regresa2Decimales(rs.getDouble("horaspagadas"));
-                    EficCorteC=Regresa2Decimales(rs.getDouble("eficiencia"));
-                }
-                cont++;
-               }
-                            rs=Principal.cn.GetConsulta("SELECT codigos.turno, manufactura.HCDIRLINEA\n" +
-                    "FROM\n" +
-                    "manufactura ,\n" +
-                    "codigos \n" +
-                    "WHERE\n" +
-                    "manufactura.IDCODIGO = codigos.IDCODIGO and CODIGOS.linea='91'");
-               Double kachirulesA=0.0, kachirulesB=0.0;
-               while(rs.next())
-               {
-                   if(rs.getString("TURNO").equals("A"))
-                   kachirulesA=rs.getDouble("HCDIRLINEA");
-                   else
-                   kachirulesB=rs.getDouble("HCDIRLINEA");
-               }
-               
-               
-              rs=Principal.cn.GetConsulta("SELECT manufactura.HCDIRLINEA\n" +
-                    "FROM\n" +
-                    "manufactura ,\n" +
-                    "codigos \n" +
-                    "WHERE\n" +
-                    "manufactura.IDCODIGO = codigos.IDCODIGO and CODIGOS.PLATAFORMA='SERVICIOS' and codigos.TURNO='a'");
-               Double ServiciosA=0.0;
-               if(rs.next())
-               {
-                   ServiciosA=rs.getDouble("HCDIRLINEA");
-               }
-               
-                rs=Principal.cn.GetConsulta("SELECT manufactura.HCDIRLINEA\n" +
-                    "FROM\n" +
-                    "manufactura ,\n" +
-                    "codigos \n" +
-                    "WHERE\n" +
-                    "manufactura.IDCODIGO = codigos.IDCODIGO and CODIGOS.PLATAFORMA='SERVICIOS' and codigos.TURNO='b'");
-               Double ServiciosB=0.0;
-               if(rs.next())
-               {
-                   ServiciosB=rs.getDouble("HCDIRLINEA");
-               }
-               
-              EficIA=( HrsEMBIA/HrsPagIA)*100;
-              EficIIA=(HrsEMBIIA/HrsPagIIA)*100;
-              EficIIIA=(HrsEMBIIIA/HrsPagIIIA)*100;
-              EficVIA=(HrsEMBVIA/HrsPagVIA)*100;
-              EficVIIIA=(HrsEMBVIIIA/HrsPagVIIIA)*100;
-               
-              EficIB=( HrsEMBIB/HrsPagIB)*100;
-              EficIIB=(HrsEMBIIB/HrsPagIIB)*100;
-              EficIIIB=(HrsEMBIIIB/HrsPagIIIB)*100;
-              EficVIB=(HrsEMBVIB/HrsPagVIB)*100;
-              EficVIIIB=(HrsEMBVIIIB/HrsPagVIIIB)*100;
-   
-              HrsPagIA=(double)Math.round(HrsPagIA);
-              HrsPagIIA=(double)Math.round(HrsPagIIA);
-              HrsPagIIIA=(double)Math.round(HrsPagIIIA);
-              HrsPagVIIIA=(double)Math.round(HrsPagVIIIA);
-              
-              HrsEMBIA=(double)Math.round(HrsEMBIA);
-              HrsEMBIIA=(double)Math.round(HrsEMBIIA);
-              HrsEMBIIIA=(double)Math.round(HrsEMBIIIA);
-              HrsEMBVIIIA=(double)Math.round(HrsEMBVIIIA);
-              
-              HrsPagIB=(double)Math.round(HrsPagIB);
-              HrsPagIIB=(double)Math.round(HrsPagIIB);
-              HrsPagIIIB=(double)Math.round(HrsPagIIIB);
-              HrsPagVIIIB=(double)Math.round(HrsPagVIIIB);
-            
-              HrsEMBIB=(double)Math.round(HrsEMBIB);
-              HrsEMBIIB=(double)Math.round(HrsEMBIIB);
-              HrsEMBIIIB=(double)Math.round(HrsEMBIIIB);
-              HrsEMBVIA=(double)Math.round(HrsEMBVIA);
-              HrsEMBVIB=(double)Math.round(HrsEMBVIB);
-              HrsEMBVIIIB=(double)Math.round(HrsEMBVIIIB);
-              HrsEMBVIIIA=(double)Math.round(HrsEMBVIIIA);
-              
-              
-              
-              
-              EficIA=Regresa2Decimales(EficIA);
-              EficIIA=Regresa2Decimales(EficIIA);
-              EficIIIA=Regresa2Decimales(EficIIIA);
-              EficIB=Regresa2Decimales(EficIB);
-              EficIIB=Regresa2Decimales(EficIIB);
-              EficIIIB=Regresa2Decimales(EficIIIB);
-              EficVIA=Regresa2Decimales(EficVIA);
-              EficVIB=Regresa2Decimales(EficVIB);
-              EficVIIIB=Regresa2Decimales(EficVIIIB);
-              EficVIIIA=Regresa2Decimales(EficVIIIA);
-              
-             
-              Double HrsEMBTotalA= Regresa2Decimales( HrsEMBIA+HrsEMBIIA+HrsEMBIIIA+HrsEMBVIA+HrsEmbCorteA+HrsEMBVIIIA);
-              Double HrsEMBTotalB=Regresa2Decimales( HrsEMBIB+HrsEMBIIB+HrsEMBIIIB+HrsEMBVIB+HrsEmbCorteB+HrsEMBVIIIB);
-              Double HrsPagTotalA=Regresa2Decimales( HrsPagIA+HrsPagIIA+HrsPagIIIA+HrsPagVIA+HrsPagCorteA+((kachirulesA+ServiciosA)*9)+HrsPagVIIIA);
-              Double HrsPagTotalB=Regresa2Decimales( HrsPagIB+HrsPagIIB+HrsPagIIIB+HrsPagVIB+HrsPagCorteB+((kachirulesB+ServiciosB)*7.9)+HrsPagVIIIB);
-              Double EficTotalA=Regresa2Decimales((HrsEMBTotalA/HrsPagTotalA)*100);
-              Double EficTotalB=Regresa2Decimales( (HrsEMBTotalB/HrsPagTotalB)*100);
-              Double HrsTotalEMB=Regresa2Decimales(HrsEMBTotalA+HrsEMBTotalB+HrsEmbCorteC)+15+0;
-              Double HrsTotalPag=Regresa2Decimales(HrsPagTotalA+HrsPagTotalB+HrsPagCorteC);
-              Double EficTotal=Regresa2Decimales((HrsTotalEMB/HrsTotalPag)*100);
-              //Double HrsPagTotalB=
-              lblHorasPagIA.setText(HrsPagIA.toString() );
-              lblHorasPagIIA.setText(HrsPagIIA.toString() );
-              lblHorasPagIIIA.setText(HrsPagIIIA.toString() );
-             
-               
-              lblhorasEmbIA.setText(HrsEMBIA.toString());
-              lblhorasEmbIIA.setText(HrsEMBIIA.toString());
-              lblhorasEmbIIIA.setText(HrsEMBIIIA.toString());
-              
-              
-              
-              lblEficManufIA.setText(EficIA.toString()+" %");
-              lblEficManufIIA.setText(EficIIA.toString()+" %");
-              lblEficManufIIIA.setText(EficIIIA.toString()+" %");
-              lblEficManufIVA.setText(EficCorteA.toString()+" %");
-              lblEficManufIVB.setText(EficCorteB.toString()+" %");
-              lblEficManufIVC.setText(EficCorteC.toString()+" %");
-              
-              lblhorasEmbIVA.setText(HrsEmbCorteA.toString());
-              lblHorasPagIVA.setText(HrsPagCorteA.toString());
-              lblhorasEmbIVB.setText(HrsEmbCorteB.toString());
-              lblHorasPagIVB.setText(HrsPagCorteB.toString());
-              lblHorasPagVIA.setText(HrsPagVIA.toString());
-              lblHorasPagVIB.setText(HrsPagVIB.toString());
-              lblHorasPagIVC.setText(HrsPagCorteC.toString());
-              
-             
-          
-              lblHorasPagIB.setText(HrsPagIB.toString());
-              lblHorasPagIIB.setText(HrsPagIIB.toString());
-              lblHorasPagIIIB.setText(HrsPagIIIB.toString());
-              
-              lblhorasEmbIB.setText(HrsEMBIB.toString());
-              lblhorasEmbIIB.setText(HrsEMBIIB.toString());
-              lblhorasEmbIIIB.setText(HrsEMBIIIB.toString());
-              lblhorasEmbVIA.setText(HrsEMBVIA.toString());
-              lblhorasEmbVIB.setText(HrsEMBVIB.toString());
-              lblhorasEmbIVC.setText(HrsEmbCorteC.toString());
-             
-               
-              lblEficManufIB.setText(EficIB.toString()+" %");
-              lblEficManufIIB.setText(EficIIB.toString()+" %");            
-              lblEficManufIIIB.setText(EficIIIB.toString()+" %");
-              lblEficManufVIA.setText(EficVIA.toString()+" %");
-              lblEficManufVIB.setText(EficVIB.toString()+" %");
-             
-             
-              lblHorasPagPlantaA.setText(HrsPagTotalA.toString());
-              lblHorasPagPlantaB.setText(HrsPagTotalB.toString());
-              lblhorasEmbPlantaA.setText(HrsEMBTotalA.toString());
-              lblhorasEmbPlantaB.setText(HrsEMBTotalB.toString());
-              lblEficManufPlantaA.setText(EficTotalA.toString()+" %");
-              lblEficManufPlantaB.setText(EficTotalB.toString()+" %");
-              lblhorasEmbPlanta.setText(HrsTotalEMB.toString());
-              lblHorasPagPlanta.setText(HrsTotalPag.toString());
-              lblEficManufPlanta.setText(EficTotal.toString()+ " %");
-              
-              
-          }catch(Exception e )
-          {
-          System.out.println(e.toString());
-          }
-      }
-    
-     public void EFIC_ONLY_MOCHIS(){
-          try  {
-              Double HrsPagIA1=0.0, HrsPagIIA1=0.0, HrsPagIIIA1=0.0, HrsPagIB1=0.0, HrsPagIIB1=0.0, HrsPagIIIB1=0.0,HrsPagVIIIB=0.0,HrsPagVIIIA=0.0;
-              Double HrsEMBIA1=0.0, HrsEMBIIA1=0.0, HrsEMBIIIA1=0.0, HrsEMBIB1=0.0, HrsEMBIIB1=0.0, HrsEMBIIIB1=0.0,HrsEMBVIIIA=0.0,HrsEMBVIIIB=0.0;
-              Double EficIA1=0.0, EficIIA1=0.0, EficIIIA1=0.0, EficIB1=0.0, EficIIB1=0.0, EficIIIB1=0.0, EficVIIIB=0.0, EficVIIIA=0.0;
-              Double HrsPagCorteA1=0.0, HrsEmbCorteA1=0.0, EficCorteA1=0.0, HrsPagCorteB1=0.0, HrsEmbCorteB1=0.0, EficCorteB1=0.0,HrsPagCorteC1=0.0, HrsEmbCorteC1=0.0, EficCorteC1=0.0;; 
-              ResultSet rs1= Principal.cn.GetConsulta("select  manu.CADENA, manu.turno, manu.hc, manu.activo,  (manu.horasemb) as horasemb, (manu.hrsPagadas) as hrsPagadas,  ( manu.horasemb/manu.hrsPagadas)*100 as efic from \n" +
-                "(select c.LINEA, c.CADENA, c.turno, sum(m.HCDIRLINEA+elinea+ estaciones+kits) as hc,round( sum((m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100)),2) as horasemb,  IF(c.TURNO='A', sum(((elinea+ estaciones+kits+HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*9)),sum(((+m.elinea+ m.estaciones+m.kits+HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*7.9))) as hrsPagadas, m.activo  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO and m.activo=1  GROUP BY c.idcodigo) as manu\n" +
-                "where manu.CADENA<>4 and manu.activo<>0 and manu.CADENA<>6 and manu.linea<>'29A' ");
-              while(rs1.next())
-              {
-                  switch(rs1.getString("CADENA"))
-                  {
-                      case "1":
-                          if(rs1.getString("turno").equals("A"))
-                          {
-                          HrsPagIA1+=rs1.getDouble("hrsPagadas");
-                          HrsEMBIA1+=rs1.getDouble("horasemb");
-                          }else if(rs1.getString("turno").equals("B"))
-                          {
-                          HrsPagIB1+=rs1.getDouble("hrsPagadas");
-                          HrsEMBIB1+=rs1.getDouble("horasemb");
-                          }
-                          break;
-                      case "2":
-                         if(rs1.getString("turno").equals("A"))
-                          {
-                          HrsPagIIA1+=rs1.getDouble("hrsPagadas");
-                          HrsEMBIIA1+=rs1.getDouble("horasemb");
-                          }else if(rs1.getString("turno").equals("B"))
-                          {
-                          HrsPagIIB1+=rs1.getDouble("hrsPagadas");
-                          HrsEMBIIB1+=rs1.getDouble("horasemb");
-                          }
-                          break;
-                      case "3":
-               if(rs1.getString("turno").equals("A"))
-                          {
-                          HrsPagIIIA1+=rs1.getDouble("hrsPagadas");
-                          HrsEMBIIIA1+=rs1.getDouble("horasemb");
-                          }else if(rs1.getString("turno").equals("B"))
-                          {
-                          HrsPagIIIB1+=rs1.getDouble("hrsPagadas");
-                          HrsEMBIIIB1+=rs1.getDouble("horasemb");
-                          }
-                          break;
-                          
-                          case "5":
-               if(rs1.getString("turno").equals("A"))
-                          {
-                          HrsPagVIIIA+=rs1.getDouble("hrsPagadas");
-                          HrsEMBVIIIA+=rs1.getDouble("horasemb");
-                          }else if(rs1.getString("turno").equals("B"))
-                          {
-                          HrsPagVIIIB+=rs1.getDouble("hrsPagadas");
-                          HrsEMBVIIIB+=rs1.getDouble("horasemb");
-                          }
-                          break;
-                     
-                  }
-              }
-                  rs1=Principal.cn.GetConsulta("SELECT DISTINCT\n" +
-"               corte.idcodigo,\n" +
-"               hcpag.IDCODIGO, hcpag.HCDIRLINEA, corte.hrsEMBC, hcpag.horaspagadas, hcpag.TURNO, truncate((corte.hrsEMBC/hcpag.horaspagadas)*100,2) as eficiencia                 from \n" +
-"               (select c.IDCODIGO, c.LINEA, c.CODIGO, c.TURNO, m.SALIDAENPIEZA, g.HCDIRCORTE as cortee,  SUM(TRUNCATE((((g.HCDIRCORTE*m.SALIDAENPIEZA)/100)),2)) as hrsEMBC,   g.HCDIRLPS as 'POND.LPS', TRUNCATE( if(c.TURNO='B' or c.TURNO='C', ((g.HCDIRLPS*m.SALIDAENPIEZA)/7.9/100),((g.HCDIRLPS *m.SALIDAENPIEZA)/9/100)) ,2) as LPS, g.HCDIRENSFINAL as 'PUNTOS.EF', TRUNCATE( if(c.TURNO='B' or c.TURNO='C',((g.HCDIRENSFINAL*m.SALIDAENPIEZA)/7.9/100), ((g.HCDIRENSFINAL *m.SALIDAENPIEZA)/9/100)),2) as ENSFINAL  FROM codigos as c, manufactura as m, gsd  as g where c.IDCODIGO=m.IDCODIGO and c.IDCODIGO=g.IDCODIGO and m.activo=1 and CADENA<>6  GROUP BY c.TURNO) as corte,\n" +
-"                (select c.IDCODIGO, HCDIRLINEA, C.TURNO, \n" +
-"                    case c.TURNO when'B' THEN SUM((M.elinea+M.estaciones+ M.kits+M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*7.9) \n" +
-"                      WHEN 'A' THEN sum((M.elinea+M.estaciones+ M.kits+M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*9) \n" +
-"                       WHEN 'C' THEN sum((M.elinea+M.estaciones+ M.kits+M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*7.32)  END \n" +
-"                     as horaspagadas from manufactura as m, codigos as c where m.IDCODIGO=c.IDCODIGO and c.CADENA=4   GROUP BY c.TURNO) as hcpag");
-             int cont=1; 
-                while(rs1.next())
-               {
-                if(cont==1)
-                { 
-                    HrsEmbCorteA1=Regresa2Decimales( rs1.getDouble("hrsEMBC"));
-                    HrsPagCorteA1=Regresa2Decimales(rs1.getDouble("horaspagadas"));
-                    EficCorteA1=Regresa2Decimales(rs1.getDouble("eficiencia"));
-                }
-                if(cont==13)
-                {
-                    HrsEmbCorteB1=Regresa2Decimales(rs1.getDouble("hrsEMBC"));
-                    HrsPagCorteB1=Regresa2Decimales(rs1.getDouble("horaspagadas"));
-                    EficCorteB1=Regresa2Decimales(rs1.getDouble("eficiencia"));
-                }
-                //turno c
-                if(cont==9)
-                {
-                    HrsEmbCorteC1=Regresa2Decimales(rs1.getDouble("hrsEMBC"));
-                    HrsPagCorteC1=Regresa2Decimales(rs1.getDouble("horaspagadas"));
-                    EficCorteC1=Regresa2Decimales(rs1.getDouble("eficiencia"));
-                }
-                cont++;
-               }
-                            rs1=Principal.cn.GetConsulta("SELECT codigos.turno, manufactura.HCDIRLINEA\n" +
-                    "FROM\n" +
-                    "manufactura ,\n" +
-                    "codigos \n" +
-                    "WHERE\n" +
-                    "manufactura.IDCODIGO = codigos.IDCODIGO and CODIGOS.linea='91'");
-               Double kachirulesA=0.0, kachirulesB=0.0;
-               while(rs1.next())
-               {
-                   if(rs1.getString("TURNO").equals("A"))
-                   kachirulesA=rs1.getDouble("HCDIRLINEA");
-                   else
-                   kachirulesB=rs1.getDouble("HCDIRLINEA");
-               }
-               
-              rs1=Principal.cn.GetConsulta("SELECT manufactura.HCDIRLINEA\n" +
-                    "FROM\n" +
-                    "manufactura ,\n" +
-                    "codigos \n" +
-                    "WHERE\n" +
-                    "manufactura.IDCODIGO = codigos.IDCODIGO and CODIGOS.PLATAFORMA='SERVICIOS' and codigos.TURNO='a'");
-               Double ServiciosA=0.0;
-               if(rs1.next())
-               {
-                   ServiciosA=rs1.getDouble("HCDIRLINEA");
-               }
-               
-                rs1=Principal.cn.GetConsulta("SELECT manufactura.HCDIRLINEA\n" +
-                    "FROM\n" +
-                    "manufactura ,\n" +
-                    "codigos \n" +
-                    "WHERE\n" +
-                    "manufactura.IDCODIGO = codigos.IDCODIGO and CODIGOS.PLATAFORMA='SERVICIOS' and codigos.TURNO='b'");
-               Double ServiciosB=0.0;
-               if(rs1.next())
-               {
-                   ServiciosB=rs1.getDouble("HCDIRLINEA");
-               }
-               
-              EficIA1=( HrsEMBIA1/HrsPagIA1)*100;
-              EficIIA1=(HrsEMBIIA1/HrsPagIIA1)*100;
-              EficIIIA1=(HrsEMBIIIA1/HrsPagIIIA1)*100;
-              EficIB1=( HrsEMBIB1/HrsPagIB1)*100;
-              EficIIB1=(HrsEMBIIB1/HrsPagIIB1)*100;
-              EficIIIB1=(HrsEMBIIIB1/HrsPagIIIB1)*100;
-             
-              EficVIIIA=(HrsEMBVIIIA/HrsPagVIIIA)*100;
-              EficVIIIB=(HrsEMBVIIIB/HrsPagVIIIB)*100;
-             
-              
-              HrsPagIA1=(double)Math.round(HrsPagIA1);
-              HrsPagIIA1=(double)Math.round(HrsPagIIA1);
-              HrsPagIIIA1=(double)Math.round(HrsPagIIIA1);
-              HrsEMBIA1=(double)Math.round(HrsEMBIA1);
-              HrsEMBIIA1=(double)Math.round(HrsEMBIIA1);
-              HrsEMBIIIA1=(double)Math.round(HrsEMBIIIA1);
-              HrsPagIB1=(double)Math.round(HrsPagIB1);
-              HrsPagIIB1=(double)Math.round(HrsPagIIB1);
-              HrsPagIIIB1=(double)Math.round(HrsPagIIIB1);
-              HrsEMBIB1=(double)Math.round(HrsEMBIB1);
-              HrsEMBIIB1=(double)Math.round(HrsEMBIIB1);
-              HrsEMBIIIB1=(double)Math.round(HrsEMBIIIB1);
-              
-               HrsEMBVIIIA=(double)Math.round(HrsEMBVIIIA);
-               HrsEMBVIIIB=(double)Math.round(HrsEMBVIIIB);
+            rs = Principal.cn.GetConsulta("SELECT DISTINCT\n"
+                    + "                corte.idcodigo,\n"
+                    + "                hcpag.IDCODIGO, hcpag.HCDIRLINEA, corte.hrsEMBC, hcpag.horaspagadas, hcpag.TURNO, truncate((corte.hrsEMBC/hcpag.horaspagadas)*100,2) as eficiencia \n"
+                    + "                from \n"
+                    + "                (select c.IDCODIGO, c.LINEA, c.CODIGO, c.TURNO, m.SALIDAENPIEZA, g.HCDIRCORTE as cortee,  SUM(TRUNCATE((((g.HCDIRCORTE*m.SALIDAENPIEZA)/100)),2)) as hrsEMBC,   g.HCDIRLPS as 'POND.LPS', TRUNCATE( if(c.TURNO='B' or c.TURNO='C', ((g.HCDIRLPS*m.SALIDAENPIEZA)/7.9/100),((g.HCDIRLPS *m.SALIDAENPIEZA)/9/100)) ,2) as LPS, g.HCDIRENSFINAL as 'PUNTOS.EF', TRUNCATE( if(c.TURNO='B' or c.TURNO='C',((g.HCDIRENSFINAL*m.SALIDAENPIEZA)/7.9/100), ((g.HCDIRENSFINAL *m.SALIDAENPIEZA)/9/100)),2) as ENSFINAL  FROM codigos as c, manufactura as m, gsd  as g where c.IDCODIGO=m.IDCODIGO and c.IDCODIGO=g.IDCODIGO and m.activo=1 and CADENA<>6  GROUP BY c.TURNO) as corte,\n"
+                    + "                (select c.IDCODIGO, HCDIRLINEA, C.TURNO, "
+                    + "case c.TURNO when'B' THEN SUM((M.elinea+M.estaciones+ M.kits+M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*7.9) "
+                    + " WHEN 'A' THEN sum((M.elinea+M.estaciones+ M.kits+M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*9) "
+                    + " WHEN 'C' THEN sum((M.elinea+M.estaciones+ M.kits+M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*7.32)  END "
+                    + "as horaspagadas from manufactura as m, codigos as c where m.IDCODIGO=c.IDCODIGO and c.CADENA=4   GROUP BY c.TURNO) as hcpag ");
 
-              Double HrsEMBTotalA1= Regresa2Decimales( HrsEMBIA1+HrsEMBIIA1+HrsEMBIIIA1+HrsEmbCorteA1+HrsEMBVIIIA);
-              Double HrsEMBTotalB1=Regresa2Decimales( HrsEMBIB1+HrsEMBIIB1+HrsEMBIIIB1+HrsEmbCorteB1+HrsEMBVIIIB);
-              Double HrsPagTotalA1=Regresa2Decimales( HrsPagIA1+HrsPagIIA1+HrsPagIIIA1+HrsPagCorteA1+((kachirulesA+ServiciosA)*9)+HrsPagVIIIA);
-              Double HrsPagTotalB1=Regresa2Decimales( HrsPagIB1+HrsPagIIB1+HrsPagIIIB1+HrsPagCorteB1+((kachirulesB+ServiciosB)*7.9)+HrsPagVIIIB);
-              //Double EficTotalA=Regresa2Decimales((HrsEMBTotalA1/HrsPagTotalA1)*100);
-             // Double EficTotalB=Regresa2Decimales( (HrsEMBTotalB1/HrsPagTotalB1)*100);
-              Double HrsTotalEMB1=Regresa2Decimales(HrsEMBTotalA1+HrsEMBTotalB1+HrsEmbCorteC1+15+0);
-              //Double HrsTotalEMB1=Regresa2Decimales(HrsEMBTotalA1+HrsEMBTotalB1+HrsEmbCorteC1);
-              Double HrsTotalPag1=Regresa2Decimales(HrsPagTotalA1+HrsPagTotalB1+HrsPagCorteC1);
-              Double EficTotal1=Regresa2Decimales((HrsTotalEMB1/HrsTotalPag1)*100);
-           
- 
-              lblhorasEmbPlanta1.setText(HrsTotalEMB1.toString()+ " %");
-              lblHorasPagPlanta1.setText(HrsTotalPag1.toString()+ " %");
-              lblEficManufPlanta1.setText(EficTotal1.toString()+ " %");
-          }catch(Exception e )
-          {
-          System.out.println(e.toString());
-          }
-      }
-    
-      public void EFIC_ONLY_GUA(){
-          try  {
-              Double HrsPagIA1=0.0, HrsPagIIA1=0.0, HrsPagIIIA1=0.0, HrsPagIB1=0.0, HrsPagIIB1=0.0, HrsPagIIIB1=0.0;
-              Double HrsEMBIA1=0.0, HrsEMBIIA1=0.0, HrsEMBIIIA1=0.0, HrsEMBIB1=0.0, HrsEMBIIB1=0.0, HrsEMBIIIB1=0.0;
-              Double EficIA1=0.0, EficIIA1=0.0, EficIIIA1=0.0, EficIB1=0.0, EficIIB1=0.0, EficIIIB1=0.0;
-              Double HrsPagCorteA1=0.0, HrsEmbCorteA1=0.0, EficCorteA1=0.0, HrsPagCorteB1=0.0, HrsEmbCorteB1=0.0, EficCorteB1=0.0,HrsPagCorteC1=0.0, HrsEmbCorteC1=0.0, EficCorteC1=0.0;; 
-          
-                ResultSet rs1= Principal.cn.GetConsulta("select DISTINCT manu.IDCODIGO,manu.CADENA,manu.LINEA, manu.turno, manu.hc, manu.activo,IF(manu.LINEA='CORTE' AND manu.CADENA=6,cortehrsemb.hrsEMBC,manu.horasemb)as horasemb, (manu.hrsPagadas) as hrsPagadas,ROUND(IF(manu.LINEA='CORTE' AND manu.CADENA=6,(cortehrsemb.hrsEMBC/manu.hrsPagadas)*100,(manu.horasemb/manu.hrsPagadas)*100),2)as efic   from \n" +
-"              (select c.IDCODIGO,c.arnes,c.LINEA, c.CADENA, c.turno, sum(m.HCDIRLINEA) as hc,round( sum((m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100)),2) as horasemb,  IF(c.TURNO='A', sum(((elinea+estaciones+ kits+HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*9)),\n" +
-"               sum(((elinea+estaciones+ kits+ HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*7.9))) as hrsPagadas, m.activo  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO and c.CADENA<>4  and c.TURNO='A' GROUP BY c.idcodigo) as manu,\n" +
-"               (SELECT SUM(TRUNCATE((((g.HCDIRCORTE*m.SALIDAENPIEZA)/100)),2)) as hrsEMBC FROM gsd as g, manufactura as m, codigos as c where c.IDCODIGO=m.IDCODIGO and c.IDCODIGO=g.IDCODIGO and m.activo=1 AND C.CADENA=6 and c.TURNO='A' GROUP BY c.TURNO) as cortehrsemb\n" +
-"                where manu.CADENA<>4 and manu.activo<>0  UNION select DISTINCT manu.IDCODIGO,manu.CADENA,manu.LINEA, manu.turno, manu.hc, manu.activo,IF(manu.LINEA='CORTE' AND manu.CADENA=6,cortehrsemb.hrsEMBC,manu.horasemb)as horasemb, (manu.hrsPagadas) as hrsPagadas,ROUND(IF(manu.LINEA='CORTE' AND manu.CADENA=6,(cortehrsemb.hrsEMBC/manu.hrsPagadas)*100,(manu.horasemb/manu.hrsPagadas)*100),2)as efic   from \n" +
-"              (select c.IDCODIGO,c.arnes,c.LINEA, c.CADENA, c.turno, sum(m.HCDIRLINEA) as hc,round( sum((m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100)),2) as horasemb,  IF(c.TURNO='A', sum(((elinea+estaciones+ kits+HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*9)),\n" +
-"               sum(((elinea+estaciones+ kits+ HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*7.9))) as hrsPagadas, m.activo  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO and c.CADENA<>4 and c.TURNO='B' GROUP BY c.idcodigo) as manu,\n" +
-"               (SELECT SUM(TRUNCATE((((g.HCDIRCORTE*m.SALIDAENPIEZA)/100)),2)) as hrsEMBC FROM gsd as g, manufactura as m, codigos as c where c.IDCODIGO=m.IDCODIGO and c.IDCODIGO=g.IDCODIGO and m.activo=1 AND C.CADENA=6  and c.TURNO='B'  GROUP BY c.TURNO) as cortehrsemb\n" +
-"                where manu.CADENA<>4 and manu.activo<>0 ");
-              
+            int cont = 1;
+            while (rs.next()) {
+                if (cont == 1) {
+                    HrsEmbCorteA = Regresa2Decimales(rs.getDouble("hrsEMBC"));
+                    HrsPagCorteA = Regresa2Decimales(rs.getDouble("horaspagadas"));
+                    EficCorteA = Regresa2Decimales(rs.getDouble("eficiencia"));
+                }
+                if (cont == 13) {
+                    HrsEmbCorteB = Regresa2Decimales(rs.getDouble("hrsEMBC"));
+                    HrsPagCorteB = Regresa2Decimales(rs.getDouble("horaspagadas"));
+                    EficCorteB = Regresa2Decimales(rs.getDouble("eficiencia"));
+                }
+                //turno c
+                if (cont == 24) {
+                    HrsEmbCorteC = Regresa2Decimales(rs.getDouble("hrsEMBC"));
+                    HrsPagCorteC = Regresa2Decimales(rs.getDouble("horaspagadas"));
+                    EficCorteC = Regresa2Decimales(rs.getDouble("eficiencia"));
+                }
+                cont++;
+            }
+            rs = Principal.cn.GetConsulta("SELECT codigos.turno, manufactura.HCDIRLINEA\n"
+                    + "FROM\n"
+                    + "manufactura ,\n"
+                    + "codigos \n"
+                    + "WHERE\n"
+                    + "manufactura.IDCODIGO = codigos.IDCODIGO and CODIGOS.linea='91'");
+            Double kachirulesA = 0.0, kachirulesB = 0.0;
+            while (rs.next()) {
+                if (rs.getString("TURNO").equals("A")) {
+                    kachirulesA = rs.getDouble("HCDIRLINEA");
+                } else {
+                    kachirulesB = rs.getDouble("HCDIRLINEA");
+                }
+            }
+
+            rs = Principal.cn.GetConsulta("SELECT manufactura.HCDIRLINEA\n"
+                    + "FROM\n"
+                    + "manufactura ,\n"
+                    + "codigos \n"
+                    + "WHERE\n"
+                    + "manufactura.IDCODIGO = codigos.IDCODIGO and CODIGOS.PLATAFORMA='SERVICIOS' and codigos.TURNO='a'");
+            Double ServiciosA = 0.0;
+            if (rs.next()) {
+                ServiciosA = rs.getDouble("HCDIRLINEA");
+            }
+
+            rs = Principal.cn.GetConsulta("SELECT manufactura.HCDIRLINEA\n"
+                    + "FROM\n"
+                    + "manufactura ,\n"
+                    + "codigos \n"
+                    + "WHERE\n"
+                    + "manufactura.IDCODIGO = codigos.IDCODIGO and CODIGOS.PLATAFORMA='SERVICIOS' and codigos.TURNO='b'");
+            Double ServiciosB = 0.0;
+            if (rs.next()) {
+                ServiciosB = rs.getDouble("HCDIRLINEA");
+            }
+
+            EficIA = (HrsEMBIA / HrsPagIA) * 100;
+            EficIIA = (HrsEMBIIA / HrsPagIIA) * 100;
+            EficIIIA = (HrsEMBIIIA / HrsPagIIIA) * 100;
+            EficVIA = (HrsEMBVIA / HrsPagVIA) * 100;
+            EficVIIIA = (HrsEMBVIIIA / HrsPagVIIIA) * 100;
+
+            EficIB = (HrsEMBIB / HrsPagIB) * 100;
+            EficIIB = (HrsEMBIIB / HrsPagIIB) * 100;
+            EficIIIB = (HrsEMBIIIB / HrsPagIIIB) * 100;
+            EficVIB = (HrsEMBVIB / HrsPagVIB) * 100;
+            EficVIIIB = (HrsEMBVIIIB / HrsPagVIIIB) * 100;
+
+            HrsPagIA = (double) Math.round(HrsPagIA);
+            HrsPagIIA = (double) Math.round(HrsPagIIA);
+            HrsPagIIIA = (double) Math.round(HrsPagIIIA);
+            HrsPagVIIIA = (double) Math.round(HrsPagVIIIA);
+
+            HrsEMBIA = (double) Math.round(HrsEMBIA);
+            HrsEMBIIA = (double) Math.round(HrsEMBIIA);
+            HrsEMBIIIA = (double) Math.round(HrsEMBIIIA);
+            HrsEMBVIIIA = (double) Math.round(HrsEMBVIIIA);
+
+            HrsPagIB = (double) Math.round(HrsPagIB);
+            HrsPagIIB = (double) Math.round(HrsPagIIB);
+            HrsPagIIIB = (double) Math.round(HrsPagIIIB);
+            HrsPagVIIIB = (double) Math.round(HrsPagVIIIB);
+
+            HrsEMBIB = (double) Math.round(HrsEMBIB);
+            HrsEMBIIB = (double) Math.round(HrsEMBIIB);
+            HrsEMBIIIB = (double) Math.round(HrsEMBIIIB);
+            HrsEMBVIA = (double) Math.round(HrsEMBVIA);
+            HrsEMBVIB = (double) Math.round(HrsEMBVIB);
+            HrsEMBVIIIB = (double) Math.round(HrsEMBVIIIB);
+            HrsEMBVIIIA = (double) Math.round(HrsEMBVIIIA);
+
+            EficIA = Regresa2Decimales(EficIA);
+            EficIIA = Regresa2Decimales(EficIIA);
+            EficIIIA = Regresa2Decimales(EficIIIA);
+            EficIB = Regresa2Decimales(EficIB);
+            EficIIB = Regresa2Decimales(EficIIB);
+            EficIIIB = Regresa2Decimales(EficIIIB);
+            EficVIA = Regresa2Decimales(EficVIA);
+            EficVIB = Regresa2Decimales(EficVIB);
+            EficVIIIB = Regresa2Decimales(EficVIIIB);
+            EficVIIIA = Regresa2Decimales(EficVIIIA);
+
+            Double HrsEMBTotalA = Regresa2Decimales(HrsEMBIA + HrsEMBIIA + HrsEMBIIIA + HrsEMBVIA + HrsEmbCorteA + HrsEMBVIIIA);
+            Double HrsEMBTotalB = Regresa2Decimales(HrsEMBIB + HrsEMBIIB + HrsEMBIIIB + HrsEMBVIB + HrsEmbCorteB + HrsEMBVIIIB);
+            Double HrsPagTotalA = Regresa2Decimales(HrsPagIA + HrsPagIIA + HrsPagIIIA + HrsPagVIA + HrsPagCorteA + ((kachirulesA + ServiciosA) * 9) + HrsPagVIIIA);
+            Double HrsPagTotalB = Regresa2Decimales(HrsPagIB + HrsPagIIB + HrsPagIIIB + HrsPagVIB + HrsPagCorteB + ((kachirulesB + ServiciosB) * 7.9) + HrsPagVIIIB);
+            Double EficTotalA = Regresa2Decimales((HrsEMBTotalA / HrsPagTotalA) * 100);
+            Double EficTotalB = Regresa2Decimales((HrsEMBTotalB / HrsPagTotalB) * 100);
+            Double HrsTotalEMB = Regresa2Decimales(HrsEMBTotalA + HrsEMBTotalB + HrsEmbCorteC) + 15 + 0;
+            Double HrsTotalPag = Regresa2Decimales(HrsPagTotalA + HrsPagTotalB + HrsPagCorteC);
+            Double EficTotal = Regresa2Decimales((HrsTotalEMB / HrsTotalPag) * 100);
+            //Double HrsPagTotalB=
+            lblHorasPagIA.setText(HrsPagIA.toString());
+            lblHorasPagIIA.setText(HrsPagIIA.toString());
+            lblHorasPagIIIA.setText(HrsPagIIIA.toString());
+
+            lblhorasEmbIA.setText(HrsEMBIA.toString());
+            lblhorasEmbIIA.setText(HrsEMBIIA.toString());
+            lblhorasEmbIIIA.setText(HrsEMBIIIA.toString());
+
+            lblEficManufIA.setText(EficIA.toString() + " %");
+            lblEficManufIIA.setText(EficIIA.toString() + " %");
+            lblEficManufIIIA.setText(EficIIIA.toString() + " %");
+            lblEficManufIVA.setText(EficCorteA.toString() + " %");
+            lblEficManufIVB.setText(EficCorteB.toString() + " %");
+            lblEficManufIVC.setText(EficCorteC.toString() + " %");
+
+            lblhorasEmbIVA.setText(HrsEmbCorteA.toString());
+            lblHorasPagIVA.setText(HrsPagCorteA.toString());
+            lblhorasEmbIVB.setText(HrsEmbCorteB.toString());
+            lblHorasPagIVB.setText(HrsPagCorteB.toString());
+            lblHorasPagVIA.setText(HrsPagVIA.toString());
+            lblHorasPagVIB.setText(HrsPagVIB.toString());
+            lblHorasPagIVC.setText(HrsPagCorteC.toString());
+
+            lblHorasPagIB.setText(HrsPagIB.toString());
+            lblHorasPagIIB.setText(HrsPagIIB.toString());
+            lblHorasPagIIIB.setText(HrsPagIIIB.toString());
+
+            lblhorasEmbIB.setText(HrsEMBIB.toString());
+            lblhorasEmbIIB.setText(HrsEMBIIB.toString());
+            lblhorasEmbIIIB.setText(HrsEMBIIIB.toString());
+            lblhorasEmbVIA.setText(HrsEMBVIA.toString());
+            lblhorasEmbVIB.setText(HrsEMBVIB.toString());
+            lblhorasEmbIVC.setText(HrsEmbCorteC.toString());
+
+            lblEficManufIB.setText(EficIB.toString() + " %");
+            lblEficManufIIB.setText(EficIIB.toString() + " %");
+            lblEficManufIIIB.setText(EficIIIB.toString() + " %");
+            lblEficManufVIA.setText(EficVIA.toString() + " %");
+            lblEficManufVIB.setText(EficVIB.toString() + " %");
+
+            lblHorasPagPlantaA.setText(HrsPagTotalA.toString());
+            lblHorasPagPlantaB.setText(HrsPagTotalB.toString());
+            lblhorasEmbPlantaA.setText(HrsEMBTotalA.toString());
+            lblhorasEmbPlantaB.setText(HrsEMBTotalB.toString());
+            lblEficManufPlantaA.setText(EficTotalA.toString() + " %");
+            lblEficManufPlantaB.setText(EficTotalB.toString() + " %");
+            lblhorasEmbPlanta.setText(HrsTotalEMB.toString());
+            lblHorasPagPlanta.setText(HrsTotalPag.toString());
+            lblEficManufPlanta.setText(EficTotal.toString() + " %");
+
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+    }
+
+    public void EFIC_ONLY_MOCHIS() {
+        try {
+            Double HrsPagIA1 = 0.0, HrsPagIIA1 = 0.0, HrsPagIIIA1 = 0.0, HrsPagIB1 = 0.0, HrsPagIIB1 = 0.0, HrsPagIIIB1 = 0.0, HrsPagVIIIB = 0.0, HrsPagVIIIA = 0.0;
+            Double HrsEMBIA1 = 0.0, HrsEMBIIA1 = 0.0, HrsEMBIIIA1 = 0.0, HrsEMBIB1 = 0.0, HrsEMBIIB1 = 0.0, HrsEMBIIIB1 = 0.0, HrsEMBVIIIA = 0.0, HrsEMBVIIIB = 0.0;
+            Double EficIA1 = 0.0, EficIIA1 = 0.0, EficIIIA1 = 0.0, EficIB1 = 0.0, EficIIB1 = 0.0, EficIIIB1 = 0.0, EficVIIIB = 0.0, EficVIIIA = 0.0;
+            Double HrsPagCorteA1 = 0.0, HrsEmbCorteA1 = 0.0, EficCorteA1 = 0.0, HrsPagCorteB1 = 0.0, HrsEmbCorteB1 = 0.0, EficCorteB1 = 0.0, HrsPagCorteC1 = 0.0, HrsEmbCorteC1 = 0.0, EficCorteC1 = 0.0;;
+            ResultSet rs1 = Principal.cn.GetConsulta("select  manu.CADENA, manu.turno, manu.hc, manu.activo,  (manu.horasemb) as horasemb, (manu.hrsPagadas) as hrsPagadas,  ( manu.horasemb/manu.hrsPagadas)*100 as efic from \n"
+                    + "(select c.LINEA, c.CADENA, c.turno, sum(m.HCDIRLINEA+elinea+ estaciones+kits) as hc,round( sum((m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100)),2) as horasemb,  IF(c.TURNO='A', sum(((elinea+ estaciones+kits+HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*9)),sum(((+m.elinea+ m.estaciones+m.kits+HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*7.9))) as hrsPagadas, m.activo  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO and m.activo=1  GROUP BY c.idcodigo) as manu\n"
+                    + "where manu.CADENA<>4 and manu.activo<>0 and manu.CADENA<>6 and manu.linea<>'29A' ");
+            while (rs1.next()) {
+                switch (rs1.getString("CADENA")) {
+                    case "1":
+                        if (rs1.getString("turno").equals("A")) {
+                            HrsPagIA1 += rs1.getDouble("hrsPagadas");
+                            HrsEMBIA1 += rs1.getDouble("horasemb");
+                        } else if (rs1.getString("turno").equals("B")) {
+                            HrsPagIB1 += rs1.getDouble("hrsPagadas");
+                            HrsEMBIB1 += rs1.getDouble("horasemb");
+                        }
+                        break;
+                    case "2":
+                        if (rs1.getString("turno").equals("A")) {
+                            HrsPagIIA1 += rs1.getDouble("hrsPagadas");
+                            HrsEMBIIA1 += rs1.getDouble("horasemb");
+                        } else if (rs1.getString("turno").equals("B")) {
+                            HrsPagIIB1 += rs1.getDouble("hrsPagadas");
+                            HrsEMBIIB1 += rs1.getDouble("horasemb");
+                        }
+                        break;
+                    case "3":
+                        if (rs1.getString("turno").equals("A")) {
+                            HrsPagIIIA1 += rs1.getDouble("hrsPagadas");
+                            HrsEMBIIIA1 += rs1.getDouble("horasemb");
+                        } else if (rs1.getString("turno").equals("B")) {
+                            HrsPagIIIB1 += rs1.getDouble("hrsPagadas");
+                            HrsEMBIIIB1 += rs1.getDouble("horasemb");
+                        }
+                        break;
+
+                    case "5":
+                        if (rs1.getString("turno").equals("A")) {
+                            HrsPagVIIIA += rs1.getDouble("hrsPagadas");
+                            HrsEMBVIIIA += rs1.getDouble("horasemb");
+                        } else if (rs1.getString("turno").equals("B")) {
+                            HrsPagVIIIB += rs1.getDouble("hrsPagadas");
+                            HrsEMBVIIIB += rs1.getDouble("horasemb");
+                        }
+                        break;
+
+                }
+            }
+            rs1 = Principal.cn.GetConsulta("SELECT DISTINCT\n"
+                    + "               corte.idcodigo,\n"
+                    + "               hcpag.IDCODIGO, hcpag.HCDIRLINEA, corte.hrsEMBC, hcpag.horaspagadas, hcpag.TURNO, truncate((corte.hrsEMBC/hcpag.horaspagadas)*100,2) as eficiencia                 from \n"
+                    + "               (select c.IDCODIGO, c.LINEA, c.CODIGO, c.TURNO, m.SALIDAENPIEZA, g.HCDIRCORTE as cortee,  SUM(TRUNCATE((((g.HCDIRCORTE*m.SALIDAENPIEZA)/100)),2)) as hrsEMBC,   g.HCDIRLPS as 'POND.LPS', TRUNCATE( if(c.TURNO='B' or c.TURNO='C', ((g.HCDIRLPS*m.SALIDAENPIEZA)/7.9/100),((g.HCDIRLPS *m.SALIDAENPIEZA)/9/100)) ,2) as LPS, g.HCDIRENSFINAL as 'PUNTOS.EF', TRUNCATE( if(c.TURNO='B' or c.TURNO='C',((g.HCDIRENSFINAL*m.SALIDAENPIEZA)/7.9/100), ((g.HCDIRENSFINAL *m.SALIDAENPIEZA)/9/100)),2) as ENSFINAL  FROM codigos as c, manufactura as m, gsd  as g where c.IDCODIGO=m.IDCODIGO and c.IDCODIGO=g.IDCODIGO and m.activo=1 and CADENA<>6  GROUP BY c.TURNO) as corte,\n"
+                    + "                (select c.IDCODIGO, HCDIRLINEA, C.TURNO, \n"
+                    + "                    case c.TURNO when'B' THEN SUM((M.elinea+M.estaciones+ M.kits+M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*7.9) \n"
+                    + "                      WHEN 'A' THEN sum((M.elinea+M.estaciones+ M.kits+M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*9) \n"
+                    + "                       WHEN 'C' THEN sum((M.elinea+M.estaciones+ M.kits+M.HCDIRLPS+M.HCDIRSOPLPS +M.HCDIRLINEA+ m.hcdirconte+m.HCDIRSOPORTE+m.HCDIRTABINSP+m.hcrutasint+m.hcdirpilotos+m.hcdirftq+ m.hcdirsistemas)*7.32)  END \n"
+                    + "                     as horaspagadas from manufactura as m, codigos as c where m.IDCODIGO=c.IDCODIGO and c.CADENA=4   GROUP BY c.TURNO) as hcpag");
+            int cont = 1;
+            while (rs1.next()) {
+                if (cont == 1) {
+                    HrsEmbCorteA1 = Regresa2Decimales(rs1.getDouble("hrsEMBC"));
+                    HrsPagCorteA1 = Regresa2Decimales(rs1.getDouble("horaspagadas"));
+                    EficCorteA1 = Regresa2Decimales(rs1.getDouble("eficiencia"));
+                }
+                if (cont == 13) {
+                    HrsEmbCorteB1 = Regresa2Decimales(rs1.getDouble("hrsEMBC"));
+                    HrsPagCorteB1 = Regresa2Decimales(rs1.getDouble("horaspagadas"));
+                    EficCorteB1 = Regresa2Decimales(rs1.getDouble("eficiencia"));
+                }
+                //turno c
+                if (cont == 9) {
+                    HrsEmbCorteC1 = Regresa2Decimales(rs1.getDouble("hrsEMBC"));
+                    HrsPagCorteC1 = Regresa2Decimales(rs1.getDouble("horaspagadas"));
+                    EficCorteC1 = Regresa2Decimales(rs1.getDouble("eficiencia"));
+                }
+                cont++;
+            }
+            rs1 = Principal.cn.GetConsulta("SELECT codigos.turno, manufactura.HCDIRLINEA\n"
+                    + "FROM\n"
+                    + "manufactura ,\n"
+                    + "codigos \n"
+                    + "WHERE\n"
+                    + "manufactura.IDCODIGO = codigos.IDCODIGO and CODIGOS.linea='91'");
+            Double kachirulesA = 0.0, kachirulesB = 0.0;
+            while (rs1.next()) {
+                if (rs1.getString("TURNO").equals("A")) {
+                    kachirulesA = rs1.getDouble("HCDIRLINEA");
+                } else {
+                    kachirulesB = rs1.getDouble("HCDIRLINEA");
+                }
+            }
+
+            rs1 = Principal.cn.GetConsulta("SELECT manufactura.HCDIRLINEA\n"
+                    + "FROM\n"
+                    + "manufactura ,\n"
+                    + "codigos \n"
+                    + "WHERE\n"
+                    + "manufactura.IDCODIGO = codigos.IDCODIGO and CODIGOS.PLATAFORMA='SERVICIOS' and codigos.TURNO='a'");
+            Double ServiciosA = 0.0;
+            if (rs1.next()) {
+                ServiciosA = rs1.getDouble("HCDIRLINEA");
+            }
+
+            rs1 = Principal.cn.GetConsulta("SELECT manufactura.HCDIRLINEA\n"
+                    + "FROM\n"
+                    + "manufactura ,\n"
+                    + "codigos \n"
+                    + "WHERE\n"
+                    + "manufactura.IDCODIGO = codigos.IDCODIGO and CODIGOS.PLATAFORMA='SERVICIOS' and codigos.TURNO='b'");
+            Double ServiciosB = 0.0;
+            if (rs1.next()) {
+                ServiciosB = rs1.getDouble("HCDIRLINEA");
+            }
+
+            EficIA1 = (HrsEMBIA1 / HrsPagIA1) * 100;
+            EficIIA1 = (HrsEMBIIA1 / HrsPagIIA1) * 100;
+            EficIIIA1 = (HrsEMBIIIA1 / HrsPagIIIA1) * 100;
+            EficIB1 = (HrsEMBIB1 / HrsPagIB1) * 100;
+            EficIIB1 = (HrsEMBIIB1 / HrsPagIIB1) * 100;
+            EficIIIB1 = (HrsEMBIIIB1 / HrsPagIIIB1) * 100;
+
+            EficVIIIA = (HrsEMBVIIIA / HrsPagVIIIA) * 100;
+            EficVIIIB = (HrsEMBVIIIB / HrsPagVIIIB) * 100;
+
+            HrsPagIA1 = (double) Math.round(HrsPagIA1);
+            HrsPagIIA1 = (double) Math.round(HrsPagIIA1);
+            HrsPagIIIA1 = (double) Math.round(HrsPagIIIA1);
+            HrsEMBIA1 = (double) Math.round(HrsEMBIA1);
+            HrsEMBIIA1 = (double) Math.round(HrsEMBIIA1);
+            HrsEMBIIIA1 = (double) Math.round(HrsEMBIIIA1);
+            HrsPagIB1 = (double) Math.round(HrsPagIB1);
+            HrsPagIIB1 = (double) Math.round(HrsPagIIB1);
+            HrsPagIIIB1 = (double) Math.round(HrsPagIIIB1);
+            HrsEMBIB1 = (double) Math.round(HrsEMBIB1);
+            HrsEMBIIB1 = (double) Math.round(HrsEMBIIB1);
+            HrsEMBIIIB1 = (double) Math.round(HrsEMBIIIB1);
+
+            HrsEMBVIIIA = (double) Math.round(HrsEMBVIIIA);
+            HrsEMBVIIIB = (double) Math.round(HrsEMBVIIIB);
+
+            Double HrsEMBTotalA1 = Regresa2Decimales(HrsEMBIA1 + HrsEMBIIA1 + HrsEMBIIIA1 + HrsEmbCorteA1 + HrsEMBVIIIA);
+            Double HrsEMBTotalB1 = Regresa2Decimales(HrsEMBIB1 + HrsEMBIIB1 + HrsEMBIIIB1 + HrsEmbCorteB1 + HrsEMBVIIIB);
+            Double HrsPagTotalA1 = Regresa2Decimales(HrsPagIA1 + HrsPagIIA1 + HrsPagIIIA1 + HrsPagCorteA1 + ((kachirulesA + ServiciosA) * 9) + HrsPagVIIIA);
+            Double HrsPagTotalB1 = Regresa2Decimales(HrsPagIB1 + HrsPagIIB1 + HrsPagIIIB1 + HrsPagCorteB1 + ((kachirulesB + ServiciosB) * 7.9) + HrsPagVIIIB);
+            //Double EficTotalA=Regresa2Decimales((HrsEMBTotalA1/HrsPagTotalA1)*100);
+            // Double EficTotalB=Regresa2Decimales( (HrsEMBTotalB1/HrsPagTotalB1)*100);
+            Double HrsTotalEMB1 = Regresa2Decimales(HrsEMBTotalA1 + HrsEMBTotalB1 + HrsEmbCorteC1 + 15 + 0);
+            //Double HrsTotalEMB1=Regresa2Decimales(HrsEMBTotalA1+HrsEMBTotalB1+HrsEmbCorteC1);
+            Double HrsTotalPag1 = Regresa2Decimales(HrsPagTotalA1 + HrsPagTotalB1 + HrsPagCorteC1);
+            Double EficTotal1 = Regresa2Decimales((HrsTotalEMB1 / HrsTotalPag1) * 100);
+
+            lblhorasEmbPlanta1.setText(HrsTotalEMB1.toString() + " %");
+            lblHorasPagPlanta1.setText(HrsTotalPag1.toString() + " %");
+            lblEficManufPlanta1.setText(EficTotal1.toString() + " %");
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+    }
+
+    public void EFIC_ONLY_GUA() {
+        try {
+            Double HrsPagIA1 = 0.0, HrsPagIIA1 = 0.0, HrsPagIIIA1 = 0.0, HrsPagIB1 = 0.0, HrsPagIIB1 = 0.0, HrsPagIIIB1 = 0.0;
+            Double HrsEMBIA1 = 0.0, HrsEMBIIA1 = 0.0, HrsEMBIIIA1 = 0.0, HrsEMBIB1 = 0.0, HrsEMBIIB1 = 0.0, HrsEMBIIIB1 = 0.0;
+            Double EficIA1 = 0.0, EficIIA1 = 0.0, EficIIIA1 = 0.0, EficIB1 = 0.0, EficIIB1 = 0.0, EficIIIB1 = 0.0;
+            Double HrsPagCorteA1 = 0.0, HrsEmbCorteA1 = 0.0, EficCorteA1 = 0.0, HrsPagCorteB1 = 0.0, HrsEmbCorteB1 = 0.0, EficCorteB1 = 0.0, HrsPagCorteC1 = 0.0, HrsEmbCorteC1 = 0.0, EficCorteC1 = 0.0;;
+
+            ResultSet rs1 = Principal.cn.GetConsulta("select DISTINCT manu.IDCODIGO,manu.CADENA,manu.LINEA, manu.turno, manu.hc, manu.activo,IF(manu.LINEA='CORTE' AND manu.CADENA=6,cortehrsemb.hrsEMBC,manu.horasemb)as horasemb, (manu.hrsPagadas) as hrsPagadas,ROUND(IF(manu.LINEA='CORTE' AND manu.CADENA=6,(cortehrsemb.hrsEMBC/manu.hrsPagadas)*100,(manu.horasemb/manu.hrsPagadas)*100),2)as efic   from \n"
+                    + "              (select c.IDCODIGO,c.arnes,c.LINEA, c.CADENA, c.turno, sum(m.HCDIRLINEA) as hc,round( sum((m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100)),2) as horasemb,  IF(c.TURNO='A', sum(((elinea+estaciones+ kits+HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*9)),\n"
+                    + "               sum(((elinea+estaciones+ kits+ HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*7.9))) as hrsPagadas, m.activo  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO and c.CADENA<>4  and c.TURNO='A' GROUP BY c.idcodigo) as manu,\n"
+                    + "               (SELECT SUM(TRUNCATE((((g.HCDIRCORTE*m.SALIDAENPIEZA)/100)),2)) as hrsEMBC FROM gsd as g, manufactura as m, codigos as c where c.IDCODIGO=m.IDCODIGO and c.IDCODIGO=g.IDCODIGO and m.activo=1 AND C.CADENA=6 and c.TURNO='A' GROUP BY c.TURNO) as cortehrsemb\n"
+                    + "                where manu.CADENA<>4 and manu.activo<>0  UNION select DISTINCT manu.IDCODIGO,manu.CADENA,manu.LINEA, manu.turno, manu.hc, manu.activo,IF(manu.LINEA='CORTE' AND manu.CADENA=6,cortehrsemb.hrsEMBC,manu.horasemb)as horasemb, (manu.hrsPagadas) as hrsPagadas,ROUND(IF(manu.LINEA='CORTE' AND manu.CADENA=6,(cortehrsemb.hrsEMBC/manu.hrsPagadas)*100,(manu.horasemb/manu.hrsPagadas)*100),2)as efic   from \n"
+                    + "              (select c.IDCODIGO,c.arnes,c.LINEA, c.CADENA, c.turno, sum(m.HCDIRLINEA) as hc,round( sum((m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100)),2) as horasemb,  IF(c.TURNO='A', sum(((elinea+estaciones+ kits+HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*9)),\n"
+                    + "               sum(((elinea+estaciones+ kits+ HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*7.9))) as hrsPagadas, m.activo  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO and c.CADENA<>4 and c.TURNO='B' GROUP BY c.idcodigo) as manu,\n"
+                    + "               (SELECT SUM(TRUNCATE((((g.HCDIRCORTE*m.SALIDAENPIEZA)/100)),2)) as hrsEMBC FROM gsd as g, manufactura as m, codigos as c where c.IDCODIGO=m.IDCODIGO and c.IDCODIGO=g.IDCODIGO and m.activo=1 AND C.CADENA=6  and c.TURNO='B'  GROUP BY c.TURNO) as cortehrsemb\n"
+                    + "                where manu.CADENA<>4 and manu.activo<>0 ");
+
 //              ResultSet rs1= Principal.cn.GetConsulta("select  manu.CADENA, manu.turno, manu.hc, manu.activo,ROUND( (manu.horasemb)*1,2) as horasemb, (manu.hrsPagadas) as hrsPagadas,  ROUND( ( manu.horasemb/manu.hrsPagadas)*100,2) as efic  from \n" +
 //              "(select c.LINEA, c.CADENA, c.turno, sum(m.HCDIRLINEA) as hc, sum((m.PUNTOSPZAPOND*m.SALIDAENPIEZA/100)) as horasemb,  IF(c.TURNO='A', sum(((elinea+estaciones+ kits+HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*9)),sum(((elinea+estaciones+ kits+HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas)*7.9))) as hrsPagadas, m.activo  from manufactura as m, codigos as c where m.idcodigo=c.IDCODIGO   GROUP BY c.idcodigo) as manu\n" +
 //              " where   manu.activo<>0 and manu.CADENA<>4 and manu.CADENA=6 ");
-              while(rs1.next())
-              {
-                  switch(rs1.getString("CADENA"))
-                  {
-                      case "6":
-                          if(rs1.getString("turno").equals("A"))
-                          {
-                          HrsPagIA1+=rs1.getDouble("hrsPagadas");
-                          HrsEMBIA1+=rs1.getDouble("horasemb");
-                          }else if(rs1.getString("turno").equals("B"))
-                          {
-                          HrsPagIB1+=rs1.getDouble("hrsPagadas");
-                          HrsEMBIB1+=rs1.getDouble("horasemb");
-                          }
-                          break;
-                  
-                     
-                  }
-              }
-          
-             
-              
-              HrsPagIA1=(double)Math.round(HrsPagIA1);
-              HrsPagIIA1=(double)Math.round(HrsPagIIA1);
-              HrsPagIIIA1=(double)Math.round(HrsPagIIIA1);
-              HrsEMBIA1=(double)Math.round(HrsEMBIA1);
-              HrsEMBIIA1=(double)Math.round(HrsEMBIIA1);
-              HrsEMBIIIA1=(double)Math.round(HrsEMBIIIA1);
-              HrsPagIB1=(double)Math.round(HrsPagIB1);
-              HrsPagIIB1=(double)Math.round(HrsPagIIB1);
-              HrsPagIIIB1=(double)Math.round(HrsPagIIIB1);
-              HrsEMBIB1=(double)Math.round(HrsEMBIB1);
-              HrsEMBIIB1=(double)Math.round(HrsEMBIIB1);
-              HrsEMBIIIB1=(double)Math.round(HrsEMBIIIB1);
-             
-              
+            while (rs1.next()) {
+                switch (rs1.getString("CADENA")) {
+                    case "6":
+                        if (rs1.getString("turno").equals("A")) {
+                            HrsPagIA1 += rs1.getDouble("hrsPagadas");
+                            HrsEMBIA1 += rs1.getDouble("horasemb");
+                        } else if (rs1.getString("turno").equals("B")) {
+                            HrsPagIB1 += rs1.getDouble("hrsPagadas");
+                            HrsEMBIB1 += rs1.getDouble("horasemb");
+                        }
+                        break;
+
+                }
+            }
+
+            HrsPagIA1 = (double) Math.round(HrsPagIA1);
+            HrsPagIIA1 = (double) Math.round(HrsPagIIA1);
+            HrsPagIIIA1 = (double) Math.round(HrsPagIIIA1);
+            HrsEMBIA1 = (double) Math.round(HrsEMBIA1);
+            HrsEMBIIA1 = (double) Math.round(HrsEMBIIA1);
+            HrsEMBIIIA1 = (double) Math.round(HrsEMBIIIA1);
+            HrsPagIB1 = (double) Math.round(HrsPagIB1);
+            HrsPagIIB1 = (double) Math.round(HrsPagIIB1);
+            HrsPagIIIB1 = (double) Math.round(HrsPagIIIB1);
+            HrsEMBIB1 = (double) Math.round(HrsEMBIB1);
+            HrsEMBIIB1 = (double) Math.round(HrsEMBIIB1);
+            HrsEMBIIIB1 = (double) Math.round(HrsEMBIIIB1);
+
 //              EficIA1=Regresa2Decimales(EficIA1);
 //              EficIIA1=Regresa2Decimales(EficIIA1);
 //              EficIIIA1=Regresa2Decimales(EficIIIA1);
 //              EficIB1=Regresa2Decimales(EficIB1);
 //              EficIIB1=Regresa2Decimales(EficIIB1);
 //              EficIIIB1=Regresa2Decimales(EficIIIB1);
-             
-              
-              Double HrsEMBTotalA1= Regresa2Decimales( HrsEMBIA1);
-              Double HrsEMBTotalB1=Regresa2Decimales( HrsEMBIB1);
-              Double HrsPagTotalA1=Regresa2Decimales( HrsPagIA1);
-              Double HrsPagTotalB1=Regresa2Decimales( HrsPagIB1);
-              //Double EficTotalA=Regresa2Decimales((HrsEMBTotalA1/HrsPagTotalA1)*100);
-             // Double EficTotalB=Regresa2Decimales( (HrsEMBTotalB1/HrsPagTotalB1)*100);
-              Double HrsTotalEMB1=Regresa2Decimales(HrsEMBTotalA1+HrsEMBTotalB1);
-              Double HrsTotalPag1=Regresa2Decimales(HrsPagTotalA1+HrsPagTotalB1);
-              Double EficTotal1=Regresa2Decimales((HrsTotalEMB1/HrsTotalPag1)*100);
-           
-        
-             
-              lblhorasEmbPlanta2.setText(HrsTotalEMB1.toString()+ " %");
-              lblHorasPagPlanta2.setText(HrsTotalPag1.toString()+ " %");
-              lblEficManufPlanta2.setText(EficTotal1.toString()+ " %");
-          }catch(Exception e )
-          {
-          System.out.println(e.toString());
-          }
-      }
+            Double HrsEMBTotalA1 = Regresa2Decimales(HrsEMBIA1);
+            Double HrsEMBTotalB1 = Regresa2Decimales(HrsEMBIB1);
+            Double HrsPagTotalA1 = Regresa2Decimales(HrsPagIA1);
+            Double HrsPagTotalB1 = Regresa2Decimales(HrsPagIB1);
+            //Double EficTotalA=Regresa2Decimales((HrsEMBTotalA1/HrsPagTotalA1)*100);
+            // Double EficTotalB=Regresa2Decimales( (HrsEMBTotalB1/HrsPagTotalB1)*100);
+            Double HrsTotalEMB1 = Regresa2Decimales(HrsEMBTotalA1 + HrsEMBTotalB1);
+            Double HrsTotalPag1 = Regresa2Decimales(HrsPagTotalA1 + HrsPagTotalB1);
+            Double EficTotal1 = Regresa2Decimales((HrsTotalEMB1 / HrsTotalPag1) * 100);
 
-   
-    
-  
-      /**
+            lblhorasEmbPlanta2.setText(HrsTotalEMB1.toString() + " %");
+            lblHorasPagPlanta2.setText(HrsTotalPag1.toString() + " %");
+            lblEficManufPlanta2.setText(EficTotal1.toString() + " %");
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+    }
+
+    /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
@@ -1636,16 +1554,16 @@ txt_captura.setText(date2.format(now));
     private void panelCadIA4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelCadIA4MouseClicked
         // TODO add your handling code here:
         this.hide();
-        CapturaExcelManufactura manuf=new CapturaExcelManufactura("1", "A");
+        CapturaExcelManufactura manuf = new CapturaExcelManufactura("1", "A");
         manuf.setVisible(true);
         manuf.setLocationRelativeTo(null);
-        
+
     }//GEN-LAST:event_panelCadIA4MouseClicked
 
     private void panelCadIA6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelCadIA6MouseClicked
         // TODO add your handling code here:
         this.hide();
-        CapturaExcelManufactura manuf=new CapturaExcelManufactura("1", "B");
+        CapturaExcelManufactura manuf = new CapturaExcelManufactura("1", "B");
         manuf.setVisible(true);
         manuf.setLocationRelativeTo(null);
     }//GEN-LAST:event_panelCadIA6MouseClicked
@@ -1653,44 +1571,44 @@ txt_captura.setText(date2.format(now));
     private void panelCadIA5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelCadIA5MouseClicked
         // TODO add your handling code here:     
         this.hide();
-        CapturaExcelManufactura manuf=new CapturaExcelManufactura("2", "A");
+        CapturaExcelManufactura manuf = new CapturaExcelManufactura("2", "A");
         manuf.setVisible(true);
         manuf.setLocationRelativeTo(null);
-        
+
     }//GEN-LAST:event_panelCadIA5MouseClicked
 
     private void panelCadIA7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelCadIA7MouseClicked
         // TODO add your handling code here:
         this.hide();
-        CapturaExcelManufactura manuf=new CapturaExcelManufactura("2", "B");
+        CapturaExcelManufactura manuf = new CapturaExcelManufactura("2", "B");
         manuf.setVisible(true);
         manuf.setLocationRelativeTo(null);
     }//GEN-LAST:event_panelCadIA7MouseClicked
 
     private void btnExportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportarActionPerformed
-        AgregarNota G=new  AgregarNota();
-           G.setVisible(true);
-           G.setLocationRelativeTo(null);
+        AgregarNota G = new AgregarNota();
+        G.setVisible(true);
+        G.setLocationRelativeTo(null);
     }//GEN-LAST:event_btnExportarActionPerformed
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         // TODO add your handling code here:
-        Principal   p=new Principal(Principal.UsuarioLogeado);
+        Principal p = new Principal(Principal.UsuarioLogeado);
         p.setLocationRelativeTo(null);
         p.setVisible(true);
     }//GEN-LAST:event_formWindowClosed
 
     private void panelCadIA14MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelCadIA14MouseClicked
         // TODO add your handling code here:
-        
-         this.hide();
-        CapturaExcelManufactura manuf=new CapturaExcelManufactura("4", "A");
+
+        this.hide();
+        CapturaExcelManufactura manuf = new CapturaExcelManufactura("4", "A");
         manuf.setVisible(true);
         manuf.setLocationRelativeTo(null);
 //        CapturaGenteCorte CapturaGente=new CapturaGenteCorte("A");
 //        CapturaGente.setVisible(true);
 //        CapturaGente.setLocationRelativeTo(null);
-                
+
     }//GEN-LAST:event_panelCadIA14MouseClicked
 
     private void panelCadIA17MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelCadIA17MouseClicked
@@ -1712,98 +1630,96 @@ txt_captura.setText(date2.format(now));
 
     private void panelCadIA15MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelCadIA15MouseClicked
         // TODO add your handling code here:
-         this.hide();
-        CapturaExcelManufactura manuf=new CapturaExcelManufactura("4", "B");
+        this.hide();
+        CapturaExcelManufactura manuf = new CapturaExcelManufactura("4", "B");
         manuf.setVisible(true);
         manuf.setLocationRelativeTo(null);
     }//GEN-LAST:event_panelCadIA15MouseClicked
 
     private void panelCadIA20MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelCadIA20MouseClicked
         this.hide();
-        CapturaExcelManufactura manuf=new CapturaExcelManufactura("4", "C");
+        CapturaExcelManufactura manuf = new CapturaExcelManufactura("4", "C");
         manuf.setVisible(true);
         manuf.setLocationRelativeTo(null);        // TODO add your handling code here:
     }//GEN-LAST:event_panelCadIA20MouseClicked
 
     private void btnExportar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportar1ActionPerformed
-  try {
+        try {
             // TODO add your handling code here:
-            ArrayList<DefaultTableModel> modelos=new ArrayList<DefaultTableModel>();
-            ArrayList<String> modelosS=new ArrayList<String>();
+            ArrayList<DefaultTableModel> modelos = new ArrayList<DefaultTableModel>();
+            ArrayList<String> modelosS = new ArrayList<String>();
             modelosS.add("1A");
             modelosS.add("1B");
-          //modelosS.add("SERV-A");
-          //modelosS.add("SERV-B");
+            //modelosS.add("SERV-A");
+            //modelosS.add("SERV-B");
             modelosS.add("2A");
             modelosS.add("2B");
             modelosS.add("LPS-A");
             modelosS.add("LPS-B");
-           // modelosS.add("5A");
+            // modelosS.add("5A");
             //modelosS.add("5B");
             //modelosS.add("6A");
-           // modelosS.add("6B"); 
-           
-           /// modelosS.add("PLATAFORMAS"); 
-            
+            // modelosS.add("6B"); 
+
+            /// modelosS.add("PLATAFORMAS"); 
             //modelosS.add("5A");
             //modelosS.add("5B");
-            
             modelos.add(CapturaExcelManufactura.getModeloMFG("1", "A"));
             modelos.add(CapturaExcelManufactura.getModeloMFG("1", "B"));
-          //  modelos.add(CapturaExcelManufactura.getModeloServiciosA("29A", "A"));
+            //  modelos.add(CapturaExcelManufactura.getModeloServiciosA("29A", "A"));
             //modelos.add(CapturaExcelManufactura.getModeloServiciosB("29A", "B"));
             modelos.add(CapturaExcelManufactura.getModeloMFG("2", "A"));
             modelos.add(CapturaExcelManufactura.getModeloMFG("2", "B"));
             modelos.add(CapturaExcelManufactura.getModeloLPS("3", "A"));
             modelos.add(CapturaExcelManufactura.getModeloLPS("3", "B"));
-          //modelos.add(CapturaExcelManufactura.getModelo("4", "A"));
-          //modelos.add(CapturaExcelManufactura.getModelo("4", "B"));
-           //  modelos.add(CapturaExcelManufactura.getModelo("5", "A"));
-          // modelos.add(CapturaExcelManufactura.getModelo("5", "B"));
+            //modelos.add(CapturaExcelManufactura.getModelo("4", "A"));
+            //modelos.add(CapturaExcelManufactura.getModelo("4", "B"));
+            //  modelos.add(CapturaExcelManufactura.getModelo("5", "A"));
+            // modelos.add(CapturaExcelManufactura.getModelo("5", "B"));
             //modelos.add(CapturaExcelManufactura.getModeloMFG("6", "A"));
             //modelos.add(CapturaExcelManufactura.getModeloMFG("6", "B"));
-         
-           // modelos.add(CapturaExcelManufactura.getModeloplataforma());
 
-          // modelos.add(CapturaExcelManufactura.getModelo("5", "A"));
-           //modelos.add(CapturaExcelManufactura.getModelo("5", "B"));
-            DefaultTableModel corteMochis=CapturaExcelManufactura.GetModeloCorte("4");
-           // DefaultTableModel corteGML=CapturaExcelManufactura.GetModeloCortegml("6");
-            DefaultTableModel plataformas=CapturaExcelManufactura.getModeloplataforma();
-            DefaultTableModel plataformasMSD=CapturaExcelManufactura.getModeloplataformaMSD();
-            DefaultTableModel TCODIGOS=CapturaExcelManufactura.getModelotOTALESXcodigo();
-            DefaultTableModel plataformastot=CapturaExcelManufactura.getModeloplataformatOTALES();
-            DefaultTableModel plataformasConcentradoLM=CapturaExcelManufactura.concentrado_plataformasLM();
-            DefaultTableModel plataformasConcentradoGML=CapturaExcelManufactura.concentrado_plataformasGML();
-            DefaultTableModel plataformasConcentradoLMYGML=CapturaExcelManufactura.concentrado_plataformasLMYGML();
-            DefaultTableModel plataformasGMTLM=CapturaExcelManufactura.getModeloplataformaGMTLM();
-            DefaultTableModel plataformasK2XXLM=CapturaExcelManufactura.getModeloplataformaLMK2XX();
-            DefaultTableModel plataformasT1XXLM=CapturaExcelManufactura.getModeloplataformaLMT1XX();
-            DefaultTableModel plataformasE2XXLM=CapturaExcelManufactura.getModeloplataformaLME2XX();
-            DefaultTableModel plataformasISUZULM=CapturaExcelManufactura.getModeloplataformaLMISUZU();
-            DefaultTableModel plataformasSERVICIOSLM=CapturaExcelManufactura.getModeloplataformaLMSERVICIOS();
-            DefaultTableModel plataformasCORTELM=CapturaExcelManufactura.getModeloplataformaLMCORTE();
-            
-            DefaultTableModel plataformasGMTGML=CapturaExcelManufactura.getModeloplataformaGMTGML();
-            DefaultTableModel plataformasK2XXGML=CapturaExcelManufactura.getModeloplataformaGMLK2XX();
-            DefaultTableModel plataformasT1XXGML=CapturaExcelManufactura.getModeloplataformaGMLT1XX();
-            DefaultTableModel plataformascorteGML=CapturaExcelManufactura.getModeloplataformaGMLcorte();
-            DefaultTableModel plataformasserviciosGML=CapturaExcelManufactura.getModeloplataformaGMLservicios();
-            DefaultTableModel CATIA=CapturaExcelManufactura.tablacatia();
-            DefaultTableModel PPCORTE=CapturaExcelManufactura.pp_corte();
+            // modelos.add(CapturaExcelManufactura.getModeloplataforma());
+            // modelos.add(CapturaExcelManufactura.getModelo("5", "A"));
+            //modelos.add(CapturaExcelManufactura.getModelo("5", "B"));
+            DefaultTableModel corteMochis = CapturaExcelManufactura.GetModeloCorte("4");
+            // DefaultTableModel corteGML=CapturaExcelManufactura.GetModeloCortegml("6");
+            DefaultTableModel plataformas = CapturaExcelManufactura.getModeloplataforma();
+            DefaultTableModel plataformasMSD = CapturaExcelManufactura.getModeloplataformaMSD();
+            DefaultTableModel TCODIGOS = CapturaExcelManufactura.getModelotOTALESXcodigo();
+            DefaultTableModel plataformastot = CapturaExcelManufactura.getModeloplataformatOTALES();
+            DefaultTableModel plataformasConcentradoLM = CapturaExcelManufactura.concentrado_plataformasLM();
+            DefaultTableModel plataformasConcentradoGML = CapturaExcelManufactura.concentrado_plataformasGML();
+            DefaultTableModel plataformasConcentradoLMYGML = CapturaExcelManufactura.concentrado_plataformasLMYGML();
+            DefaultTableModel plataformasGMTLM = CapturaExcelManufactura.getModeloplataformaGMTLM();
+            DefaultTableModel plataformasK2XXLM = CapturaExcelManufactura.getModeloplataformaLMK2XX();
+            DefaultTableModel plataformasT1XXLM = CapturaExcelManufactura.getModeloplataformaLMT1XX();
+            DefaultTableModel plataformasE2XXLM = CapturaExcelManufactura.getModeloplataformaLME2XX();
+            DefaultTableModel plataformasISUZULM = CapturaExcelManufactura.getModeloplataformaLMISUZU();
+            DefaultTableModel plataformasSERVICIOSLM = CapturaExcelManufactura.getModeloplataformaLMSERVICIOS();
+            DefaultTableModel plataformasCORTELM = CapturaExcelManufactura.getModeloplataformaLMCORTE();
+
+            DefaultTableModel plataformasGMTGML = CapturaExcelManufactura.getModeloplataformaGMTGML();
+            DefaultTableModel plataformasK2XXGML = CapturaExcelManufactura.getModeloplataformaGMLK2XX();
+            DefaultTableModel plataformasT1XXGML = CapturaExcelManufactura.getModeloplataformaGMLT1XX();
+            DefaultTableModel plataformascorteGML = CapturaExcelManufactura.getModeloplataformaGMLcorte();
+            DefaultTableModel plataformasserviciosGML = CapturaExcelManufactura.getModeloplataformaGMLservicios();
+            DefaultTableModel CATIA = CapturaExcelManufactura.tablacatia();
+            DefaultTableModel PPCORTE = CapturaExcelManufactura.pp_corte();
             //modelos.add(CapturaExcelManufactura.GetModeloCorte("4", "A"));
 //modelos.add(CapturaExcelManufactura.GetModeloCorte("4", "B"));
 //modelos.add(CapturaExcelManufactura.GetModeloCorte("4", "C"));
-          ResultSet rs= Principal.cn.GetConsulta("select * from notas");
-          String nota="";
-          if(rs.next())
-              nota=rs.getString(1);
-            DatosManufactura dt=new DatosManufactura(); 
+            ResultSet rs = Principal.cn.GetConsulta("select * from notas");
+            String nota = "";
+            if (rs.next()) {
+                nota = rs.getString(1);
+            }
+            DatosManufactura dt = new DatosManufactura();
             System.out.println("entro a todo");
-            ExcelEficiencia excel=new ExcelEficiencia(modelos, dt.GetReporteHCJorge(), modelosS, dt.GetReporte(), corteMochis,plataformas,plataformasMSD,TCODIGOS,plataformastot,plataformasConcentradoLM,plataformasConcentradoGML,plataformasConcentradoLMYGML,plataformasGMTLM,plataformasK2XXLM,plataformasT1XXLM,plataformasE2XXLM,plataformasISUZULM,plataformasSERVICIOSLM,plataformasCORTELM,plataformasGMTGML,plataformasK2XXGML,plataformasT1XXGML,plataformascorteGML,plataformasserviciosGML,CATIA,PPCORTE ,nota,txt_captura.getText());
+            ExcelEficiencia excel = new ExcelEficiencia(modelos, dt.GetReporteHCJorge(), modelosS, dt.GetReporte(), corteMochis, plataformas, plataformasMSD, TCODIGOS, plataformastot, plataformasConcentradoLM, plataformasConcentradoGML, plataformasConcentradoLMYGML, plataformasGMTLM, plataformasK2XXLM, plataformasT1XXLM, plataformasE2XXLM, plataformasISUZULM, plataformasSERVICIOSLM, plataformasCORTELM, plataformasGMTGML, plataformasK2XXGML, plataformasT1XXGML, plataformascorteGML, plataformasserviciosGML, CATIA, PPCORTE, nota, txt_captura.getText());
 
         } catch (SQLException | IOException ex) {
-            System.out.println(ex+"2333");
+            System.out.println(ex + "2333");
         }
         // TODO add your handling code here:
     }//GEN-LAST:event_btnExportar1ActionPerformed
@@ -1811,31 +1727,31 @@ txt_captura.setText(date2.format(now));
     private void panelCadIA22MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelCadIA22MouseClicked
         // TODO add your handling code here:
         this.hide();
-        CapturaExcelManufactura manuf=new CapturaExcelManufactura("3", "B");
+        CapturaExcelManufactura manuf = new CapturaExcelManufactura("3", "B");
         manuf.setVisible(true);
         manuf.setLocationRelativeTo(null);
     }//GEN-LAST:event_panelCadIA22MouseClicked
 
     private void panelCadIA23MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelCadIA23MouseClicked
         // TODO add your handling code here:
-         this.hide();
-        CapturaExcelManufactura manuf=new CapturaExcelManufactura("3", "A");
+        this.hide();
+        CapturaExcelManufactura manuf = new CapturaExcelManufactura("3", "A");
         manuf.setVisible(true);
         manuf.setLocationRelativeTo(null);
     }//GEN-LAST:event_panelCadIA23MouseClicked
 
     private void panelCadIA26MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelCadIA26MouseClicked
- this.hide();
-        CapturaExcelManufactura manuf=new CapturaExcelManufactura("5", "B");
+        this.hide();
+        CapturaExcelManufactura manuf = new CapturaExcelManufactura("5", "B");
         manuf.setVisible(true);
-        manuf.setLocationRelativeTo(null);  
+        manuf.setLocationRelativeTo(null);
         // TODO add your handling code here:
     }//GEN-LAST:event_panelCadIA26MouseClicked
 
     private void panelCadIA27MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelCadIA27MouseClicked
 //        // TODO add your handling code here:
-         this.hide();
-        CapturaExcelManufactura manuf=new CapturaExcelManufactura("5", "A");
+        this.hide();
+        CapturaExcelManufactura manuf = new CapturaExcelManufactura("5", "A");
         manuf.setVisible(true);
         manuf.setLocationRelativeTo(null);
     }//GEN-LAST:event_panelCadIA27MouseClicked
@@ -1846,15 +1762,13 @@ txt_captura.setText(date2.format(now));
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-          if(Principal.UsuarioLogeado.turno.equals("TODOS"))
-        {
-        CapturaExcelGSD cEG=new CapturaExcelGSD();
-        cEG.setLocationRelativeTo(null);
-        cEG.setVisible(true);
-        //this.setVisible(false);
-        }
-         else
-             JOptionPane.showMessageDialog(this, "No tiene permisos para accesar a este modulo...", "Error", JOptionPane.WARNING_MESSAGE);
+        if (Principal.UsuarioLogeado.turno.equals("TODOS")) {
+            CapturaExcelGSD cEG = new CapturaExcelGSD();
+            cEG.setLocationRelativeTo(null);
+            cEG.setVisible(true);
+            //this.setVisible(false);
+        } else
+            JOptionPane.showMessageDialog(this, "No tiene permisos para accesar a este modulo...", "Error", JOptionPane.WARNING_MESSAGE);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**

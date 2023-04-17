@@ -12,10 +12,7 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import Reportes.EXCELGCSD;
-/**
- *
- * @author gzld6k
- */
+
 public class CapturaExcelGSD_Verdadero extends javax.swing.JFrame {
 
     /**

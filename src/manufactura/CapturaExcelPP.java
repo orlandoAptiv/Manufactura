@@ -1,9 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package manufactura;
-
 
 import java.awt.Font;
 import java.sql.ResultSet;
@@ -11,167 +6,157 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-/**
- *
- * @author gzld6k
- */
+
 public class CapturaExcelPP extends javax.swing.JFrame {
 
     /**
      * Creates new form CapturaExcelGSD
      */
     DefaultTableModel modelo;
-     public CapturaExcelPP() {
+
+    public CapturaExcelPP() {
         initComponents();
         EnlazarCbxPlataforma();
         cbxCadena.addItem("TODOS");
-        if(Principal.UsuarioLogeado.Cadena1.equals("1"))
-        {
+        if (Principal.UsuarioLogeado.Cadena1.equals("1")) {
             cbxCadena.addItem("1");
         }
-        if(Principal.UsuarioLogeado.Cadena2.equals("1"))
-        {
+        if (Principal.UsuarioLogeado.Cadena2.equals("1")) {
             cbxCadena.addItem("2");
         }
-        if(Principal.UsuarioLogeado.Cadena3.equals("1"))
-        {
+        if (Principal.UsuarioLogeado.Cadena3.equals("1")) {
             cbxCadena.addItem("3");
         }
-        if(Principal.UsuarioLogeado.Cadena4.equals("1"))
-        {
+        if (Principal.UsuarioLogeado.Cadena4.equals("1")) {
             cbxCadena.addItem("4");
         }
-        if(Principal.UsuarioLogeado.Cadena5.equals("1"))
-        {
+        if (Principal.UsuarioLogeado.Cadena5.equals("1")) {
             cbxCadena.addItem("5");
         }
-        
-        if(Principal.UsuarioLogeado.Cadena6.equals("1"))
-        {
+
+        if (Principal.UsuarioLogeado.Cadena6.equals("1")) {
             cbxCadena.addItem("6");
         }
-        
+
         // if(Principal.UsuarioLogeado.Cadena8.equals("1"))
-       // {
+        // {
         //    cbxCadena.addItem("5");
-      //  }
+        //  }
     }
 
-     public void EnlazarDgv(String Plataforma, String Arnes, String Cad1, String Cad2, String Cad3, String Cad4, String Cad5,String Cad6, String Codigo, String Turno){
+    public void EnlazarDgv(String Plataforma, String Arnes, String Cad1, String Cad2, String Cad3, String Cad4, String Cad5, String Cad6, String Codigo, String Turno) {
         try {
-            modelo =new DefaultTableModel(){ 
-                    @Override
+            modelo = new DefaultTableModel() {
+                @Override
                 public boolean isCellEditable(int row, int column) {
-                     //all cells false
-                        boolean rsp=true;
-                        return rsp;
-                        }
+                    //all cells false
+                    boolean rsp = true;
+                    return rsp;
+                }
             };
-            modelo.setColumnIdentifiers(new Object[]{"IDENT", "PLAT.",  "CODIGO", "LINEA", "TURNO", "POND.CORTE", "POND.LPS", "POND.EF.", "HRS.EMB"});
+            modelo.setColumnIdentifiers(new Object[]{"IDENT", "PLAT.", "CODIGO", "LINEA", "TURNO", "POND.CORTE", "POND.LPS", "POND.EF.", "HRS.EMB"});
             //modelo.setColumnIdentifiers(new Object[]{"IDCODIGO", "PLAT.", "ARNES", "LINEA", "TURNO", "LINEA", "LPS", "SOPORTE", "TAB.INSP", "CORTE", "FTQ", "PILOTOS", "SISTEMAS", "RUTAS", "PTOS.PIEZA", "CAP.UTIL.HTA", "SAL.EN.PZA", "HRS.EMB", "HRS.PAG"});   
-            String query="SELECT\n" +
-                    "c.IDCODIGO, c.PLATAFORMA, c.CADENA, c.CODIGO, c.LINEA,\n" +
-                    "c.TURNO,\n" +
-                    "g.HCDIRCORTE, g.HCDIRLPS, g.HCDIRENSFINAL,\n" +
-                    "TRUNCATE(((g.HCDIRCORTE*m.SALIDAENPIEZA)/100),2) as hrsEmb from\n" +
-                    "(select * from codigos";
-                    if((Cad1.equals("1")) || (Cad2.equals("1")) || (Cad3.equals("1")) || (Cad4.equals("1"))|| (Cad5.equals("1"))|| (Cad6.equals("1")))
-                    {
-                    query+=" where ";
-                    if(Cad1.equals("1"))
-                    {
-                         query+= "CODIGOS.cadena='1' ";
-                         if((Cad2.equals("1")) || (Cad3.equals("1")) || (Cad4.equals("1"))|| (Cad5.equals("1"))|| (Cad6.equals("1")))
-                             query+="or ";
-        
+            String query = "SELECT\n"
+                    + "c.IDCODIGO, c.PLATAFORMA, c.CADENA, c.CODIGO, c.LINEA,\n"
+                    + "c.TURNO,\n"
+                    + "g.HCDIRCORTE, g.HCDIRLPS, g.HCDIRENSFINAL,\n"
+                    + "TRUNCATE(((g.HCDIRCORTE*m.SALIDAENPIEZA)/100),2) as hrsEmb from\n"
+                    + "(select * from codigos";
+            if ((Cad1.equals("1")) || (Cad2.equals("1")) || (Cad3.equals("1")) || (Cad4.equals("1")) || (Cad5.equals("1")) || (Cad6.equals("1"))) {
+                query += " where ";
+                if (Cad1.equals("1")) {
+                    query += "CODIGOS.cadena='1' ";
+                    if ((Cad2.equals("1")) || (Cad3.equals("1")) || (Cad4.equals("1")) || (Cad5.equals("1")) || (Cad6.equals("1"))) {
+                        query += "or ";
                     }
-                    if(Cad2.equals("1"))
-                    {
-                        query+= "CODIGOS.cadena='2' ";
-                          if( (Cad3.equals("1")) || (Cad4.equals("1"))|| (Cad5.equals("1"))|| (Cad6.equals("1")))
-                             query+="or ";
-                    }
-                    if(Cad3.equals("1"))
-                    {
-                        query+= "CODIGOS.cadena='3' ";
-                        if( (Cad4.equals("1"))|| (Cad5.equals("1"))|| (Cad6.equals("1")))
-                             query+="or ";
-                    }
-                    
-                     if(Cad5.equals("1"))
-                    {
-                        query+= "CODIGOS.cadena='5' ";
-                        if( (Cad4.equals("1"))|| (Cad6.equals("1")))
-                             query+="or ";
-                    }
-                     
-                     if(Cad6.equals("1"))
-                    {
-                        query+= "CODIGOS.cadena='6' ";
-                        if( (Cad4.equals("1")))
-                             query+="or ";
-                    }
-                     
-                    
-                    if(Cad4.equals("1"))
-                    {
-                        query+= "CODIGOS.cadena='4' ";
 
+                }
+                if (Cad2.equals("1")) {
+                    query += "CODIGOS.cadena='2' ";
+                    if ((Cad3.equals("1")) || (Cad4.equals("1")) || (Cad5.equals("1")) || (Cad6.equals("1"))) {
+                        query += "or ";
                     }
-                    
+                }
+                if (Cad3.equals("1")) {
+                    query += "CODIGOS.cadena='3' ";
+                    if ((Cad4.equals("1")) || (Cad5.equals("1")) || (Cad6.equals("1"))) {
+                        query += "or ";
                     }
-            query+=") as c,\n" +
-                    "gsd as g,\n" +
-                    "manufactura as m where \n" +
-                    "c.IDCODIGO = g.IDCODIGO  and m.idcodigo=c.idcodigo and m.activo=1 ";
-            if(!Plataforma.equals("TODOS"))
-            query+="AND c.PLATAFORMA='"+Plataforma+"'";
-            if(!Arnes.equals("TODOS"))
-            query+= "AND  c.ARNES='"+Arnes+"'";
-            if(!Codigo.equals("TODOS"))
-            query+= "AND  c.Codigo='"+Codigo+"'";
-                  if(!Turno.equals("TODOS"))
-            query+= "AND  c.Turno='"+Turno+"'";
-            ResultSet rs=Principal.cn.GetConsulta(query);
-            while(rs.next())
-            {
-               modelo.addRow(new Object[]{rs.getString("idcodigo"), rs.getString("PLATAFORMA"), rs.getString("codigo"), rs.getString("LINEA"), rs.getString("turno"),  rs.getString("HCDIRCORTE"), rs.getString("HCDIRLPS"), rs.getString("HCDIRENSFINAL"), rs.getString("hrsEmb")  });
+                }
+
+                if (Cad5.equals("1")) {
+                    query += "CODIGOS.cadena='5' ";
+                    if ((Cad4.equals("1")) || (Cad6.equals("1"))) {
+                        query += "or ";
+                    }
+                }
+
+                if (Cad6.equals("1")) {
+                    query += "CODIGOS.cadena='6' ";
+                    if ((Cad4.equals("1"))) {
+                        query += "or ";
+                    }
+                }
+
+                if (Cad4.equals("1")) {
+                    query += "CODIGOS.cadena='4' ";
+
+                }
+
             }
-              tblCodigos.setModel(modelo);
-              tblCodigos.getColumnModel().getColumn(0).setMaxWidth(0);
-              tblCodigos.getColumnModel().getColumn(0).setMinWidth(0);
-              tblCodigos.getColumnModel().getColumn(0).setPreferredWidth(0);
-              tblCodigos.getColumnModel().getColumn(1).setMaxWidth(100);
-              tblCodigos.getColumnModel().getColumn(1).setMinWidth(100);
-              tblCodigos.getColumnModel().getColumn(1).setPreferredWidth(100);
-              tblCodigos.getColumnModel().getColumn(2).setMaxWidth(80);
-              tblCodigos.getColumnModel().getColumn(2).setMinWidth(80);
-              tblCodigos.getColumnModel().getColumn(2).setPreferredWidth(80);
-              tblCodigos.getColumnModel().getColumn(3).setMaxWidth(50);
-              tblCodigos.getColumnModel().getColumn(3).setMinWidth(50);
-              tblCodigos.getColumnModel().getColumn(3).setPreferredWidth(50);  
-              tblCodigos.getColumnModel().getColumn(4).setMaxWidth(50);
-              tblCodigos.getColumnModel().getColumn(4).setMinWidth(50);
-              tblCodigos.getColumnModel().getColumn(4).setPreferredWidth(50); 
+            query += ") as c,\n"
+                    + "gsd as g,\n"
+                    + "manufactura as m where \n"
+                    + "c.IDCODIGO = g.IDCODIGO  and m.idcodigo=c.idcodigo and m.activo=1 ";
+            if (!Plataforma.equals("TODOS")) {
+                query += "AND c.PLATAFORMA='" + Plataforma + "'";
+            }
+            if (!Arnes.equals("TODOS")) {
+                query += "AND  c.ARNES='" + Arnes + "'";
+            }
+            if (!Codigo.equals("TODOS")) {
+                query += "AND  c.Codigo='" + Codigo + "'";
+            }
+            if (!Turno.equals("TODOS")) {
+                query += "AND  c.Turno='" + Turno + "'";
+            }
+            ResultSet rs = Principal.cn.GetConsulta(query);
+            while (rs.next()) {
+                modelo.addRow(new Object[]{rs.getString("idcodigo"), rs.getString("PLATAFORMA"), rs.getString("codigo"), rs.getString("LINEA"), rs.getString("turno"), rs.getString("HCDIRCORTE"), rs.getString("HCDIRLPS"), rs.getString("HCDIRENSFINAL"), rs.getString("hrsEmb")});
+            }
+            tblCodigos.setModel(modelo);
+            tblCodigos.getColumnModel().getColumn(0).setMaxWidth(0);
+            tblCodigos.getColumnModel().getColumn(0).setMinWidth(0);
+            tblCodigos.getColumnModel().getColumn(0).setPreferredWidth(0);
+            tblCodigos.getColumnModel().getColumn(1).setMaxWidth(100);
+            tblCodigos.getColumnModel().getColumn(1).setMinWidth(100);
+            tblCodigos.getColumnModel().getColumn(1).setPreferredWidth(100);
+            tblCodigos.getColumnModel().getColumn(2).setMaxWidth(80);
+            tblCodigos.getColumnModel().getColumn(2).setMinWidth(80);
+            tblCodigos.getColumnModel().getColumn(2).setPreferredWidth(80);
+            tblCodigos.getColumnModel().getColumn(3).setMaxWidth(50);
+            tblCodigos.getColumnModel().getColumn(3).setMinWidth(50);
+            tblCodigos.getColumnModel().getColumn(3).setPreferredWidth(50);
+            tblCodigos.getColumnModel().getColumn(4).setMaxWidth(50);
+            tblCodigos.getColumnModel().getColumn(4).setMinWidth(50);
+            tblCodigos.getColumnModel().getColumn(4).setPreferredWidth(50);
 //              tblCodigos.getColumnModel().getColumn(5).setMaxWidth(50);
 //              tblCodigos.getColumnModel().getColumn(5).setMinWidth(50);
 //              tblCodigos.getColumnModel().getColumn(5).setPreferredWidth(50);  
             Font font = tblCodigos.getFont();
             font.deriveFont(48);
             tblCodigos.setFont(font);
-        }catch(Exception e)
-        {
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
-    }  
-     
-     public void EnlazarCbxPlataforma(){
-     cbxPlataforma.removeAllItems();
-     cbxPlataforma.addItem("TODOS");
+    }
+
+    public void EnlazarCbxPlataforma() {
+        cbxPlataforma.removeAllItems();
+        cbxPlataforma.addItem("TODOS");
         try {
-            ResultSet rs= Principal.cn.GetConsulta("select DISTINCT(codigos.PLATAFORMA) as plataforma from codigos");
-            while(rs.next())
-            {
+            ResultSet rs = Principal.cn.GetConsulta("select DISTINCT(codigos.PLATAFORMA) as plataforma from codigos");
+            while (rs.next()) {
                 cbxPlataforma.addItem(rs.getString("plataforma"));
                 //modelo.addListDataListener(rs);
             }
@@ -179,14 +164,13 @@ public class CapturaExcelPP extends javax.swing.JFrame {
             System.out.println(ex.toString());
         }
     }
-     
-      public void EnlazarCbxArnes(String Plataforma){
-     cbxArnes.removeAllItems();
-     cbxArnes.addItem("TODOS");
+
+    public void EnlazarCbxArnes(String Plataforma) {
+        cbxArnes.removeAllItems();
+        cbxArnes.addItem("TODOS");
         try {
-            ResultSet rs= Principal.cn.GetConsulta("select DISTINCT(codigos.arnes) as ARNES from codigos where codigos.PLATAFORMA='"+Plataforma+"'");
-            while(rs.next())
-            {
+            ResultSet rs = Principal.cn.GetConsulta("select DISTINCT(codigos.arnes) as ARNES from codigos where codigos.PLATAFORMA='" + Plataforma + "'");
+            while (rs.next()) {
                 cbxArnes.addItem(rs.getString("ARNES"));
                 //modelo.addListDataListener(rs);
             }
@@ -194,38 +178,37 @@ public class CapturaExcelPP extends javax.swing.JFrame {
             System.out.println(ex.toString());
         }
     }
-     
-      public void DefinirParametros(){
-          if(cbxCadena.getSelectedItem()!=null)
-          {
-              switch (cbxCadena.getSelectedItem().toString())
-            {
+
+    public void DefinirParametros() {
+        if (cbxCadena.getSelectedItem() != null) {
+            switch (cbxCadena.getSelectedItem().toString()) {
                 case "1":
                     EnlazarDgv(cbxPlataforma.getSelectedItem().toString(), cbxArnes.getSelectedItem().toString(), "1", "0", "0", "0", "0", "0", "TODOS", cbxTurno.getSelectedItem().toString());
                     break;
                 case "2":
-                    EnlazarDgv(cbxPlataforma.getSelectedItem().toString(), cbxArnes.getSelectedItem().toString(), "0", "1", "0", "0", "0", "0",  "TODOS", cbxTurno.getSelectedItem().toString());
-                break;
+                    EnlazarDgv(cbxPlataforma.getSelectedItem().toString(), cbxArnes.getSelectedItem().toString(), "0", "1", "0", "0", "0", "0", "TODOS", cbxTurno.getSelectedItem().toString());
+                    break;
                 case "3":
-                     EnlazarDgv(cbxPlataforma.getSelectedItem().toString(), cbxArnes.getSelectedItem().toString(), "0", "0", "1", "0", "0", "0",  "TODOS", cbxTurno.getSelectedItem().toString());
-                break;
+                    EnlazarDgv(cbxPlataforma.getSelectedItem().toString(), cbxArnes.getSelectedItem().toString(), "0", "0", "1", "0", "0", "0", "TODOS", cbxTurno.getSelectedItem().toString());
+                    break;
                 case "4":
-                    EnlazarDgv(cbxPlataforma.getSelectedItem().toString(), cbxArnes.getSelectedItem().toString(), "0", "0", "0", "1","0", "0",  "TODOS", cbxTurno.getSelectedItem().toString());
-                break;
+                    EnlazarDgv(cbxPlataforma.getSelectedItem().toString(), cbxArnes.getSelectedItem().toString(), "0", "0", "0", "1", "0", "0", "TODOS", cbxTurno.getSelectedItem().toString());
+                    break;
                 case "5":
                     EnlazarDgv(cbxPlataforma.getSelectedItem().toString(), cbxArnes.getSelectedItem().toString(), "0", "0", "0", "0", "1", "0", "TODOS", cbxTurno.getSelectedItem().toString());
-                break;
-                    
-                    case "6":
+                    break;
+
+                case "6":
                     EnlazarDgv(cbxPlataforma.getSelectedItem().toString(), cbxArnes.getSelectedItem().toString(), "0", "0", "0", "0", "0", "1", "TODOS", cbxTurno.getSelectedItem().toString());
-                break;
-                    
+                    break;
+
                 case "TODOS":
-                    EnlazarDgv(cbxPlataforma.getSelectedItem().toString(), cbxArnes.getSelectedItem().toString(), Principal.UsuarioLogeado.Cadena1, Principal.UsuarioLogeado.Cadena2, Principal.UsuarioLogeado.Cadena3, Principal.UsuarioLogeado.Cadena4, Principal.UsuarioLogeado.Cadena5,Principal.UsuarioLogeado.Cadena5,"TODOS", cbxTurno.getSelectedItem().toString());
-                break;
-              }
+                    EnlazarDgv(cbxPlataforma.getSelectedItem().toString(), cbxArnes.getSelectedItem().toString(), Principal.UsuarioLogeado.Cadena1, Principal.UsuarioLogeado.Cadena2, Principal.UsuarioLogeado.Cadena3, Principal.UsuarioLogeado.Cadena4, Principal.UsuarioLogeado.Cadena5, Principal.UsuarioLogeado.Cadena5, "TODOS", cbxTurno.getSelectedItem().toString());
+                    break;
+            }
         }
-      }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -467,15 +450,14 @@ public class CapturaExcelPP extends javax.swing.JFrame {
 
     private void cbxTurnoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxTurnoItemStateChanged
         // TODO add your handling code here:
-           if(cbxTurno.getSelectedItem()!=null)
-              DefinirParametros();
+        if (cbxTurno.getSelectedItem() != null)
+            DefinirParametros();
     }//GEN-LAST:event_cbxTurnoItemStateChanged
 
     private void cbxPlataformaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxPlataformaItemStateChanged
         // TODO add your handling code here:
         // cbxCodigo.removeAllItems();
-        if(cbxPlataforma.getSelectedItem()!=null)
-        {
+        if (cbxPlataforma.getSelectedItem() != null) {
             EnlazarCbxArnes(cbxPlataforma.getSelectedItem().toString());
             DefinirParametros();
         }
@@ -483,7 +465,7 @@ public class CapturaExcelPP extends javax.swing.JFrame {
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
-        CapturaCodigos Cc=new  CapturaCodigos();
+        CapturaCodigos Cc = new CapturaCodigos();
         this.setVisible(false);
         Cc.setLocationRelativeTo(null);
         Cc.setVisible(true);
@@ -491,45 +473,43 @@ public class CapturaExcelPP extends javax.swing.JFrame {
 
     private void cbxCadenaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxCadenaItemStateChanged
         // TODO add your handling code here:
-        if(cbxCadena.getSelectedItem()!=null)
-        {
+        if (cbxCadena.getSelectedItem() != null) {
             DefinirParametros();
         }
     }//GEN-LAST:event_cbxCadenaItemStateChanged
 
     private void cbxArnesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxArnesItemStateChanged
         // TODO add your handling code here:
-        if((cbxArnes.getSelectedItem()!=null) )
-        {
+        if ((cbxArnes.getSelectedItem() != null)) {
             DefinirParametros();
         }
     }//GEN-LAST:event_cbxArnesItemStateChanged
 
     private void tblCodigosPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tblCodigosPropertyChange
         // TODO add your handling code here:
-        if((evt.getOldValue()!=null) && (tblCodigos.getSelectedRow()>-1))
-        {
+        if ((evt.getOldValue() != null) && (tblCodigos.getSelectedRow() > -1)) {
             //JOptionPane.showMessageDialog(null, tblCodigos.getValueAt(tblCodigos.getSelectedRow(), 0));
-            ArrayList<String> lista=new ArrayList<>();
+            ArrayList<String> lista = new ArrayList<>();
             lista.add(tblCodigos.getValueAt(tblCodigos.getSelectedRow(), 5).toString());
             lista.add(tblCodigos.getValueAt(tblCodigos.getSelectedRow(), 6).toString());
             lista.add(tblCodigos.getValueAt(tblCodigos.getSelectedRow(), 7).toString());
             lista.add(Principal.UsuarioLogeado.codigo);
-            lista.add(tblCodigos.getValueAt(tblCodigos.getSelectedRow(), 0).toString());        
-            if(Principal.cn.EjecutarInsert("update gsd set  hcdircorte=?, hcdirlps=?, hcdirensfinal=?,  usuariomodif=?  where gsd.idcodigo=?", lista))
+            lista.add(tblCodigos.getValueAt(tblCodigos.getSelectedRow(), 0).toString());
+            if (Principal.cn.EjecutarInsert("update gsd set  hcdircorte=?, hcdirlps=?, hcdirensfinal=?,  usuariomodif=?  where gsd.idcodigo=?", lista)) {
                 DefinirParametros();
+            }
         }
     }//GEN-LAST:event_tblCodigosPropertyChange
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         // TODO add your handling code here:
-        ArrayList<Object> listas=new ArrayList<Object>();
-                Principal.cn.EjecutarInsertOb("update manufactura as a\n" +
-                "INNER JOIN gsd as b on\n" +
-                "    a.idcodigo = b.idcodigo\n" +
-                "set \n" +
-                "    a.PUNTOSPZAPOND = b.hcdirlps+b.hcdirensfinal", listas);
-        Principal p=new Principal(Principal.UsuarioLogeado);
+        ArrayList<Object> listas = new ArrayList<Object>();
+        Principal.cn.EjecutarInsertOb("update manufactura as a\n"
+                + "INNER JOIN gsd as b on\n"
+                + "    a.idcodigo = b.idcodigo\n"
+                + "set \n"
+                + "    a.PUNTOSPZAPOND = b.hcdirlps+b.hcdirensfinal", listas);
+        Principal p = new Principal(Principal.UsuarioLogeado);
         p.setLocationRelativeTo(null);
         p.setVisible(true);
     }//GEN-LAST:event_formWindowClosed
@@ -542,30 +522,31 @@ public class CapturaExcelPP extends javax.swing.JFrame {
     private void btnImportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportarActionPerformed
         // TODO add your handling code here:
         this.hide();
-        LectorPP pp=new LectorPP();
+        LectorPP pp = new LectorPP();
         pp.setVisible(true);
         pp.setLocationRelativeTo(null);
     }//GEN-LAST:event_btnImportarActionPerformed
 
     private void btn_ajusteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ajusteActionPerformed
-         
+
         // TODO add your handling code here:
-        try{
-           ArrayList<String> lista=new ArrayList<>();
-           if(Principal.cn.EjecutarInsert("update manufactura as a\n" +
-                                            "INNER JOIN gsd as b on\n" +
-                                               "    a.idcodigo = b.idcodigo\n" +
-                                                 "set\n" +
-                                                  "    PUNTOSPZAPOND = b.hcdirlps+b.hcdirensfinal", lista))
+        try {
+            ArrayList<String> lista = new ArrayList<>();
+            if (Principal.cn.EjecutarInsert("update manufactura as a\n"
+                    + "INNER JOIN gsd as b on\n"
+                    + "    a.idcodigo = b.idcodigo\n"
+                    + "set\n"
+                    + "    PUNTOSPZAPOND = b.hcdirlps+b.hcdirensfinal", lista)) {
                 DefinirParametros();
-           JOptionPane.showMessageDialog(null, "Operación realizada OK");
-        }catch (ExceptionInInitializerError ex) {
-            
+            }
+            JOptionPane.showMessageDialog(null, "Operación realizada OK");
+        } catch (ExceptionInInitializerError ex) {
+
             System.out.println(ex.toString());
-                     
+
         }
-       
-        
+
+
     }//GEN-LAST:event_btn_ajusteActionPerformed
 
     private void cbxTurnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxTurnoActionPerformed

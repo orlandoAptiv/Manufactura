@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package manufactura;
 
 import Clases.DatosGSD;
@@ -12,10 +8,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-/**
- *
- * @author gzld6k
- */
 public class LectorPP extends javax.swing.JFrame {
 
     /**
@@ -23,15 +15,16 @@ public class LectorPP extends javax.swing.JFrame {
      */
     ExcelImportGSD Eimport;
     Processbar barra;
+
     public LectorPP() {
         initComponents();
         this.setLocationRelativeTo(null);
         //jFileChooser1.se
-        Eimport=new ExcelImportGSD("");
-        barra=new Processbar();
+        Eimport = new ExcelImportGSD("");
+        barra = new Processbar();
         Image icon = new ImageIcon(getClass().getResource("/Images/competitors-icon.png")).getImage();
-            setIconImage(icon);
-        FileNameExtensionFilter  filtro=new FileNameExtensionFilter("Excel 97-2003, Excel 2007/2010","csv","xlsx","xls");
+        setIconImage(icon);
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Excel 97-2003, Excel 2007/2010", "csv", "xlsx", "xls");
         jFileChooser1.setFileFilter(filtro);
     }
 
@@ -96,42 +89,39 @@ public class LectorPP extends javax.swing.JFrame {
 
     private void jFileChooser1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooser1ActionPerformed
         // TODO add your handling code here:
-       if(evt.getActionCommand().equals("CancelSelection"))
-           this.dispose();
-       else
-       {
-        if(jFileChooser1.getSelectedFile()!=null)
-        {
-          Thread t=new  Thread(new Runnable() {
+        if (evt.getActionCommand().equals("CancelSelection"))
+            this.dispose();
+        else {
+            if (jFileChooser1.getSelectedFile() != null) {
+                Thread t = new Thread(new Runnable() {
 
-              @Override
-              public void run() {
-                  threadImportar(jFileChooser1.getSelectedFile().getPath());
-              }
-          });
-          barra.setVisible(true);
-          t.start();
-          
+                    @Override
+                    public void run() {
+                        threadImportar(jFileChooser1.getSelectedFile().getPath());
+                    }
+                });
+                barra.setVisible(true);
+                t.start();
+
+            }
         }
-       }
     }//GEN-LAST:event_jFileChooser1ActionPerformed
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         // TODO add your handling code here:
-            Principal p=new Principal(Principal.UsuarioLogeado);
+        Principal p = new Principal(Principal.UsuarioLogeado);
         p.setLocationRelativeTo(null);
         p.setVisible(true);
     }//GEN-LAST:event_formWindowClosed
 
-    public void threadImportar(String Ruta)
-    {
-        try{
-            
-           String Cadena="";
-           String Hoja=Eimport.getLibroCorrecto(Ruta);
-            switch(Hoja){
+    public void threadImportar(String Ruta) {
+        try {
+
+            String Cadena = "";
+            String Hoja = Eimport.getLibroCorrecto(Ruta);
+            switch (Hoja) {
                 case "PP":
-                    Cadena="1";
+                    Cadena = "1";
                     break;
 //                case "CADENA 2":
 //                    Cadena="2";
@@ -143,36 +133,35 @@ public class LectorPP extends javax.swing.JFrame {
 //                    Cadena="6";
 //                    break;
             }
-            Eimport=new ExcelImportGSD(Cadena);
-            if(Hoja.isEmpty())
+            Eimport = new ExcelImportGSD(Cadena);
+            if (Hoja.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "El archivo seleccionado es incorrecto, vuelva a intentarlo", "Error", JOptionPane.INFORMATION_MESSAGE);
-            else{
-               Eimport.lecturaArchivoXLS(jFileChooser1.getSelectedFile().toString(), Hoja);
+            } else {
+                Eimport.lecturaArchivoXLS(jFileChooser1.getSelectedFile().toString(), Hoja);
             }
-            for(DatosGSD d:ExcelImportGSD.listadatosGSD)
-            {
-                ArrayList<String> lista=new ArrayList<String>();
+            for (DatosGSD d : ExcelImportGSD.listadatosGSD) {
+                ArrayList<String> lista = new ArrayList<String>();
                 lista.add(d.HCDIRCORTE);
                 lista.add(d.HCDIRLPS);
                 lista.add(d.HCDIRENSFINAL);
                 lista.add(Principal.UsuarioLogeado.codigo);
                 lista.add(d.Codigo.Idcodigo);
                 Principal.cn.EjecutarInsert("update gsd set  hcdircorte=?, hcdirlps=?, hcdirensfinal=?,  usuariomodif=?  where gsd.idcodigo=?", lista);
-                txtTexto.setText(txtTexto.getText()+ d.Codigo.Codigo+d.Codigo.Linea+d.Codigo.Turno+"    valor:"+d.HCDIRCORTE+","+d.HCDIRLPS+","+d.HCDIRENSFINAL+"\n");
-                
+                txtTexto.setText(txtTexto.getText() + d.Codigo.Codigo + d.Codigo.Linea + d.Codigo.Turno + "    valor:" + d.HCDIRCORTE + "," + d.HCDIRLPS + "," + d.HCDIRENSFINAL + "\n");
+
             }
-            ArrayList<Object> listas=new ArrayList<Object>();
-                Principal.cn.EjecutarInsertOb("update manufactura as a\n" +
-                "INNER JOIN gsd as b on\n" +
-                "    a.idcodigo = b.idcodigo\n" +
-                "set \n" +
-                "    a.PUNTOSPZAPOND = b.hcdirlps+b.hcdirensfinal", listas);
-        }catch(Exception e)
-        {
-           System.out.println(e.toString());
+            ArrayList<Object> listas = new ArrayList<Object>();
+            Principal.cn.EjecutarInsertOb("update manufactura as a\n"
+                    + "INNER JOIN gsd as b on\n"
+                    + "    a.idcodigo = b.idcodigo\n"
+                    + "set \n"
+                    + "    a.PUNTOSPZAPOND = b.hcdirlps+b.hcdirensfinal", listas);
+        } catch (Exception e) {
+            System.out.println(e.toString());
         }
         barra.dispose();
     }
+
     /**
      * @param args the command line arguments
      */

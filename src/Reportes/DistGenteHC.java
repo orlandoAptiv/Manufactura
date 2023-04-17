@@ -12,27 +12,24 @@ import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import manufactura.Principal;
 
-/**
- *
- * @author gzld6k
- */
 public class DistGenteHC extends javax.swing.JFrame {
 
     /**
      * Creates new form DistGenteHC
      */
     DefaultTableModel modelo;
+
     public DistGenteHC() {
         try {
             initComponents();
-            Principal.cn=new Conection();
-            Thread t=new Thread(new Runnable() {
+            Principal.cn = new Conection();
+            Thread t = new Thread(new Runnable() {
 
                 @Override
                 public void run() {
                     enlazardgv();
                 }
-                
+
             });
             t.start();
         } catch (SQLException ex) {
@@ -41,37 +38,34 @@ public class DistGenteHC extends javax.swing.JFrame {
             Logger.getLogger(DistGenteHC.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public void enlazardgv()
-    {
+
+    public void enlazardgv() {
         try {
-            ResultSet rs=Principal.cn.GetConsulta("SELECT\n" +
-                "codigos.CADENA,\n" +
-                "codigos.PLATAFORMA,\n" +
-                "codigos.ARNES,\n" +
-                "codigos.CODIGO,\n" +
-                "codigos.LINEA,\n" +
-                "codigos.TURNO,\n" +
-                "sum(elinea+ estaciones+kits+HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas) as 'GENTE DIRECTA',\n" +
-                "SUM(HCINDRUTAS) as 'GENTE INDIRECTA'\n" +
-                "FROM\n" +
-                "codigos ,\n" +
-                "manufactura\n" +
-                "WHERE\n" +
-                "codigos.IDCODIGO = manufactura.IDCODIGO AND\n" +
-                "manufactura.ACTIVO = 1\n" +
-                "GROUP BY codigos.IDCODIGO");
-            modelo=new DefaultTableModel();
+            ResultSet rs = Principal.cn.GetConsulta("SELECT\n"
+                    + "codigos.CADENA,\n"
+                    + "codigos.PLATAFORMA,\n"
+                    + "codigos.ARNES,\n"
+                    + "codigos.CODIGO,\n"
+                    + "codigos.LINEA,\n"
+                    + "codigos.TURNO,\n"
+                    + "sum(elinea+ estaciones+kits+HCDIRLINEA+ hcdirconte+HCDIRSOPORTE+HCDIRTABINSP+hcrutasint+hcdirlps+HCDIRSOPLPS+ hcdirpilotos+hcdirftq+ hcdirsistemas) as 'GENTE DIRECTA',\n"
+                    + "SUM(HCINDRUTAS) as 'GENTE INDIRECTA'\n"
+                    + "FROM\n"
+                    + "codigos ,\n"
+                    + "manufactura\n"
+                    + "WHERE\n"
+                    + "codigos.IDCODIGO = manufactura.IDCODIGO AND\n"
+                    + "manufactura.ACTIVO = 1\n"
+                    + "GROUP BY codigos.IDCODIGO");
+            modelo = new DefaultTableModel();
             modelo.setColumnIdentifiers(new Object[]{"CADENA", "PLATAFORMA", "ARNES", "CODIGO", "LINEA", "TURNO", "HC DIRECTO", "HC INDIRECTO"});
-            
-            while(rs.next())
-            {
+
+            while (rs.next()) {
                 modelo.addRow(new Object[]{rs.getString("CADENA"), rs.getString("plataforma"), rs.getString("arnes"), rs.getString("codigo"), rs.getString("LINEA"), rs.getString("turno"), rs.getString("GENTE DIRECTA"), rs.getString("GENTE INDIRECTA")
                 });
             }
             tblgente.setModel(modelo);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }
@@ -188,18 +182,17 @@ public class DistGenteHC extends javax.swing.JFrame {
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         // TODO add your handling code here:
-           Principal p=new Principal(Principal.UsuarioLogeado);
-           p.setLocationRelativeTo(null);
-           p.setVisible(true);
+        Principal p = new Principal(Principal.UsuarioLogeado);
+        p.setLocationRelativeTo(null);
+        p.setVisible(true);
     }//GEN-LAST:event_formWindowClosed
 
     private void btnExportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportarActionPerformed
-       try{
-           ExcelDistribuccion exportar=new ExcelDistribuccion((DefaultTableModel)tblgente.getModel(), "Reporte HC");
-       }catch(Exception e )
-       {
-           System.out.println(e.toString());
-       }
+        try {
+            ExcelDistribuccion exportar = new ExcelDistribuccion((DefaultTableModel) tblgente.getModel(), "Reporte HC");
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
     }//GEN-LAST:event_btnExportarActionPerformed
 
     /**

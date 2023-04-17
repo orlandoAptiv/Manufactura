@@ -4,9 +4,7 @@
  */
 package manufactura;
 
-import Reportes.CeldaCheck;
 import Reportes.ExcelContigencias;
-import Reportes.Render_CheckBox;
 import java.awt.Font;
 import java.awt.Image;
 import java.sql.ResultSet;
@@ -16,10 +14,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author gzld6k
- */
+
 public class CapturaContigencias extends javax.swing.JFrame {
 
     /**

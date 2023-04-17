@@ -1,38 +1,30 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package manufactura;
 
-import Clases.DatosGSD;
 import Clases.DatosMSD;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author gzld6k
- */
 public class CapturaMSD extends javax.swing.JFrame {
 
     /**
      * Creates new form CapturaGSD
      */
-    Double totalHCDIR=0.0;
-    Double totalHCIND=0.0;
+    Double totalHCDIR = 0.0;
+    Double totalHCIND = 0.0;
     DatosMSD dmsd;
+
     public CapturaMSD(DatosMSD DMS) {
         initComponents();
-        dmsd=DMS;
-        lblEtiqueta.setText("C"+DMS.Codigo.Cadena+", PL="+ DMS.Codigo.Plataforma+ ",  COD="+ DMS.Codigo.Codigo+ ", L="+DMS.Codigo.Linea +", T="+DMS.Codigo.Turno+"." );
+        dmsd = DMS;
+        lblEtiqueta.setText("C" + DMS.Codigo.Cadena + ", PL=" + DMS.Codigo.Plataforma + ",  COD=" + DMS.Codigo.Codigo + ", L=" + DMS.Codigo.Linea + ", T=" + DMS.Codigo.Turno + ".");
         //lblEtiqueta.setText("CADENA="+DMS.Codigo.Cadena+" PLATAFORMA="+ DMS.Codigo.Plataforma+ " CODIGO="+ DMS.Codigo.Codigo+ " LINEA="+DMS.Codigo.Linea +" TURNO="+DMS.Codigo.Turno );
         hcdirLps.setValue(Double.parseDouble(DMS.HCDIRLPS));
         HCdirEnsFinal.setValue(Double.parseDouble(DMS.HCDIRENSFINAL));
         hcDirCorte.setValue(Double.parseDouble(DMS.HCDIRCORTE));
         ptosPzasPond.setValue(Double.parseDouble(DMS.PUNTOSPZAPOND));
         capUtilHta.setValue(Double.parseDouble(DMS.CAP_UTIL_HTA));
-        totalHCDIR=Double.parseDouble(DMS.HCDIRLPS)+Double.parseDouble(DMS.HCDIRCORTE)+Double.parseDouble(DMS.HCDIRENSFINAL);
-        totalHCIND=Double.parseDouble(DMS.HCINDRUTAS);
+        totalHCDIR = Double.parseDouble(DMS.HCDIRLPS) + Double.parseDouble(DMS.HCDIRCORTE) + Double.parseDouble(DMS.HCDIRENSFINAL);
+        totalHCIND = Double.parseDouble(DMS.HCINDRUTAS);
         lblHCDIR.setText(totalHCDIR.toString());
         lblHCIND.setText(totalHCIND.toString());
     }
@@ -339,17 +331,16 @@ public class CapturaMSD extends javax.swing.JFrame {
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         // TODO add your handling code here:
-                SelectCodigo p=new SelectCodigo();
-                p.setLocationRelativeTo(null);
-                p.setVisible(true);
+        SelectCodigo p = new SelectCodigo();
+        p.setLocationRelativeTo(null);
+        p.setVisible(true);
     }//GEN-LAST:event_formWindowClosed
 
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
         // TODO add your handling code here:
         //JOptionPane.showConfirmDialog(null, "", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
-        if((JOptionPane.showConfirmDialog(null, "Esta seguro que desea actualizar?", "Confirmar", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION))
-        {
-            ArrayList<String> listaInsert=new ArrayList<String>();
+        if ((JOptionPane.showConfirmDialog(null, "Esta seguro que desea actualizar?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)) {
+            ArrayList<String> listaInsert = new ArrayList<String>();
             listaInsert.add(hcdirLps.getValue().toString());
             listaInsert.add(hcDirCorte.getValue().toString());
             listaInsert.add(HCdirEnsFinal.getValue().toString());
@@ -358,12 +349,9 @@ public class CapturaMSD extends javax.swing.JFrame {
             listaInsert.add(capUtilHta.getValue().toString());
             listaInsert.add(Principal.UsuarioLogeado.codigo);
             listaInsert.add(dmsd.Codigo.Idcodigo);
-            if( Principal.cn.EjecutarInsert("update GSD SET HCDIRLPS=?, HCDIRCORTE=?, HCDIRENSFINAL=?, HCINDRUTAS=?, PUNTOSPZAPOND=?, CAP_UTIL_HTA=?, usuariomodif=? WHERE IDCODIGO=?", listaInsert))
-            {
+            if (Principal.cn.EjecutarInsert("update GSD SET HCDIRLPS=?, HCDIRCORTE=?, HCDIRENSFINAL=?, HCINDRUTAS=?, PUNTOSPZAPOND=?, CAP_UTIL_HTA=?, usuariomodif=? WHERE IDCODIGO=?", listaInsert)) {
                 JOptionPane.showMessageDialog(null, "Datos Actualizados", "Confirmacion", JOptionPane.INFORMATION_MESSAGE);
-            }
-            else
-            {
+            } else {
                 JOptionPane.showMessageDialog(null, "Error, al guardar", "Confirmacion", JOptionPane.WARNING_MESSAGE);
             }
 

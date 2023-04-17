@@ -1,12 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package CapturasEffort;
 
-import Clases.Conection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -15,10 +8,6 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import manufactura.Principal;
 
-/**
- *
- * @author Felipe M
- */
 public class CapturaPorcentajesEffort extends javax.swing.JFrame {
 
     /**
@@ -27,7 +16,7 @@ public class CapturaPorcentajesEffort extends javax.swing.JFrame {
     public CapturaPorcentajesEffort() {
         try {
             initComponents();
-          //  Principal.cn=new Conection();
+            //  Principal.cn=new Conection();
             cargarModuloscbxAlta();
             cargarModuloscbxEditar();
             setLocationRelativeTo(null);
@@ -35,55 +24,49 @@ public class CapturaPorcentajesEffort extends javax.swing.JFrame {
             System.out.println(ex.toString());
         }
     }
-    
-    public  void cargarModuloscbxEditar(){
-    try{
+
+    public void cargarModuloscbxEditar() {
+        try {
 //        cbxModuloAlta.removeAllItems();
-        cbxModulosEditar.removeAllItems();
-       ResultSet rs= Principal.cn.GetConsulta("SELECT * FROM MODULOS");
-        while(rs.next())
-        {
+            cbxModulosEditar.removeAllItems();
+            ResultSet rs = Principal.cn.GetConsulta("SELECT * FROM MODULOS");
+            while (rs.next()) {
 //            cbxModuloAlta.addItem(rs.getString(2));
-            cbxModulosEditar.addItem(rs.getString(2));
-        }
-      }catch(Exception e)
-        {
+                cbxModulosEditar.addItem(rs.getString(2));
+            }
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }
 
-     public  void cargarModuloscbxAlta(){
-    try{
-        cbxModuloAlta.removeAllItems();
+    public void cargarModuloscbxAlta() {
+        try {
+            cbxModuloAlta.removeAllItems();
 //        cbxModulosEditar.removeAllItems();
-       ResultSet rs= Principal.cn.GetConsulta("SELECT * FROM MODULOS");
-        while(rs.next())
-        {
-            cbxModuloAlta.addItem(rs.getString(2));
+            ResultSet rs = Principal.cn.GetConsulta("SELECT * FROM MODULOS");
+            while (rs.next()) {
+                cbxModuloAlta.addItem(rs.getString(2));
 //            cbxModulosEditar.addItem(rs.getString(2));
-        }
-      }catch(Exception e)
-        {
+            }
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }
-   
-     public void cargardgv(String Modulo){
-        try
-        {
-            DefaultTableModel modelo=new DefaultTableModel();
+
+    public void cargardgv(String Modulo) {
+        try {
+            DefaultTableModel modelo = new DefaultTableModel();
             modelo.setColumnIdentifiers(new Object[]{"PLANTA", "MODULO", "PLATAFORMA", "VALOR"});
-            ResultSet rs=  Principal.cn.GetConsulta("SELECT PLANTA, NOMBREVALOR, PLATAFORMA, VALOR FROM CAPTURAEFFORT WHERE NOMBREVALOR='"+Modulo+"'");
-            while(rs.next())
-            {
-            modelo.addRow(new  Object[]{rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)});
+            ResultSet rs = Principal.cn.GetConsulta("SELECT PLANTA, NOMBREVALOR, PLATAFORMA, VALOR FROM CAPTURAEFFORT WHERE NOMBREVALOR='" + Modulo + "'");
+            while (rs.next()) {
+                modelo.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)});
             }
             tblConc.setModel(modelo);
-        }catch(Exception e)
-        {
-    
+        } catch (Exception e) {
+
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -265,7 +248,7 @@ public class CapturaPorcentajesEffort extends javax.swing.JFrame {
 
     private void tblConcPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tblConcPropertyChange
         // TODO add your handling code here:
-        try{
+        try {
 //            if((tblConc.getSelectedRow()>-1))
 //            {
 //                ArrayList<Object> lista=new ArrayList<Object>();
@@ -287,9 +270,7 @@ public class CapturaPorcentajesEffort extends javax.swing.JFrame {
 //                lista.add(tblConc.getValueAt(tblConc.getSelectedRow(), 13).toString());
 //                Principal.cn.EjecutarInsertOb("update concentradoeffort set enero=?, febrero=?, marzo=?, abril=?, mayo=?, junio=?, julio=?, agosto=?, septiembre=?, octubre=?, noviembre=?, diciembre=?, usuariomodifico=?, fechamodifico=now() where nombre=? and ano=? ", lista);
 //            }
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }//GEN-LAST:event_tblConcPropertyChange
@@ -301,30 +282,25 @@ public class CapturaPorcentajesEffort extends javax.swing.JFrame {
     private void btnAddModuloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddModuloActionPerformed
         // TODO add your handling code here:
         JFrame frame = new JFrame("AGREGAR NUEVO MODULO CAPTURA");
-        String NombreModulo ="";
+        String NombreModulo = "";
         NombreModulo = JOptionPane.showInputDialog(frame, "NOMBRE MODULO?");
-        if(NombreModulo!=null)
-        {
+        if (NombreModulo != null) {
             try {
-                NombreModulo=NombreModulo.toUpperCase();
-                ResultSet rs=  Principal.cn.GetConsulta("SELECT * FROM modulos where modulo='"+NombreModulo+"'");
-                if(rs.next() && rs.isFirst())
-                {
+                NombreModulo = NombreModulo.toUpperCase();
+                ResultSet rs = Principal.cn.GetConsulta("SELECT * FROM modulos where modulo='" + NombreModulo + "'");
+                if (rs.next() && rs.isFirst()) {
                     JOptionPane.showMessageDialog(null, "MODULO YA ESTA DADO DE ALTA", "", JOptionPane.WARNING_MESSAGE);
-                }
-                else
-                {
-                    ArrayList<String> lista=new ArrayList<String>();
+                } else {
+                    ArrayList<String> lista = new ArrayList<String>();
                     lista.add(NombreModulo);
-                    if(Principal.cn.EjecutarInsert("INSERT INTO MODULOS (MODULO) VALUES (?)", lista))
-                    {
+                    if (Principal.cn.EjecutarInsert("INSERT INTO MODULOS (MODULO) VALUES (?)", lista)) {
                         cargarModuloscbxAlta();
                         cargarModuloscbxEditar();
                     }
                 }
             } catch (SQLException ex) {
                 System.out.println(ex.toString());
-                        
+
             }
         }
     }//GEN-LAST:event_btnAddModuloActionPerformed
@@ -345,19 +321,17 @@ public class CapturaPorcentajesEffort extends javax.swing.JFrame {
 
     private void cbxModulosEditarItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxModulosEditarItemStateChanged
         // TODO add your handling code here:
-        if(cbxModulosEditar.getSelectedItem()!=null)
-        {
+        if (cbxModulosEditar.getSelectedItem() != null) {
             cargardgv(cbxModulosEditar.getSelectedItem().toString());
             cargarModuloscbxAlta();
         }
-        
-         
-        
+
+
     }//GEN-LAST:event_cbxModulosEditarItemStateChanged
 
     private void cbxModuloAltaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxModuloAltaItemStateChanged
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_cbxModuloAltaItemStateChanged
 
     /**

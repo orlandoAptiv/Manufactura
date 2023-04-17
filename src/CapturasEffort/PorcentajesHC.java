@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package CapturasEffort;
 
 import Clases.Depto;
@@ -15,10 +11,6 @@ import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import manufactura.Principal;
 
-/**
- *
- * @author Felipe M
- */
 public class PorcentajesHC extends javax.swing.JFrame {
 
     /**
@@ -27,7 +19,7 @@ public class PorcentajesHC extends javax.swing.JFrame {
     public Double hcRecHumanos62 = 0.0;
     public Double hcRecHumanos63 = 0.0;
     public Double hcRecHumanos28 = 0.0;
-    public Double hcManuf62 = 0.0, kachirules=0.0;
+    public Double hcManuf62 = 0.0, kachirules = 0.0;
     public Double hcManuf63 = 0.0;
     public Double hcManuf28 = 0.0;
 
@@ -38,41 +30,38 @@ public class PorcentajesHC extends javax.swing.JFrame {
 //            Principal.cn = new Conection();
             IniValoresRecursos();
             tblHC62.setModel(cargarHCDepto("25962", getKachirules()));
-            tblHC63.setModel(cargarHCDepto("25963", 0.0 ));
-            hcManuf62 = SacarTotalHC("25962")+ getKachirules();
+            tblHC63.setModel(cargarHCDepto("25963", 0.0));
+            hcManuf62 = SacarTotalHC("25962") + getKachirules();
             hcManuf63 = SacarTotalHC("25963");
             lblHCTotal62.setText("HC TOTAL: " + hcManuf62);
             lblHCTotal63.setText("HC TOTAL: " + hcManuf63);
             creartablaCoincidencias();
-            
-           if(hcRecHumanos28 >0){
-                
-           
-            HCInduccion();
-           }
+
+            if (hcRecHumanos28 > 0) {
+
+                HCInduccion();
+            }
             inicializartotales();
             inicializarPorcentaje();
         } catch (Exception ex) {
             Logger.getLogger(PorcentajesHC.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public double getKachirules(){
-       Double rsp=0.0;
-        try{
-               ResultSet rs2=Principal.cn.GetConsulta("select c.IDCODIGO, sum(m.HCDIRLINEA) as KACHIRULES from codigos as c, manufactura as m where c.IDCODIGO=m.IDCODIGO and c.CADENA=7");       
-       
-            if(rs2.next())
-            {            
-              rsp=rs2.getDouble("KACHIRULES");
+
+    public double getKachirules() {
+        Double rsp = 0.0;
+        try {
+            ResultSet rs2 = Principal.cn.GetConsulta("select c.IDCODIGO, sum(m.HCDIRLINEA) as KACHIRULES from codigos as c, manufactura as m where c.IDCODIGO=m.IDCODIGO and c.CADENA=7");
+
+            if (rs2.next()) {
+                rsp = rs2.getDouble("KACHIRULES");
             }
-        }catch(Exception e )
-        {
-            
+        } catch (Exception e) {
+
         }
-     return rsp;      
+        return rsp;
     }
-    
+
     public String DoubleFormat(double parDouble) {
         DecimalFormat formatter = new DecimalFormat("###,##0.000");
         String myNumero = formatter.format(parDouble);
@@ -99,11 +88,12 @@ public class PorcentajesHC extends javax.swing.JFrame {
             }
             rs = Principal.cn.GetConsulta("select c.PLATAFORMA,  sum(c.hcdirecto)  as  total  from manufactura as m, personas as c where  m.IDCODIGO=c.IDCODIGO AND M.ACTIVO=1 and  m.bcable<>1  AND DEPTO='" + Depto + "' GROUP BY c.PLATAFORMA");
             while (rs.next()) {
-               String plat= rs.getString("PLATAFORMA");
-                if(plat.trim().equals("K2XX") )
-                    modelo.addRow(new Object[]{rs.getString(1),  Double.parseDouble(rs.getString(2).toString())+Kachirules});
-                else
+                String plat = rs.getString("PLATAFORMA");
+                if (plat.trim().equals("K2XX")) {
+                    modelo.addRow(new Object[]{rs.getString(1), Double.parseDouble(rs.getString(2).toString()) + Kachirules});
+                } else {
                     modelo.addRow(new Object[]{rs.getString(1), rs.getString(2)});
+                }
             }
 
         } catch (Exception e) {
@@ -129,7 +119,7 @@ public class PorcentajesHC extends javax.swing.JFrame {
         return rsp;
     }
 
-    public void IniValoresRecursos(){
+    public void IniValoresRecursos() {
         try {
             ResultSet rs = Principal.cn.GetConsulta("SELECT * FROM RECURSOSHC WHERE MONTHNAME(now()) =MONTHNAME(fecha)");
             if (rs.next()) {
@@ -167,15 +157,14 @@ public class PorcentajesHC extends javax.swing.JFrame {
                         flag = true;
                         break;
                     }
-                    
+
                 }
                 if (!flag) {
                     modelo.addColumn(tblHC63.getModel().getValueAt(i, 0));
                 }
                 flag = false;
             }
-            
-           
+
             modelo.addRow(new Object[]{"25962", hcRecHumanos62, 0, 0, 0, 0, 0, 0, 0, 0, 0});
             modelo.addRow(new Object[]{"25963", hcRecHumanos63, 0, 0, 0, 0, 0, 0, 0, 0, 0});
             for (int i = 0; i < tblHC62.getModel().getRowCount(); i++) {
@@ -224,14 +213,14 @@ public class PorcentajesHC extends javax.swing.JFrame {
             Double ValorHCPla = 0.0;
             Double ValorTotal = hcRecHumanos62 + hcRecHumanos63;
             DefaultTableModel modelo = (DefaultTableModel) tblHCdistribucion.getModel();
-            modelo.addRow(new Object[]{"25928", hcRecHumanos28, 0, 0, 0, 0, 0, 0,0, 0,0});
+            modelo.addRow(new Object[]{"25928", hcRecHumanos28, 0, 0, 0, 0, 0, 0, 0, 0, 0});
             for (int c = 2; c < modelo.getColumnCount(); c++) {
                 for (int r = 0; r < modelo.getRowCount(); r++) {
                     ValorHCPla += Double.parseDouble(modelo.getValueAt(r, c).toString());
                 }
-                ValorHCPla =(ValorHCPla / ValorTotal) * hcRecHumanos28;
+                ValorHCPla = (ValorHCPla / ValorTotal) * hcRecHumanos28;
                 modelo = regresaModeloEditado(modelo, modelo.getColumnName(c), ValorHCPla, 2);
-                ValorHCPla=0.0;
+                ValorHCPla = 0.0;
             }
         } catch (Exception e) {
             System.out.println(e.toString());
@@ -239,48 +228,45 @@ public class PorcentajesHC extends javax.swing.JFrame {
     }
 
     public void inicializartotales() {
-       if (hcRecHumanos28 >0)
-       {
-        try {
-            DefaultTableModel modelo = new DefaultTableModel() {
-            };
-            for (int i = 0; i < tblHCdistribucion.getModel().getColumnCount(); i++) {
-                modelo.addColumn(tblHCdistribucion.getModel().getColumnName(i));
+        if (hcRecHumanos28 > 0) {
+            try {
+                DefaultTableModel modelo = new DefaultTableModel() {
+                };
+                for (int i = 0; i < tblHCdistribucion.getModel().getColumnCount(); i++) {
+                    modelo.addColumn(tblHCdistribucion.getModel().getColumnName(i));
+                }
+                modelo.addRow(new Object[]{"TOTALES", 0, 0, 0, 0, 0, 0, 0, 0, 0});
+                tblHCTotales.setModel(modelo);
+                for (int c = 2; c < tblHCdistribucion.getColumnCount(); c++) {
+                    double suma = Double.parseDouble(tblHCdistribucion.getModel().getValueAt(0, c).toString());
+                    suma += Double.parseDouble(tblHCdistribucion.getModel().getValueAt(1, c).toString());
+                    suma += Double.parseDouble(tblHCdistribucion.getModel().getValueAt(2, c).toString());
+                    tblHCTotales.getModel().setValueAt(suma, 0, c);
+                }//           tblHCTotales.getColumnModel().getColumn(0).setPreferredWidth(0);
+            } catch (Exception e) {
+
             }
-            modelo.addRow(new Object[]{"TOTALES", 0, 0, 0, 0, 0, 0, 0, 0, 0});
-            tblHCTotales.setModel(modelo);
-            for (int c = 2; c < tblHCdistribucion.getColumnCount(); c++) {
-                double suma = Double.parseDouble(tblHCdistribucion.getModel().getValueAt(0, c).toString());
-                suma += Double.parseDouble(tblHCdistribucion.getModel().getValueAt(1, c).toString());
-                suma += Double.parseDouble(tblHCdistribucion.getModel().getValueAt(2, c).toString());
-                tblHCTotales.getModel().setValueAt(suma, 0, c);
-            }//           tblHCTotales.getColumnModel().getColumn(0).setPreferredWidth(0);
-        } catch (Exception e) {
+        } else {
+
+            try {
+                DefaultTableModel modelo = new DefaultTableModel() {
+                };
+                for (int i = 0; i < tblHCdistribucion.getModel().getColumnCount(); i++) {
+                    modelo.addColumn(tblHCdistribucion.getModel().getColumnName(i));
+                }
+                modelo.addRow(new Object[]{"TOTALES", 0, 0, 0, 0, 0, 0, 0, 0, 0});
+                tblHCTotales.setModel(modelo);
+                for (int c = 2; c < tblHCdistribucion.getColumnCount(); c++) {
+                    double suma = Double.parseDouble(tblHCdistribucion.getModel().getValueAt(0, c).toString());
+                    suma += Double.parseDouble(tblHCdistribucion.getModel().getValueAt(1, c).toString());
+
+                    tblHCTotales.getModel().setValueAt(suma, 0, c);
+                }//           tblHCTotales.getColumnModel().getColumn(0).setPreferredWidth(0);
+            } catch (Exception e) {
+
+            }
 
         }
-       }
-       else
-       {
-           
-          try {
-            DefaultTableModel modelo = new DefaultTableModel() {
-            };
-            for (int i = 0; i < tblHCdistribucion.getModel().getColumnCount(); i++) {
-                modelo.addColumn(tblHCdistribucion.getModel().getColumnName(i));
-            }
-            modelo.addRow(new Object[]{"TOTALES", 0, 0, 0, 0, 0, 0, 0, 0, 0});
-            tblHCTotales.setModel(modelo);
-            for (int c = 2; c < tblHCdistribucion.getColumnCount(); c++) {
-                double suma = Double.parseDouble(tblHCdistribucion.getModel().getValueAt(0, c).toString());
-                suma += Double.parseDouble(tblHCdistribucion.getModel().getValueAt(1, c).toString());
-              
-                tblHCTotales.getModel().setValueAt(suma, 0, c);
-            }//           tblHCTotales.getColumnModel().getColumn(0).setPreferredWidth(0);
-        } catch (Exception e) {
-
-        } 
-           
-       }
     }
 
     public void inicializarPorcentaje() {
@@ -291,10 +277,10 @@ public class PorcentajesHC extends javax.swing.JFrame {
             for (int i = 2; i < tblHCTotales.getModel().getColumnCount(); i++) {
                 modelo.addColumn(tblHCTotales.getModel().getColumnName(i));
             }
-            modelo.addRow(new Object[]{"25962", 0, 0, 0, 0, 0, 0, 0, 0,0});
-            modelo.addRow(new Object[]{"25963", 0, 0, 0, 0, 0, 0, 0, 0,0});
-            modelo.addRow(new Object[]{"25928", 0, 0, 0, 0, 0, 0, 0, 0,0});
-            modelo.addRow(new Object[]{"TOTAL PLAT.", 0, 0, 0, 0, 0, 0, 0, 0,0});
+            modelo.addRow(new Object[]{"25962", 0, 0, 0, 0, 0, 0, 0, 0, 0});
+            modelo.addRow(new Object[]{"25963", 0, 0, 0, 0, 0, 0, 0, 0, 0});
+            modelo.addRow(new Object[]{"25928", 0, 0, 0, 0, 0, 0, 0, 0, 0});
+            modelo.addRow(new Object[]{"TOTAL PLAT.", 0, 0, 0, 0, 0, 0, 0, 0, 0});
             for (int r = 0; r < tblHCdistribucion.getModel().getRowCount(); r++) {
                 for (int c = 2; c < tblHCdistribucion.getModel().getColumnCount(); c++) {
                     Double hcPlataforma = Double.parseDouble(tblHCdistribucion.getModel().getValueAt(r, c).toString());
@@ -682,51 +668,45 @@ public class PorcentajesHC extends javax.swing.JFrame {
 
     private void btnExportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportarActionPerformed
         // TODO add your handling code here:
-        ArrayList<Depto> depto=new ArrayList<Depto>();
-        ArrayList<Modulos> Modulos=new ArrayList<Modulos>();
-        try{
-            ResultSet rs=Principal.cn.GetConsulta("SELECT * FROM DEPARTAMENTOS");
-            while(rs.next())
-            {
+        ArrayList<Depto> depto = new ArrayList<Depto>();
+        ArrayList<Modulos> Modulos = new ArrayList<Modulos>();
+        try {
+            ResultSet rs = Principal.cn.GetConsulta("SELECT * FROM DEPARTAMENTOS");
+            while (rs.next()) {
                 depto.add(new Depto(rs.getString(1), rs.getString(2)));
             }
-             ExcelEffort effort=new ExcelEffort((DefaultTableModel)tblHCPorcentajes.getModel(), depto);
+            ExcelEffort effort = new ExcelEffort((DefaultTableModel) tblHCPorcentajes.getModel(), depto);
             // ExcelEffort effort=new ExcelEffort();
 //            rs=Principal.cn.GetConsulta("SELECT CASE WHEN MONTH(NOW()) = 1 THEN 'ENERO' WHEN MONTH(NOW()) = 2 THEN 'FEBRERO'  WHEN MONTH(NOW()) = 3 THEN 'MARZO' WHEN MONTH(NOW()) = 4 THEN 'ABRIL' WHEN MONTH(NOW()) = 5 THEN 'MAYO'\n" +
 //                "WHEN MONTH(NOW()) = 6 THEN 'JUNIO' WHEN MONTH(NOW()) = 7 THEN 'JULIO' WHEN MONTH(NOW()) = 8 THEN 'AGOSTO' WHEN MONTH(NOW()) = 9 THEN 'SEPTIEMBRE' WHEN MONTH(NOW()) = 10 THEN 'OCTUBRE' WHEN MONTH(NOW()) = 11 THEN 'NOVIEMBRE'\n" +
 //                "WHEN MONTH(NOW()) = 12 THEN 'DICIEMBRE' ELSE 'esto no es un mes' END AS MESespañol from concentradoeffort ");
-             rs=Principal.cn.GetConsulta("SELECT CASE WHEN MONTH(NOW()) = 1 THEN 'DICIEMBRE' WHEN MONTH(NOW()) = 2 THEN 'ENERO'  WHEN MONTH(NOW()) = 3 THEN 'FEBRERO' WHEN MONTH(NOW()) = 4 THEN 'MARZO' WHEN MONTH(NOW()) = 5 THEN 'ABRIL'\n" +
-"                WHEN MONTH(NOW()) = 6 THEN 'MAYO' WHEN MONTH(NOW()) = 7 THEN 'JUNIO' WHEN MONTH(NOW()) = 8 THEN 'JULIO' WHEN MONTH(NOW()) = 9 THEN 'AGOSTO' WHEN MONTH(NOW()) = 10 THEN 'SEPTIEMBRE' WHEN MONTH(NOW()) = 11 THEN 'OCTUBRE'\n" +
-"                WHEN MONTH(NOW()) = 12 THEN 'NOVIEMBRE' ELSE 'esto no es un mes' END AS MESespañol from concentradoeffort");
-                     
-           String nombreMes="";
-             if(rs.next())
-             {
-                 nombreMes=rs.getString(1);
-             }
-             rs=Principal.cn.GetConsulta("SELECT nombre, "+nombreMes+" FROM concentradoeffort where ano=year(now()) AND NOMBRE='SCRAP'");
-            while(rs.next())
-            {
+            rs = Principal.cn.GetConsulta("SELECT CASE WHEN MONTH(NOW()) = 1 THEN 'DICIEMBRE' WHEN MONTH(NOW()) = 2 THEN 'ENERO'  WHEN MONTH(NOW()) = 3 THEN 'FEBRERO' WHEN MONTH(NOW()) = 4 THEN 'MARZO' WHEN MONTH(NOW()) = 5 THEN 'ABRIL'\n"
+                    + "                WHEN MONTH(NOW()) = 6 THEN 'MAYO' WHEN MONTH(NOW()) = 7 THEN 'JUNIO' WHEN MONTH(NOW()) = 8 THEN 'JULIO' WHEN MONTH(NOW()) = 9 THEN 'AGOSTO' WHEN MONTH(NOW()) = 10 THEN 'SEPTIEMBRE' WHEN MONTH(NOW()) = 11 THEN 'OCTUBRE'\n"
+                    + "                WHEN MONTH(NOW()) = 12 THEN 'NOVIEMBRE' ELSE 'esto no es un mes' END AS MESespañol from concentradoeffort");
+
+            String nombreMes = "";
+            if (rs.next()) {
+                nombreMes = rs.getString(1);
+            }
+            rs = Principal.cn.GetConsulta("SELECT nombre, " + nombreMes + " FROM concentradoeffort where ano=year(now()) AND NOMBRE='SCRAP'");
+            while (rs.next()) {
                 Modulos.add(new Modulos(rs.getString(1), rs.getDouble(2)));
             }
-              rs=Principal.cn.GetConsulta("SELECT nombre, "+nombreMes+" FROM concentradoeffort where ano=year(now()) AND NOMBRE='TLO' ");
-            while(rs.next())
-            {
+            rs = Principal.cn.GetConsulta("SELECT nombre, " + nombreMes + " FROM concentradoeffort where ano=year(now()) AND NOMBRE='TLO' ");
+            while (rs.next()) {
                 Modulos.add(new Modulos(rs.getString(1), rs.getDouble(2)));
             }
-            DefaultTableModel modeloPorc=new DefaultTableModel();
-            modeloPorc.setColumnIdentifiers(new Object[]{"MODULO", "BCABLE", "SERVICIOS", "E2XX", "D2XX", "GMT610", "ISUZU","K2XX","GMX521", "TOTAL"});
-             rs=Principal.cn.GetConsulta("SELECT concentradoeffort.nombre, porcentajes.BCABLE,  porcentajes.SERVICIOS, porcentajes.BB, porcentajes.D2XX, \n" +
-                "porcentajes.GMT610, porcentajes.ISUZU_,porcentajes.K2XX,porcentajes.GMX521 , concentradoeffort."+nombreMes+" FROM  concentradoeffort , \n" +
-                "porcentajes WHERE concentradoeffort.nombre = porcentajes.modulo and  ano=YEAR(NOW())");
-            while(rs.next())
-            {
-                modeloPorc.addRow(new Object[]{rs.getString(1), rs.getDouble(2), rs.getDouble(3), rs.getDouble(4),  rs.getDouble(5), rs.getDouble(6), rs.getDouble(7), rs.getDouble(8),rs.getDouble(9),rs.getDouble(10)});
+            DefaultTableModel modeloPorc = new DefaultTableModel();
+            modeloPorc.setColumnIdentifiers(new Object[]{"MODULO", "BCABLE", "SERVICIOS", "E2XX", "D2XX", "GMT610", "ISUZU", "K2XX", "GMX521", "TOTAL"});
+            rs = Principal.cn.GetConsulta("SELECT concentradoeffort.nombre, porcentajes.BCABLE,  porcentajes.SERVICIOS, porcentajes.BB, porcentajes.D2XX, \n"
+                    + "porcentajes.GMT610, porcentajes.ISUZU_,porcentajes.K2XX,porcentajes.GMX521 , concentradoeffort." + nombreMes + " FROM  concentradoeffort , \n"
+                    + "porcentajes WHERE concentradoeffort.nombre = porcentajes.modulo and  ano=YEAR(NOW())");
+            while (rs.next()) {
+                modeloPorc.addRow(new Object[]{rs.getString(1), rs.getDouble(2), rs.getDouble(3), rs.getDouble(4), rs.getDouble(5), rs.getDouble(6), rs.getDouble(7), rs.getDouble(8), rs.getDouble(9), rs.getDouble(10)});
             }
-        effort.gethojaScrapSq((DefaultTableModel)tblHCPorcentajes.getModel(), Modulos, modeloPorc);
-        effort.getPorcentajesHC((DefaultTableModel)tblHCdistribucion.getModel(), (DefaultTableModel)tblHCPorcentajes.getModel() );
-        }catch(Exception e)
-        {
+            effort.gethojaScrapSq((DefaultTableModel) tblHCPorcentajes.getModel(), Modulos, modeloPorc);
+            effort.getPorcentajesHC((DefaultTableModel) tblHCdistribucion.getModel(), (DefaultTableModel) tblHCPorcentajes.getModel());
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
 

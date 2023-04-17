@@ -6,8 +6,6 @@
 
 package effortGUA;
 
-import CapturasEffort.*;
-import Clases.Conection;
 import Clases.RenderCambioLetra;
 import java.awt.Color;
 import java.sql.ResultSet;
@@ -18,10 +16,7 @@ import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import manufactura.Principal;
 
-/**
- *
- * @author Felipe M
- */
+
 public class CapturaTotales2 extends javax.swing.JFrame {
 
     /**

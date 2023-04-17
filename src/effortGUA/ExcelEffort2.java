@@ -5,7 +5,6 @@
  */
 package effortGUA;
 
-//import CapturasEffort.*;
 import Clases.Depto;
 import Clases.Modulos;
 import java.awt.Desktop;
@@ -23,10 +22,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 
-/**
- *
- * @author FelipeM
- */
+
 public class ExcelEffort2 {
     File ArchivoXLS;
     HSSFSheet hoja;

@@ -1,13 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package manufactura;
 
-import Reportes.CeldaCheck;
-import Reportes.Render_CheckBox;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
@@ -16,25 +8,22 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author Felipe
- */
 public class CapturaMODIFICACIONLINEAS extends javax.swing.JFrame {
 
     /**
      * Creates new form CapturaDetalladaConv
      */
     String Turno, Cadena;
+
     public CapturaMODIFICACIONLINEAS() {
         initComponents();
         Image icon = new ImageIcon(getClass().getResource("/Images/competitors-icon.png")).getImage();
-            setIconImage(icon);
+        setIconImage(icon);
         enlazarDgv("1", "A");
         GetCambiarCalorBoton("1A");
     }
 
-    public void  GetCambiarCalorBoton(String NombreBoton){
+    public void GetCambiarCalorBoton(String NombreBoton) {
 //        String color=BtnCad1B.getBackground().toString();
         BtnCad1A.setBackground(Color.getColor("control"));
         BtnCad2A.setBackground(Color.getColor("control"));
@@ -48,8 +37,7 @@ public class CapturaMODIFICACIONLINEAS extends javax.swing.JFrame {
         BtnCad6B.setBackground(Color.getColor("control"));
         BtnCad8B.setBackground(Color.getColor("control"));
         BtnCad8A.setBackground(Color.getColor("control"));
-        switch(NombreBoton)
-        {
+        switch (NombreBoton) {
             case "1A":
                 BtnCad1A.setBackground(Color.GREEN);
                 break;
@@ -80,50 +68,47 @@ public class CapturaMODIFICACIONLINEAS extends javax.swing.JFrame {
             case "6B":
                 BtnCad6B.setBackground(Color.GREEN);
                 break;
-                  case "5B":
+            case "5B":
                 BtnCad8B.setBackground(Color.GREEN);
                 break;
             case "5A":
                 BtnCad8A.setBackground(Color.GREEN);
                 break;
-                        
+
         }
-        
-           
+
     }
-    
-    public void enlazarDgv(String Cadena, String Turno){
-            try   { 
-               
-                this.Turno=Turno;
-                this.Cadena=Cadena;
-                DefaultTableModel modelotemp=null;
-         
-              modelotemp=new DefaultTableModel();
-              modelotemp.setColumnIdentifiers(new Object[]{"IDCODIGO", "PLAT.", "CODIGO", "LINEA", "TURNO"});   
-             ResultSet rs=Principal.cn.GetConsulta("SELECT c.IDCODIGO, c.plataforma, c.codigo, c.linea, c.turno FROM codigos as c where c.IDCODIGO and c.turno='"+Turno+"' and cadena='"+Cadena+"'");
-           
-            while(rs.next())
-            {
+
+    public void enlazarDgv(String Cadena, String Turno) {
+        try {
+
+            this.Turno = Turno;
+            this.Cadena = Cadena;
+            DefaultTableModel modelotemp = null;
+
+            modelotemp = new DefaultTableModel();
+            modelotemp.setColumnIdentifiers(new Object[]{"IDCODIGO", "PLAT.", "CODIGO", "LINEA", "TURNO"});
+            ResultSet rs = Principal.cn.GetConsulta("SELECT c.IDCODIGO, c.plataforma, c.codigo, c.linea, c.turno FROM codigos as c where c.IDCODIGO and c.turno='" + Turno + "' and cadena='" + Cadena + "'");
+
+            while (rs.next()) {
                 modelotemp.addRow(new Object[]{rs.getString("idcodigo"), rs.getString("PLATAFORMA"), rs.getString("CODIGO"), rs.getString("LINEA"), rs.getString("turno")});
             }
-             tblCodigos.setModel(modelotemp);
+            tblCodigos.setModel(modelotemp);
             // tblCodigos.getColumnModel().getColumn(9).setCellEditor(new CeldaCheck());
-             // tblCodigos.getColumnModel().getColumn(9).setCellRenderer(new Render_CheckBox());
+            // tblCodigos.getColumnModel().getColumn(9).setCellRenderer(new Render_CheckBox());
             //  tblCodigos.getColumnModel().getColumn(9).setMaxWidth(30);
-                Font font = tblCodigos.getFont();
-              font.deriveFont(48);
-              tblCodigos.setFont(font);
-              tblCodigos.getColumnModel().getColumn(0).setMaxWidth(55);
-              tblCodigos.getColumnModel().getColumn(0).setMinWidth(55);
-              tblCodigos.getColumnModel().getColumn(0).setPreferredWidth(55);
-            }  
-            catch(Exception e)
-                    {
-                         System.out.println(e);
-                    }
-                    
+            Font font = tblCodigos.getFont();
+            font.deriveFont(48);
+            tblCodigos.setFont(font);
+            tblCodigos.getColumnModel().getColumn(0).setMaxWidth(55);
+            tblCodigos.getColumnModel().getColumn(0).setMinWidth(55);
+            tblCodigos.getColumnModel().getColumn(0).setPreferredWidth(55);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -446,40 +431,31 @@ public class CapturaMODIFICACIONLINEAS extends javax.swing.JFrame {
 
     private void tblCodigosPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tblCodigosPropertyChange
         // TODO add your handling code here:
-        try{
-            if( (tblCodigos.getSelectedRow()>-1))
-            {
+        try {
+            if ((tblCodigos.getSelectedRow() > -1)) {
 
-                ArrayList<Object> lista=new ArrayList<Object>();
-                
+                ArrayList<Object> lista = new ArrayList<Object>();
+
                 lista.add(tblCodigos.getValueAt(tblCodigos.getSelectedRow(), 1).toString());
                 lista.add(tblCodigos.getValueAt(tblCodigos.getSelectedRow(), 2).toString());
                 lista.add(tblCodigos.getValueAt(tblCodigos.getSelectedRow(), 3).toString());
                 //lista.add(tblCodigos.getValueAt(tblCodigos.getSelectedRow(), 8).toString());
-               // lista.add(Principal.UsuarioLogeado.codigo);
-               // if(tblCodigos.getValueAt(tblCodigos.getSelectedRow(), 9).toString().equals("true"))
-               // lista.add(1);
-               // else
-               // lista.add(0);
+                // lista.add(Principal.UsuarioLogeado.codigo);
+                // if(tblCodigos.getValueAt(tblCodigos.getSelectedRow(), 9).toString().equals("true"))
+                // lista.add(1);
+                // else
+                // lista.add(0);
                 lista.add(tblCodigos.getValueAt(tblCodigos.getSelectedRow(), 0).toString());
-               // Principal.cn.EjecutarInsertOb("update MANUFACTURA as m set m.hcdirlinea=?,  m.kits=?,  m.elinea=?,  m.estaciones=?, m.usuariomodif=?, m.activo=?  where m.idcodigo=? ", lista);
+                // Principal.cn.EjecutarInsertOb("update MANUFACTURA as m set m.hcdirlinea=?,  m.kits=?,  m.elinea=?,  m.estaciones=?, m.usuariomodif=?, m.activo=?  where m.idcodigo=? ", lista);
 
-             Principal.cn.EjecutarInsertOb("update CODIGOS set plataforma=?, codigo=?, linea=?  where idcodigo=? ", lista);
+                Principal.cn.EjecutarInsertOb("update CODIGOS set plataforma=?, codigo=?, linea=?  where idcodigo=? ", lista);
                 //DefinirParametros();
                 enlazarDgv(this.Cadena, this.Turno);
                 //enlazarPorc();
 
             }
-            
-            
-            
-            
-            
-            
-            
-        }
-        catch(Exception e)
-        {
+
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }//GEN-LAST:event_tblCodigosPropertyChange
@@ -492,28 +468,25 @@ public class CapturaMODIFICACIONLINEAS extends javax.swing.JFrame {
     private void BtnCad1AActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCad1AActionPerformed
         // TODO add your handling code here:
         //        CapturaExcelManufactura cEG=new CapturaExcelManufactura();
-        if((!this.Cadena.equals("1"))||(!this.Turno.equals("A")))
-        {
+        if ((!this.Cadena.equals("1")) || (!this.Turno.equals("A"))) {
             enlazarDgv("1", "A");
             GetCambiarCalorBoton("1A");
-            
+
         }
     }//GEN-LAST:event_BtnCad1AActionPerformed
 
     private void BtnCad2AActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCad2AActionPerformed
         // TODO add your handling code here:
-        if((!this.Cadena.equals("2"))||(!this.Turno.equals("A")))
-        {
+        if ((!this.Cadena.equals("2")) || (!this.Turno.equals("A"))) {
             enlazarDgv("2", "A");
             GetCambiarCalorBoton("2A");
         }
-        
+
     }//GEN-LAST:event_BtnCad2AActionPerformed
 
     private void BtnCad3AActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCad3AActionPerformed
         // TODO add your handling code here:
-        if((!this.Cadena.equals("3"))||(!this.Turno.equals("A")))
-        {
+        if ((!this.Cadena.equals("3")) || (!this.Turno.equals("A"))) {
             enlazarDgv("3", "A");
             GetCambiarCalorBoton("3A");
         }
@@ -521,8 +494,7 @@ public class CapturaMODIFICACIONLINEAS extends javax.swing.JFrame {
 
     private void BtnCad4AActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCad4AActionPerformed
         // TODO add your handling code here:
-        if((!this.Cadena.equals("4"))||(!this.Turno.equals("A")))
-        {
+        if ((!this.Cadena.equals("4")) || (!this.Turno.equals("A"))) {
             enlazarDgv("4", "A");
             GetCambiarCalorBoton("4A");
         }
@@ -530,8 +502,7 @@ public class CapturaMODIFICACIONLINEAS extends javax.swing.JFrame {
 
     private void BtnCad1BActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCad1BActionPerformed
         // TODO add your handling code here:
-        if((!this.Cadena.equals("1"))||(!this.Turno.equals("B")))
-        {
+        if ((!this.Cadena.equals("1")) || (!this.Turno.equals("B"))) {
             enlazarDgv("1", "B");
             GetCambiarCalorBoton("1B");
         }
@@ -539,8 +510,7 @@ public class CapturaMODIFICACIONLINEAS extends javax.swing.JFrame {
 
     private void BtnCad2BActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCad2BActionPerformed
         // TODO add your handling code here:
-        if((!this.Cadena.equals("2"))||(!this.Turno.equals("B")))
-        {
+        if ((!this.Cadena.equals("2")) || (!this.Turno.equals("B"))) {
             enlazarDgv("2", "B");
             GetCambiarCalorBoton("2B");
         }
@@ -548,8 +518,7 @@ public class CapturaMODIFICACIONLINEAS extends javax.swing.JFrame {
 
     private void BtnCad3BActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCad3BActionPerformed
         // TODO add your handling code here:
-        if((!this.Cadena.equals("3"))||(!this.Turno.equals("B")))
-        {
+        if ((!this.Cadena.equals("3")) || (!this.Turno.equals("B"))) {
             enlazarDgv("3", "B");
             GetCambiarCalorBoton("3B");
         }
@@ -557,8 +526,7 @@ public class CapturaMODIFICACIONLINEAS extends javax.swing.JFrame {
 
     private void BtnCad4BActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCad4BActionPerformed
         // TODO add your handling code here:
-        if((!this.Cadena.equals("4"))||(!this.Turno.equals("B")))
-        {
+        if ((!this.Cadena.equals("4")) || (!this.Turno.equals("B"))) {
             enlazarDgv("4", "B");
             GetCambiarCalorBoton("4B");
         }
@@ -566,8 +534,7 @@ public class CapturaMODIFICACIONLINEAS extends javax.swing.JFrame {
 
     private void BtnCad6AActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCad6AActionPerformed
         // TODO add your handling code here:
-        if((!this.Cadena.equals("6"))||(!this.Turno.equals("A")))
-        {
+        if ((!this.Cadena.equals("6")) || (!this.Turno.equals("A"))) {
             enlazarDgv("6", "A");
             GetCambiarCalorBoton("6A");
         }
@@ -575,8 +542,7 @@ public class CapturaMODIFICACIONLINEAS extends javax.swing.JFrame {
 
     private void BtnCad6BActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCad6BActionPerformed
         // TODO add your handling code here:
-        if((!this.Cadena.equals("6"))||(!this.Turno.equals("B")))
-        {
+        if ((!this.Cadena.equals("6")) || (!this.Turno.equals("B"))) {
             enlazarDgv("6", "B");
             GetCambiarCalorBoton("6B");
         }
@@ -584,28 +550,26 @@ public class CapturaMODIFICACIONLINEAS extends javax.swing.JFrame {
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         // TODO add your handling code here:
-        Principal   p=new Principal(Principal.UsuarioLogeado);
+        Principal p = new Principal(Principal.UsuarioLogeado);
         p.setLocationRelativeTo(null);
         p.setVisible(true);
     }//GEN-LAST:event_formWindowClosed
 
     private void BtnCad8AActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCad8AActionPerformed
         // TODO add your handling code here:
-         if((!this.Cadena.equals("5"))||(!this.Turno.equals("A")))
-        {
+        if ((!this.Cadena.equals("5")) || (!this.Turno.equals("A"))) {
             enlazarDgv("5", "A");
             GetCambiarCalorBoton("5A");
-            
+
         }
     }//GEN-LAST:event_BtnCad8AActionPerformed
 
     private void BtnCad8BActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCad8BActionPerformed
         // TODO add your handling code here:
-         if((!this.Cadena.equals("5"))||(!this.Turno.equals("B")))
-        {
+        if ((!this.Cadena.equals("5")) || (!this.Turno.equals("B"))) {
             enlazarDgv("5", "B");
             GetCambiarCalorBoton("5B");
-            
+
         }
     }//GEN-LAST:event_BtnCad8BActionPerformed
 

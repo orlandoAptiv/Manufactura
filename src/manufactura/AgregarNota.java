@@ -11,10 +11,6 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author Felipe
- */
 public class AgregarNota extends javax.swing.JFrame {
 
     /**
