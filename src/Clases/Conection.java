@@ -12,7 +12,7 @@ public class Conection {
         try {
             Class.forName(driver);
             con = DriverManager.getConnection(getTexturl(), getTextusr(), getTextpass());
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | SQLException e) {
             System.out.println(e.toString());
         }
     }
