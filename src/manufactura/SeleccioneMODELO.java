@@ -1,0 +1,289 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package manufactura;
+
+import Clases.Conection;
+import Clases.DatosGSD;
+import Clases.DatosMSD;
+import Clases.DatosManufactura;
+import Clases.PlatCodLinea;
+import java.awt.Color;
+import java.sql.ResultSet;
+
+/**
+ *
+ * @author gzld6k
+ */
+public class SeleccioneMODELO extends javax.swing.JFrame {
+
+    /**
+     * Creates new form SeleccioneMODELO
+     */
+    DatosManufactura datosManufactura;
+    DatosGSD datosGSD;
+    DatosMSD datosMSD;
+    String Idcodigo;
+    public SeleccioneMODELO(String idcodigo) {
+        initComponents();
+        Idcodigo=idcodigo;
+        Thread t=new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+               EjecutarThread();
+            }
+        });
+        t.start();
+        
+    }
+    
+    public  void EjecutarThread()
+    {
+        BuscarDatosCadena(Idcodigo);
+        BuscarDatosGSD(Idcodigo);
+        BuscarDatosMSD(Idcodigo);
+    }
+    public void BuscarDatosCadena(String idcodigo){
+        try{
+             ResultSet rs=Principal.cn.GetConsulta("SELECT codigos.IDCODIGO, codigos.CADENA, codigos.PLATAFORMA, codigos.CODIGO, codigos.LINEA,\n" +
+                "codigos.TURNO, manufactura.HCDIRLINEA, manufactura.HCDIRLPS, manufactura.HCDIRSOPORTE, manufactura.HCDIRTABINSP,\n" +
+                "manufactura.HCDIRCONTE, manufactura.HCDIRFTQ, manufactura.HCDIRPILOTOS, manufactura.HCDIRSISTEMAS, manufactura.HCINDRUTAS, manufactura.hcrutasint,\n" +
+                "manufactura.PUNTOSPZAPOND, manufactura.CAP_UTIL_HTA, manufactura.salidaenpieza, manufactura.hcdirsoplps FROM manufactura , codigos where manufactura.idcodigo=codigos.IDCODIGO and  codigos.idcodigo="+idcodigo);
+             if(rs.next())
+             {
+                 datosManufactura=new DatosManufactura( new PlatCodLinea( rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), ""), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10), rs.getString(11), rs.getString(12), rs.getString(13), rs.getString(14), rs.getString(15), rs.getString(16), rs.getString(17), rs.getString(18), rs.getString(19), rs.getString(20));
+             }
+        }catch(Exception e){
+            System.out.println(e.toString());
+        }
+    }
+  
+    public void BuscarDatosGSD(String idcodigo){
+        try{
+             ResultSet rs=Principal.cn.GetConsulta("SELECT codigos.IDCODIGO,\n" +
+                "codigos.CADENA,\n" +
+                "codigos.PLATAFORMA,\n" +
+                "codigos.CODIGO,\n" +
+                "codigos.LINEA,\n" +
+                "codigos.TURNO,\n" +
+                "gsd.HCDIRLPS,\n" +
+                "gsd.HCDIRCORTE,\n" +
+                "gsd.HCDIRENSFINAL,\n" +
+                "gsd.HCINDRUTAS,\n" +
+                "gsd.PUNTOSPZAPOND,\n" +
+                "gsd.CAP_UTIL_HTA\n" +
+                "FROM\n" +
+                "gsd ,\n" +
+                "codigos WHERE codigos.IDCODIGO=gsd.IDCODIGO AND codigos.IDCODIGO="+idcodigo);
+             if(rs.next())
+             {
+                 datosGSD=new DatosGSD(new PlatCodLinea( rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), ""), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10), rs.getString(11), rs.getString(12));
+             }
+        }catch(Exception e){
+            System.out.println(e.toString());
+        }
+    }
+   
+    public void BuscarDatosMSD(String idcodigo){
+        try{
+             ResultSet rs=Principal.cn.GetConsulta("SELECT\n" +
+                "codigos.IDCODIGO,\n" +
+                "codigos.CADENA,\n" +
+                "codigos.PLATAFORMA,\n" +
+                "codigos.CODIGO,\n" +
+                "codigos.LINEA,\n" +
+                "codigos.TURNO,\n" +
+                "msd.HCDIRLPS,\n" +
+                "msd.HCDIRCORTE,\n" +
+                "msd.HCDIRENSFINAL,\n" +
+                "msd.HCINDRUTAS,\n" +
+                "msd.PUNTOSPZAPOND,\n" +
+                "msd.CAP_UTIL_HTA\n" +
+                "FROM\n" +
+                "msd ,\n" +
+                "codigos\n" +
+                "WHERE\n" +
+                "msd.IDCODIGO = codigos.IDCODIGO AND codigos.IDCODIGO="+idcodigo);
+             if(rs.next())
+             {
+                 datosMSD=new DatosMSD(new PlatCodLinea( rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), ""), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10), rs.getString(11), rs.getString(12) );
+             }
+        }catch(Exception e){
+            System.out.println(e.toString());
+        }
+    }
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanel1 = new javax.swing.JPanel();
+        btnManufactura = new javax.swing.JButton();
+        btnMSD = new javax.swing.JButton();
+        btnGSD = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("SELECCIONE UNA OPCION CAPTURA");
+        setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
+
+        jPanel1.setBackground(new java.awt.Color(51, 102, 255));
+
+        btnManufactura.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        btnManufactura.setText("MANUFACTURA");
+        btnManufactura.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnManufacturaActionPerformed(evt);
+            }
+        });
+
+        btnMSD.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        btnMSD.setText("MSD");
+        btnMSD.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMSDActionPerformed(evt);
+            }
+        });
+
+        btnGSD.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        btnGSD.setText("GSD");
+        btnGSD.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGSDActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addComponent(btnManufactura, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                .addComponent(btnGSD, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(33, 33, 33)
+                .addComponent(btnMSD, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(30, 30, 30))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(78, 78, 78)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnManufactura, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnMSD, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnGSD, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(77, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnManufacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManufacturaActionPerformed
+        // TODO add your handling code here:
+        btnMSD.setBackground(btnManufactura.getBackground());
+        btnGSD.setBackground(btnManufactura.getBackground());
+        btnManufactura.setBackground(Color.GREEN);
+        CapturaManufactura cM=new CapturaManufactura(datosManufactura);
+        this.setVisible(false);
+        cM.setLocationRelativeTo(null); 
+        cM.setVisible(true);
+        
+        
+    }//GEN-LAST:event_btnManufacturaActionPerformed
+
+    private void btnGSDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGSDActionPerformed
+        // TODO add your handling code here:
+        btnMSD.setBackground(btnGSD.getBackground());
+        btnManufactura.setBackground(btnGSD.getBackground());
+        btnGSD.setBackground(Color.GREEN);
+        CapturaGSD cGSD=new CapturaGSD(datosGSD);
+        cGSD.setLocationRelativeTo(null);
+        cGSD.setVisible(true);
+        this.setVisible(false);
+
+    }//GEN-LAST:event_btnGSDActionPerformed
+
+    private void btnMSDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMSDActionPerformed
+        // TODO add your handling code here:
+        btnGSD.setBackground(btnMSD.getBackground());
+        btnManufactura.setBackground(btnMSD.getBackground());
+        btnMSD.setBackground(Color.GREEN);
+        CapturaMSD cMSD=new CapturaMSD(datosMSD);
+        cMSD.setLocationRelativeTo(null);
+        cMSD.setVisible(true);
+        this.setVisible(false);
+
+
+    }//GEN-LAST:event_btnMSDActionPerformed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        // TODO add your handling code here:
+        SelectCodigo SC=new SelectCodigo();
+        SC.setLocationRelativeTo(null);
+        SC.setVisible(true);
+    }//GEN-LAST:event_formWindowClosed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(SeleccioneMODELO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(SeleccioneMODELO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(SeleccioneMODELO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(SeleccioneMODELO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new SeleccioneMODELO(null).setVisible(true);
+            }
+        });
+    }
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnGSD;
+    private javax.swing.JButton btnMSD;
+    private javax.swing.JButton btnManufactura;
+    private javax.swing.JPanel jPanel1;
+    // End of variables declaration//GEN-END:variables
+}

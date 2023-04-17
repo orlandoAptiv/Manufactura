@@ -1,0 +1,12 @@
+//personas//
+(select `m`.`ACTIVO` AS `activo`,`c`.`CADENA` AS `cadena`,`c`.`PLATAFORMA` AS `plataforma`,`c`.`CODIGO` AS `CODIGO`,`c`.`LINEA` AS `linea`,`c`.`TURNO` AS `turno`,`c`.`ARNES` AS `ARNES`,`m`.`IDCODIGO` AS `IDCODIGO`,((((((((((((`m`.`kits` + `m`.`HCDIRLINEA`) + `m`.`HCDIRCONTE`) + `m`.`HCDIRSOPORTE`) + `m`.`HCDIRTABINSP`) + `m`.`HCRUTASINT`) + `m`.`HCDIRLPS`) + `m`.`HCDIRSOPLPS`) + `m`.`HCDIRPILOTOS`) + `m`.`HCDIRFTQ`) + `m`.`HCDIRSISTEMAS`) + `m`.`estaciones`) + `m`.`Elinea`) AS `hcdirecto`,`m`.`SALIDAENPIEZA` AS `salidaenpieza` from (`manufactura` `m` join `codigos` `c`) where ((`m`.`IDCODIGO` = `c`.`IDCODIGO`) and (`c`.`CADENA` <> 7)))
+
+//personas2//
+(select `m`.`ACTIVO` AS `activo`,`c`.`CADENA` AS `cadena`,`c`.`PLATAFORMA` AS `plataforma`,`c`.`CODIGO` AS `CODIGO`,`c`.`LINEA` AS `linea`,`c`.`TURNO` AS `turno`,`c`.`ARNES` AS `ARNES`,`m`.`IDCODIGO` AS `IDCODIGO`,((((((((((((`m`.`kits` + `m`.`HCDIRLINEA`) + `m`.`HCDIRCONTE`) + `m`.`HCDIRSOPORTE`) + `m`.`HCDIRTABINSP`) + `m`.`HCRUTASINT`) + `m`.`HCDIRLPS`) + `m`.`HCDIRSOPLPS`) + `m`.`HCDIRPILOTOS`) + `m`.`HCDIRFTQ`) + `m`.`HCDIRSISTEMAS`) + `m`.`estaciones`) + `m`.`Elinea`) AS `hcdirecto`,`m`.`SALIDAENPIEZA` AS `salidaenpieza` from (`manufactura` `m` join `codigos` `c`) where (`m`.`IDCODIGO` = `c`.`IDCODIGO`))
+
+//personaservicios//
+(select `c`.`CADENA` AS `cadena`,`c`.`PLATAFORMA` AS `plataforma`,`c`.`CODIGO` AS `CODIGO`,`c`.`LINEA` AS `linea`,`c`.`TURNO` AS `turno`,`c`.`ARNES` AS `ARNES`,`m`.`IDCODIGO` AS `IDCODIGO`,((((((((((((`m`.`kits` + `m`.`HCDIRLINEA`) + `m`.`HCDIRCONTE`) + `m`.`HCDIRSOPORTE`) + `m`.`HCDIRTABINSP`) + `m`.`HCRUTASINT`) + `m`.`HCDIRLPS`) + `m`.`HCDIRSOPLPS`) + `m`.`HCDIRPILOTOS`) + `m`.`HCDIRFTQ`) + `m`.`HCDIRSISTEMAS`) + `m`.`estaciones`) + `m`.`Elinea`) AS `hcdirecto` from (`manufactura` `m` join `codigos` `c`) where (`m`.`IDCODIGO` = `c`.`IDCODIGO`))
+
+//totalplantahc//
+select sum(`personas`.`hcdirecto`) AS `gentetotal`,`personas`.`turno` AS `turno` from `personas` where (`personas`.`cadena` <> 4) group by `personas`.`turno`
+
