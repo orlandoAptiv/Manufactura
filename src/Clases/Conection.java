@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 public class Conection {
 
-    //URL DEL SERVIDOR
     String driver = "com.mysql.jdbc.Driver";
     public Connection con = null;
 
